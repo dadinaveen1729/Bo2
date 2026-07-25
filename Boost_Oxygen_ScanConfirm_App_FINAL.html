@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Boost Oxygen — Scan Confirm</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh}
+.top{background:linear-gradient(135deg,#1F4E79 0%,#0D2B4E 100%);padding:0;position:sticky;top:0;z-index:100;box-shadow:0 3px 12px rgba(0,0,0,.5)}
+.top-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 16px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{background:#fff;border-radius:6px;padding:4px 10px;font-size:13px;font-weight:900;color:#1F4E79;letter-spacing:.05em;line-height:1.2;text-transform:uppercase}
+.brand-logo span{color:#C8402A;font-size:16px}
+.brand-text h1{font-size:13px;font-weight:700;color:#fff;line-height:1.4}
+.brand-text .sub{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px}
+.top-right{text-align:right}
+.clock{font-size:15px;color:#FFD700;font-weight:700}
+.clkd{font-size:9px;color:rgba(255,255,255,.6);margin-top:1px}
+.dev{font-size:8px;color:#FFD700;opacity:.6;margin-top:2px}
+.brand-strip{background:linear-gradient(90deg,#C8402A,#E05A3A);height:4px;width:100%}
+.tabs{display:flex;background:#0D2B4E;border-bottom:1px solid #1F4E79;overflow-x:auto}
+.tab{flex:1;min-width:60px;padding:11px 4px;text-align:center;font-size:11px;font-weight:700;cursor:pointer;opacity:.5;border-bottom:3px solid transparent;white-space:nowrap}
+.tab.active{opacity:1;border-bottom:3px solid #FFD700;color:#FFD700}
+.panel{display:none;padding:12px}
+.panel.active{display:block}
+.conn-bar{font-size:11px;text-align:center;padding:6px 10px;margin-bottom:6px;border-radius:6px}
+.conn-ok{background:rgba(27,94,46,.3);color:#4CAF50;border:1px solid #1B5E20}
+.conn-warn{background:rgba(123,32,32,.3);color:#F44336;border:1px solid #7B1F1F}
+.conn-info{background:rgba(31,78,121,.3);color:#90CAF9;border:1px solid #1F4E79}
+.banner{border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:14px;font-weight:700;text-align:center}
+.b-info{background:linear-gradient(135deg,#1F4E79,#0D2B4E);border:1px solid #2E75B6}
+.b-ok{background:linear-gradient(135deg,#1B5E20,#2E7D32);border:1px solid #4CAF50}
+.b-warn{background:linear-gradient(135deg,#7B1F1F,#C00000);border:1px solid #F44336}
+.ctr-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.ctr{border-radius:12px;padding:16px 10px;text-align:center;border:1px solid rgba(255,255,255,.08)}
+.ctr .v{font-size:36px;font-weight:700;line-height:1}
+.ctr .l{font-size:11px;opacity:.7;margin-top:6px;text-transform:uppercase;letter-spacing:.04em}
+.c1{background:linear-gradient(135deg,#1B5E20,#2E7D32)}
+.c2{background:linear-gradient(135deg,#7B1F1F,#C00000)}
+.c3{background:linear-gradient(135deg,#7B5800,#B45900)}
+.scan-section{background:#0D2B4E;border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #1F4E79}
+.scan-label{font-size:12px;color:#FFD700;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:6px}
+.scan-label::before{content:'';width:8px;height:8px;background:#4CAF50;border-radius:50%;animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.scan-input{width:100%;padding:16px 14px;border:2px solid #2E75B6;border-radius:10px;font-size:20px;background:#0A1628;color:#fff;font-family:monospace;letter-spacing:.04em;transition:border .15s}
+.scan-input:focus{outline:none;border-color:#FFD700;background:#0D1F35}
+.scan-hint{font-size:11px;color:#555;margin-top:8px;text-align:center;line-height:1.5}
+.cam-toggle{background:transparent;border:1px solid #2E75B6;color:#90CAF9;border-radius:8px;padding:8px 14px;font-size:11px;cursor:pointer;margin-bottom:10px;display:block;width:100%;text-align:center}
+.cam-wrap{display:none;position:relative;background:#000;border-radius:12px;overflow:hidden;margin-bottom:10px}
+.cam-wrap.show{display:block}
+#interactive{width:100%;min-height:200px}
+#interactive video{width:100%!important;display:block!important}
+#interactive canvas.drawingBuffer{display:none!important}
+.aim-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.aim-box{width:85%;height:80px;position:relative}
+.aim-box::before{content:'';position:absolute;inset:0;border:2px solid rgba(255,215,0,.5);border-radius:4px}
+.corner{position:absolute;width:20px;height:20px}
+.tl{top:-2px;left:-2px;border-top:4px solid #FFD700;border-left:4px solid #FFD700}
+.tr{top:-2px;right:-2px;border-top:4px solid #FFD700;border-right:4px solid #FFD700}
+.bl{bottom:-2px;left:-2px;border-bottom:4px solid #FFD700;border-left:4px solid #FFD700}
+.br{bottom:-2px;right:-2px;border-bottom:4px solid #FFD700;border-right:4px solid #FFD700}
+.scan-line{position:absolute;left:0;right:0;height:2px;background:#FFD700;box-shadow:0 0 8px #FFD700;animation:sl 1.5s ease-in-out infinite}
+@keyframes sl{0%,100%{top:2%}50%{top:95%}}
+.cam-hint-ov{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:11px;color:#FFD700}
+.last-box{background:#0D2B4E;border-radius:10px;padding:10px 14px;font-size:13px;color:#aaa;margin-bottom:10px;min-height:36px;text-align:center;line-height:1.6;border:1px solid #1F4E79}
+.result{display:none;border-radius:14px;padding:18px;text-align:center;margin-bottom:12px;animation:pop .2s ease}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.r-ok{background:linear-gradient(135deg,#1B5E20,#2E7D32);border:3px solid #4CAF50}
+.r-dup{background:linear-gradient(135deg,#7B0000,#C00000);border:3px solid #F44336}
+.r-nf{background:linear-gradient(135deg,#4A3000,#B45900);border:3px solid #FFC107}
+.result .big{font-size:28px;font-weight:700}
+.result .det{font-size:14px;margin-top:8px;line-height:1.6;opacity:.9}
+.result .rtn{font-size:11px;opacity:.4;margin-top:5px;font-family:monospace}
+.flash-overlay{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.75);align-items:center;justify-content:center}
+.flash-overlay.show{display:flex}
+.flash-box{width:88%;max-width:380px;border-radius:22px;padding:36px 24px;text-align:center;animation:popIn .2s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.f-ok{background:linear-gradient(135deg,#1B5E20,#2E7D32);border:4px solid #4CAF50;box-shadow:0 0 50px rgba(76,175,80,.4)}
+.f-dup{background:linear-gradient(135deg,#7B0000,#C00000);border:4px solid #F44336;box-shadow:0 0 50px rgba(244,67,54,.5)}
+.f-nf{background:linear-gradient(135deg,#4A3000,#B45900);border:4px solid #FFC107;box-shadow:0 0 40px rgba(255,193,7,.3)}
+.flash-icon{font-size:56px;margin-bottom:12px;line-height:1}
+.flash-title{font-size:30px;font-weight:700;margin-bottom:8px}
+.flash-detail{font-size:15px;opacity:.9;line-height:1.6}
+.flash-tn{font-size:11px;opacity:.4;margin-top:6px;font-family:monospace}
+.overall{background:#0D2B4E;border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid #1F4E79}
+.overall-title{font-size:12px;color:#FFD700;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.overall-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.ostat{font-size:12px;color:#aaa}
+.ostat span{color:#fff;font-weight:700;font-size:14px}
+.team-block{background:#0D2B4E;border-radius:12px;margin-bottom:10px;overflow:hidden;border:1px solid #1F4E79}
+.team-hdr{padding:12px 14px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.prog{height:6px;background:#0A1628}
+.prog-fill{height:100%;transition:width .4s}
+.pkg-row{display:flex;align-items:center;padding:8px 14px;border-top:1px solid #0A1628;font-size:11px;gap:8px}
+.pkg-tn{flex:1;font-family:monospace;color:#90CAF9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pkg-ord{width:80px;color:#bbb}
+.pkg-st{width:85px;text-align:right}
+.bOk{background:#1B5E20;color:#4CAF50;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700}
+.bPend{border:1px solid #FFC107;color:#FFC107;padding:3px 8px;border-radius:6px;font-size:10px}
+.bDup{background:#7B1F1F;color:#F44336;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700}
+.miss-card{background:#0D2B4E;border-left:4px solid #F44336;border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid #1F4E79}
+.miss-tn{font-family:monospace;font-size:12px;color:#90CAF9;margin-bottom:4px}
+.miss-info{font-size:11px;color:#bbb;margin-top:3px}
+.all-clear{text-align:center;padding:40px 20px}
+.all-clear .msg{font-size:16px;font-weight:700;color:#4CAF50;margin-top:10px}
+.all-clear .sub{font-size:12px;color:#555;margin-top:6px}
+.hist-row{background:#0D2B4E;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #1F4E79}
+.hist-date{font-size:14px;font-weight:700;color:#FFD700;margin-bottom:6px}
+.hist-stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+.hist-stat{font-size:12px;color:#aaa}
+.hist-stat span{color:#fff;font-weight:700}
+.hrow{display:flex;gap:8px;padding:5px 8px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center}
+.rbtn{background:#0D2B4E;border:1px solid #2E75B6;color:#90CAF9;border-radius:8px;padding:8px 16px;font-size:11px;cursor:pointer;margin-bottom:12px;margin-right:6px}
+.empty{text-align:center;padding:40px;color:#555;font-size:13px;line-height:1.8}
+.sec-hdr{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#555;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid #1F4E79}
+.footer{text-align:center;font-size:10px;color:#2A3F55;padding:16px 0 10px;border-top:1px solid #1F4E79;margin-top:8px;line-height:1.8}
+.footer strong{color:#3A5F85}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <div class="brand-logo">BOOST<span>+</span> OXYGEN</div>
+      <div class="brand-text">
+        <h1>Package Scan Confirm</h1>
+        <div class="sub">Verify all packages before 2:00 PM carrier pickup</div>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="clock" id="clk">--:-- --</div>
+      <div class="clkd" id="clkd">Eastern Time</div>
+      <div class="dev">Naveen Dadi • Rob Neuner CEO • Mike Grice COO</div>
+    </div>
+  </div>
+  <div class="brand-strip"></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" id="tb-scan" onclick="showTab('scan')">Scan</div>
+  <div class="tab" id="tb-dash" onclick="showTab('dash')">Dashboard</div>
+  <div class="tab" id="tb-miss" onclick="showTab('miss')">Missing</div>
+  <div class="tab" id="tb-hist" onclick="showTab('hist')">History</div>
+  <div class="tab" id="tb-srch" onclick="showTab('srch')">Search</div>
+  <div class="tab" id="tb-rpt" onclick="showTab('rpt')">Report</div>
+</div>
+
+<div class="conn-bar conn-info" id="conn-bar">Connecting to Google Sheets...</div>
+
+<div class="panel active" id="tab-scan">
+  <div class="banner b-info" id="banner">Loading packages...</div>
+  <div class="ctr-grid">
+    <div class="ctr c1"><div class="v" id="ct-ok">0</div><div class="l">Confirmed Today</div></div>
+    <div class="ctr c2"><div class="v" id="ct-miss">0</div><div class="l">Missing Today</div></div>
+    <div class="ctr c3"><div class="v" id="ct-dup">0</div><div class="l">Duplicates</div></div>
+  </div>
+  <div class="scan-section">
+    <div class="scan-label">Scanner Input — Click here then scan with gun</div>
+    <input type="text" id="scan-input" class="scan-input"
+           placeholder="Click here, then scan with Inateck..."
+           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+           onkeydown="handleKey(event)">
+    <div class="scan-hint">Inateck scanner types tracking number here automatically and presses Enter<br>Works via USB or Bluetooth — no setup needed</div>
+  </div>
+  <button class="cam-toggle" onclick="toggleCamera()">Use Phone Camera (optional)</button>
+  <div class="cam-wrap" id="cam-wrap">
+    <div id="interactive"></div>
+    <div class="aim-overlay">
+      <div class="aim-box">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="scan-line"></div>
+      </div>
+    </div>
+    <div class="cam-hint-ov">Hold barcode in yellow box — 1 to 3 feet away</div>
+  </div>
+  <div class="last-box" id="last-box">Waiting for first scan...</div>
+  <div class="result" id="result">
+    <div class="big" id="r-icon"></div>
+    <div class="det" id="r-det"></div>
+    <div class="rtn" id="r-tn"></div>
+  </div>
+</div>
+
+<div class="panel" id="tab-dash">
+  <button class="rbtn" onclick="renderDash()">Refresh</button>
+  <div id="dash-content"><div class="empty">Loading...</div></div>
+</div>
+
+<div class="panel" id="tab-miss">
+  <button class="rbtn" onclick="renderMissing()">Refresh</button>
+  <div id="miss-content"><div class="empty">Loading...</div></div>
+</div>
+
+<div class="panel" id="tab-hist">
+  <button class="rbtn" onclick="renderHist()">Refresh</button>
+  <div class="sec-hdr">All-time scan history — every tracking number stored permanently</div>
+  <div id="hist-content"><div class="empty">Loading history...</div></div>
+</div>
+
+<div class="panel" id="tab-srch">
+  <input type="text" id="srch-input"
+    style="width:100%;padding:12px 14px;border:2px solid #2E75B6;border-radius:10px;font-size:15px;background:#0A1628;color:#fff;margin-bottom:10px"
+    placeholder="Search tracking number, order number, or customer name..."
+    oninput="doSearch(this.value)"
+    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <div id="srch-results"><div class="empty">Type to search all packages and history</div></div>
+</div>
+
+<div class="panel" id="tab-rpt">
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+    <select id="rpt-date" style="flex:1;padding:10px;border:1px solid #2E75B6;border-radius:8px;background:#0D2B4E;color:#fff;font-size:12px">
+      <option value="">All Dates</option>
+    </select>
+    <button class="rbtn" style="margin:0" onclick="renderReport()">Generate</button>
+    <button class="rbtn" style="margin:0;background:#1B5E20;border-color:#4CAF50;color:#4CAF50" onclick="printReport()">Print / PDF</button>
+  </div>
+  <div id="rpt-content"><div class="empty">Select a date above and click Generate</div></div>
+</div>
+
+<div class="footer">
+  <strong>Boost Oxygen LLC</strong> — 125 Old Gate Lane, Milford CT 06460<br>
+  Developed by Naveen Dadi, Operations Specialist<br>
+  Reporting to Rob Neuner, CEO and Mike Grice, COO
+</div>
+
+<!-- FLASH OVERLAY -->
+<div class="flash-overlay" id="flash-overlay" onclick="hideFlash()">
+  <div class="flash-box" id="flash-box">
+    <div class="flash-icon" id="flash-icon"></div>
+    <div class="flash-title" id="flash-title"></div>
+    <div class="flash-detail" id="flash-detail"></div>
+    <div class="flash-tn" id="flash-tn"></div>
+  </div>
+</div>
+
+<script>
+var GAS="https://script.google.com/macros/s/AKfycbx9XIfULMRWYATgTEm0inf-fA7ngMEhpfJEwjDdx0rrHcgDf4gW2yoZOkbNrT84m3Q3/exec";
+var allPkgs={},confirmed={},dupCount=0,pkgsLoaded=false;
+var audioCtx=null;
+
+// ── REAL FEMALE VOICE SOUNDS ─────────────────────────────────────────
+var voiceReady=false;
+var femaleVoice=null;
+
+function initVoice(){
+  if(voiceReady) return;
+  var voices=window.speechSynthesis.getVoices();
+  // Find best female voice - prefer Google US English Female
+  femaleVoice = voices.find(function(v){return v.name.indexOf("Google US English")>-1&&v.name.indexOf("Female")>-1;})
+    || voices.find(function(v){return v.name.toLowerCase().indexOf("female")>-1&&v.lang.indexOf("en")>-1;})
+    || voices.find(function(v){return v.lang.indexOf("en-US")>-1&&(v.name.indexOf("Samantha")>-1||v.name.indexOf("Karen")>-1||v.name.indexOf("Victoria")>-1||v.name.indexOf("Zira")>-1);})
+    || voices.find(function(v){return v.lang.indexOf("en")>-1;})
+    || null;
+  voiceReady=true;
+}
+
+function speak(text){
+  try{
+    if(!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(text);
+    try{initVoice();if(femaleVoice)u.voice=femaleVoice;}catch(ex){}
+    u.rate=1.05;u.pitch=1.1;u.volume=1.0;
+    window.speechSynthesis.speak(u);
+  }catch(e){console.warn('Voice error:',e);}
+}
+
+// Load voices on startup
+if(window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged=function(){initVoice();};
+  setTimeout(initVoice,500);
+}
+
+function soundOk(){speak("Confirmed");}
+function soundDup(){speak("Warning. Duplicate shipment detected.");}
+function soundNf(){speak("Not found");}
+
+// ── FLASH OVERLAY ─────────────────────────────────────────────────────
+var flashTimer=null;
+function showFlash(type,icon,title,detail,tn){
+  var box=document.getElementById("flash-box");
+  document.getElementById("flash-icon").textContent=icon;
+  document.getElementById("flash-title").textContent=title;
+  document.getElementById("flash-detail").textContent=detail;
+  document.getElementById("flash-tn").textContent=tn||"";
+  box.className="flash-box "+(type==="ok"?"f-ok":type==="dup"?"f-dup":"f-nf");
+  document.getElementById("flash-overlay").classList.add("show");
+  clearTimeout(flashTimer);
+  flashTimer=setTimeout(hideFlash,type==="dup"?2500:1200);
+}
+function hideFlash(){
+  document.getElementById("flash-overlay").classList.remove("show");
+  setTimeout(function(){document.getElementById("scan-input").focus();},50);
+}
+
+// ── CLOCK ─────────────────────────────────────────────────────────────
+function getEST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));}
+function getTodayStr(){var e=getEST();return (e.getMonth()+1)+"/"+e.getDate()+"/"+e.getFullYear();}
+function tick(){
+  var e=getEST(),h=e.getHours(),m=e.getMinutes(),s=e.getSeconds();
+  var ap=h>=12?"PM":"AM";h=h%12||12;
+  document.getElementById("clk").textContent=h+":"+(m<10?"0"+m:m)+":"+(s<10?"0"+s:s)+" "+ap;
+  var days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  document.getElementById("clkd").textContent=days[e.getDay()]+" "+months[e.getMonth()]+" "+e.getDate()+", "+e.getFullYear()+" ET";
+  updateBanner();
+}
+tick();setInterval(tick,1000);
+
+function updateBanner(){
+  var e=getEST(),h=e.getHours(),m=e.getMinutes();
+  var b=document.getElementById("banner");
+  var todayStr=getTodayStr();
+  var todayPkgs=Object.values(allPkgs).filter(function(p){return p.date===todayStr;});
+  var todayConf=todayPkgs.filter(function(p){return confirmed[p.tracking];}).length;
+  var todayMiss=Math.max(0,todayPkgs.length-todayConf);
+  if(!pkgsLoaded){b.className="banner b-info";b.textContent="Connecting to Google Sheets...";}
+  else if(!todayPkgs.length){b.className="banner b-warn";b.textContent="No packages for today — run scan_daily_loader.py";}
+  else if(h<12){b.className="banner b-info";b.textContent=todayPkgs.length+" packages for today — scan window opens at 12:00 PM";}
+  else if(h<14){
+    var left=(14-h)*60-m;
+    b.className="banner "+(todayMiss>0?"b-warn":"b-ok");
+    b.textContent=todayMiss>0?(todayMiss+" not confirmed — "+left+" min to 2:00 PM pickup"):("All "+todayConf+" of today's packages confirmed");
+  }else{
+    b.className="banner "+(todayMiss>0?"b-warn":"b-ok");
+    b.textContent=todayMiss>0?(todayMiss+" packages not confirmed before pickup"):("All "+todayConf+" packages confirmed and shipped");
+  }
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────
+function showTab(id){
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("active");});
+  document.getElementById("tb-"+id).classList.add("active");
+  document.getElementById("tab-"+id).classList.add("active");
+  if(id==="dash")renderDash();
+  if(id==="miss")renderMissing();
+  if(id==="hist")renderHist();
+  if(id==="srch"){buildSearchDateOpts();setTimeout(function(){document.getElementById("srch-input").focus();},100);}
+  if(id==="rpt"){buildReportDateOpts();renderReport();}
+  if(id==="scan")setTimeout(function(){document.getElementById("scan-input").focus();},100);
+}
+
+// ── SCANNER GUN INPUT ─────────────────────────────────────────────────
+var scanTimer=null;
+function handleKey(e){
+  try{initAudio();}catch(ex){}
+  if(e.key==="Enter"||e.keyCode===13){
+    e.preventDefault();
+    var v=document.getElementById("scan-input").value.trim();
+    if(v.length>=6){
+      try{processCode(v);}catch(ex){console.error(ex);}
+    }
+    document.getElementById("scan-input").value="";
+    return;
+  }
+  clearTimeout(scanTimer);
+  scanTimer=setTimeout(function(){
+    var v=document.getElementById("scan-input").value.trim();
+    if(v.length>=6){
+      try{processCode(v);}catch(ex){console.error(ex);}
+      document.getElementById("scan-input").value="";
+    }
+  },500);
+}
+document.addEventListener("click",function(e){
+  if(document.getElementById("tab-scan").classList.contains("active")){
+    if(e.target.tagName!=="BUTTON"&&e.target.id!=="scan-input"){
+      document.getElementById("scan-input").focus();
+    }
+  }
+});
+
+// ── CAMERA ────────────────────────────────────────────────────────────
+var camOn=false,quaggaOn=false;
+function toggleCamera(){
+  var w=document.getElementById("cam-wrap");
+  if(!camOn){w.classList.add("show");if(!quaggaOn)startQuagga();camOn=true;document.querySelector(".cam-toggle").textContent="Hide Camera";}
+  else{w.classList.remove("show");camOn=false;document.querySelector(".cam-toggle").textContent="Use Phone Camera (optional)";}
+}
+function startQuagga(){
+  Quagga.init({
+    inputStream:{name:"Live",type:"LiveStream",target:document.getElementById("interactive"),
+      constraints:{width:{ideal:1280},height:{ideal:720},facingMode:"environment"},
+      area:{top:"20%",right:"5%",left:"5%",bottom:"20%"}},
+    locator:{patchSize:"medium",halfSample:true},numOfWorkers:2,frequency:15,
+    decoder:{readers:["code_128_reader","code_39_reader","interleaved_2of5_reader"],multiple:false},
+    locate:true
+  },function(err){if(!err){Quagga.start();quaggaOn=true;}});
+  var qc={};
+  Quagga.onDetected(function(r){
+    var code=r.codeResult.code;
+    if(!code||code.length<10||/\s/.test(code))return;
+    qc[code]=(qc[code]||0)+1;
+    if(qc[code]>=2){qc={};processCode(code.trim());}
+  });
+}
+
+// ── FUZZY MATCH ───────────────────────────────────────────────────────
+function findMatch(scanned){
+  if(allPkgs[scanned])return scanned;
+  var keys=Object.keys(allPkgs);
+  // Exact match first
+  // Last 10 digits match
+  for(var i=0;i<keys.length;i++){
+    if(scanned.slice(-10)===keys[i].slice(-10))return keys[i];
+  }
+  // First 9 characters match (handles FedEx label vs ShipStation discrepancy)
+  for(var i=0;i<keys.length;i++){
+    if(scanned.length>=9&&keys[i].length>=9&&scanned.slice(0,9)===keys[i].slice(0,9))return keys[i];
+  }
+  // Contains match
+  for(var j=0;j<keys.length;j++){
+    if(scanned.length>=10&&(scanned.indexOf(keys[j])>-1||keys[j].indexOf(scanned)>-1))return keys[j];
+  }
+  // Last 8 digits match (fallback for close but not exact)
+  for(var i=0;i<keys.length;i++){
+    if(scanned.slice(-8)===keys[i].slice(-8))return keys[i];
+  }
+  return null;
+}
+
+// ── PROCESS SCAN ──────────────────────────────────────────────────────
+function processCode(raw){
+  if(!raw||raw.trim().length<6) return;
+  var lk="lscan_"+raw.trim();
+  var ll=parseInt(sessionStorage.getItem(lk)||"0");
+  if(Date.now()-ll<2500){return;}
+  sessionStorage.setItem(lk,Date.now());
+  var matched=findMatch(raw),tn=matched||raw;
+  var res=document.getElementById("result"),lb=document.getElementById("last-box");
+
+  // Check local history for cross-day duplicates
+  var histKey="bo_scan_"+tn,prevScan=null;
+  try{prevScan=localStorage.getItem(histKey);}catch(ex){}
+
+  if((confirmed[tn])&&allPkgs[tn]){
+    // Duplicate today
+    dupCount++;
+    document.getElementById("ct-dup").textContent=dupCount;
+    res.className="result r-dup";res.style.display="block";
+    document.getElementById("r-icon").textContent="DUPLICATE";
+    document.getElementById("r-det").textContent="Already scanned today — check for double shipment!";
+    document.getElementById("r-tn").textContent=tn.slice(-20);
+    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE TODAY</span> — '+tn.slice(-16);
+    var prevScanInfo='';
+    try{var si=localStorage.getItem(histKey);if(si){var sd=JSON.parse(si);prevScanInfo=' | First scan: '+sd.date+' '+(sd.time||'');}}catch(ex){}
+    showFlash("dup","🚨","DUPLICATE TODAY","Already scanned — check for double shipment!"+prevScanInfo,tn.slice(-18));
+    soundDup();
+    postScan(tn,"DUPLICATE");
+
+  }else if(prevScan&&!allPkgs[tn]){
+    // Historical duplicate
+    dupCount++;
+    document.getElementById("ct-dup").textContent=dupCount;
+    res.className="result r-dup";res.style.display="block";
+    var prevDate=JSON.parse(prevScan).date;
+    document.getElementById("r-icon").textContent="STOP — HISTORICAL DUPLICATE";
+    document.getElementById("r-det").textContent="Shipped on "+prevDate+" — do NOT ship again!";
+    document.getElementById("r-tn").textContent=tn.slice(-20);
+    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE FROM '+prevDate+'</span>';
+    showFlash("dup","🛑","STOP — DUPLICATE","First shipped on "+prevDate+" — do NOT ship again! Check NetSuite.",tn.slice(-18));
+    soundDup();
+    postScan(tn,"HISTORICAL_DUPLICATE");
+
+  }else if(matched){
+    // CONFIRMED
+    confirmed[tn]=true;
+    var pkg=allPkgs[tn];
+    var todayStr=getTodayStr();
+    var todayPkgs=Object.values(allPkgs).filter(function(p){return p.date===todayStr;});
+    var todayConf=todayPkgs.filter(function(p){return confirmed[p.tracking];}).length;
+    document.getElementById("ct-ok").textContent=todayConf;
+    document.getElementById("ct-miss").textContent=Math.max(0,todayPkgs.length-todayConf);
+    res.className="result r-ok";res.style.display="block";
+    document.getElementById("r-icon").textContent="CONFIRMED";
+    document.getElementById("r-det").textContent=(pkg.customer||"")+" — "+(pkg.order||"")+" | "+(pkg.team||"");
+    document.getElementById("r-tn").textContent=tn.slice(-20);
+    lb.innerHTML='<span style="color:#4CAF50;font-weight:700">OK</span> — '+(pkg.order||"")+" — "+(pkg.customer||"");
+    showFlash("ok","✅","CONFIRMED",(pkg.customer||"")+" — "+(pkg.order||""),tn.slice(-18));
+    soundOk();
+    postScan(tn,"CONFIRMED");
+    // Save to local history
+    var ds=getTodayStr();
+    var e3=getEST(),h3=e3.getHours(),m3=e3.getMinutes();
+    var ap3=h3>=12?"PM":"AM";h3=h3%12||12;
+    var scanT=h3+":"+(m3<10?"0"+m3:m3)+" "+ap3;
+    try{localStorage.setItem(histKey,JSON.stringify({tn:tn,date:ds,time:scanT,order:pkg.order||""}));}catch(ex){}
+    if(document.getElementById("tab-miss").classList.contains("active"))renderMissing();
+
+  }else{
+    // NOT IN LIST
+    res.className="result r-nf";res.style.display="block";
+    document.getElementById("r-icon").textContent="NOT IN LIST";
+    document.getElementById("r-det").textContent="Not found in loaded packages — check NetSuite";
+    document.getElementById("r-tn").textContent=raw.slice(-20);
+    lb.innerHTML='<span style="color:#FFC107;font-weight:700">NOT FOUND</span> — '+raw.slice(-16);
+    showFlash("nf","❓","NOT IN LIST","Not found — check NetSuite or load more days",raw.slice(-18));
+    soundNf();
+    // Delay NOT_FOUND post by 8 seconds — if confirmed in that window cancel it
+    // This prevents false NOT_FOUND when scanning wrong barcode then correct one
+    var nfRaw=raw;
+    var nfTimer=setTimeout(function(){
+      // Only post NOT_FOUND if not confirmed in the meantime
+      if(!confirmed[nfRaw]&&!confirmed[findMatch(nfRaw)||""]){
+        postScan(nfRaw,"NOT_FOUND");
+      }
+    },8000);
+  }
+  setTimeout(function(){res.style.display="none";},2500);
+  setTimeout(function(){document.getElementById("scan-input").focus();},100);
+}
+
+// ── POST TO SHEET ─────────────────────────────────────────────────────
+function postScan(tn,status){
+  var e=getEST(),h=e.getHours(),m=e.getMinutes();
+  var ap=h>=12?"PM":"AM";h=h%12||12;
+  var t=h+":"+(m<10?"0"+m:m)+" "+ap;
+  var ds=getTodayStr();
+  var pkg=allPkgs[tn]||allPkgs[findMatch(tn)||""]||{};
+  var d={action:"confirmscan",tracking:tn,status:status,scantime:t,
+         date:ds,order:pkg.order||"",customer:pkg.customer||"",team:pkg.team||"",carrier:pkg.carrier||""};
+  var ifr=document.createElement("iframe");ifr.name="si_"+Date.now();ifr.style.display="none";document.body.appendChild(ifr);
+  var frm=document.createElement("form");frm.method="POST";frm.action=GAS;frm.target=ifr.name;frm.style.display="none";
+  var inp=document.createElement("input");inp.type="hidden";inp.name="data";inp.value=JSON.stringify(d);
+  frm.appendChild(inp);document.body.appendChild(frm);
+  ifr.onload=function(){setTimeout(function(){ifr.remove();frm.remove();},2000);};
+  frm.submit();setTimeout(function(){frm.remove();},1000);
+}
+
+// ── LOAD PACKAGES ─────────────────────────────────────────────────────
+function loadPkgs(){
+  var cb="sc_"+Date.now();
+  window[cb]=function(data){
+    pkgsLoaded=true;
+    var pkgs=data.packages||[];
+    allPkgs={};confirmed={};dupCount=0;
+    var loadedDates=[];
+
+    pkgs.forEach(function(p){
+      if(p.tracking&&p.tracking.length>=10){
+        allPkgs[p.tracking.trim()]=p;
+        if(p.status==="CONFIRMED")confirmed[p.tracking.trim()]=true;
+        if(p.status==="DUPLICATE"||p.status==="HISTORICAL_DUPLICATE")dupCount++;
+        if(p.date)loadedDates.push(p.date);
+      }
+    });
+
+    // TODAY stats only for counters
+    var todayStr=getTodayStr();
+    var todayPkgs=Object.values(allPkgs).filter(function(p){return p.date===todayStr;});
+    var todayConf=todayPkgs.filter(function(p){return confirmed[p.tracking];}).length;
+    var todayMiss=Math.max(0,todayPkgs.length-todayConf);
+
+    document.getElementById("ct-ok").textContent=todayConf;
+    document.getElementById("ct-miss").textContent=todayMiss;
+    document.getElementById("ct-dup").textContent=dupCount;
+
+    // Connection bar shows date range
+    var total=Object.keys(allPkgs).length;
+    var cb2=document.getElementById("conn-bar");
+    if(total>0){
+      var uniqueDates=loadedDates.filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
+      var rangeStr=uniqueDates.length>1?uniqueDates[0]+" to "+uniqueDates[uniqueDates.length-1]:todayStr;
+      cb2.className="conn-bar conn-ok";
+      cb2.textContent="Connected — "+todayPkgs.length+" packages for today | "+total+" total loaded ("+rangeStr+")";
+    }else{
+      cb2.className="conn-bar conn-warn";
+      cb2.textContent="Connected — no packages — run scan_daily_loader.py";
+    }
+    updateBanner();
+    delete window[cb];var sc=document.getElementById("_"+cb);if(sc)sc.remove();
+  };
+  var sc=document.createElement("script");sc.id="_"+cb;
+  sc.src=GAS+"?action=getpackages&callback="+cb+"&t="+Date.now();
+  sc.onerror=function(){pkgsLoaded=true;document.getElementById("conn-bar").className="conn-bar conn-warn";document.getElementById("conn-bar").textContent="Cannot connect to Google Sheets — check internet";sc.remove();delete window[cb];};
+  document.head.appendChild(sc);
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────
+function renderDash(){
+  var todayStr=getTodayStr();
+  var todayPkgs=Object.values(allPkgs).filter(function(p){return p.date===todayStr;});
+  var todayConf=todayPkgs.filter(function(p){return confirmed[p.tracking];}).length;
+  var todayTotal=todayPkgs.length;
+  var todayPct=todayTotal>0?Math.round(todayConf/todayTotal*100):0;
+  var allTotal=Object.keys(allPkgs).length;
+  var allConf=Object.keys(confirmed).length;
+
+  if(allTotal===0){document.getElementById("dash-content").innerHTML='<div class="empty">No packages loaded. Run scan_daily_loader.py first.</div>';return;}
+
+  var html='<div class="overall">';
+  html+='<div class="overall-title">Today\'s Progress ('+todayStr+')</div>';
+  html+='<div class="overall-stats">';
+  html+='<div class="ostat">Confirmed <span style="color:#4CAF50">'+todayConf+'</span></div>';
+  html+='<div class="ostat">Missing <span style="color:'+(todayTotal-todayConf>0?"#F44336":"#4CAF50")+'">'+Math.max(0,todayTotal-todayConf)+'</span></div>';
+  html+='<div class="ostat">Today Total <span>'+todayTotal+'</span></div>';
+  html+='<div class="ostat">Rate <span>'+todayPct+'%</span></div>';
+  html+='</div>';
+  html+='<div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+todayPct+'%;background:'+(todayPct===100?"#4CAF50":todayPct>60?"#2196F3":"#FFC107")+'"></div></div>';
+  html+='<div style="font-size:10px;color:#555;margin-top:8px">All days in sheet: '+allTotal+' packages | '+allConf+' confirmed across all days | '+dupCount+' duplicates</div>';
+  html+='</div>';
+
+  // Team breakdown — today only
+  var teams={"Online Set 1":{c:"#1565C0",p:[]},"Online Set 2":{c:"#2E7D32",p:[]},"Online Set 3":{c:"#E65100",p:[]},"LTL Priority":{c:"#6A1B9A",p:[]}};
+  todayPkgs.forEach(function(p){var t=p.team||"Online Set 1";if(!teams[t])teams[t]={c:"#555",p:[]};teams[t].p.push(p);});
+
+  Object.entries(teams).forEach(function(entry){
+    var tn=entry[0],ti=entry[1];if(!ti.p.length)return;
+    var tc=ti.p.filter(function(p){return confirmed[p.tracking];}).length;
+    var tpct=Math.round(tc/ti.p.length*100);
+    html+='<div class="team-block"><div class="team-hdr" style="border-left:5px solid '+ti.c+'"><span>'+tn+'</span><span style="font-size:14px;color:'+(tpct===100?"#4CAF50":"#FFC107")+'">'+tc+' / '+ti.p.length+'</span></div>';
+    html+='<div class="prog"><div class="prog-fill" style="width:'+tpct+'%;background:'+ti.c+'"></div></div>';
+    ti.p.slice(0,8).forEach(function(p){
+      var ok=confirmed[p.tracking];
+      html+='<div class="pkg-row"><div class="pkg-tn">...'+p.tracking.slice(-14)+'</div><div class="pkg-ord">'+(p.order||"")+'</div><div class="pkg-st"><span class="'+(ok?"bOk":"bPend")+'">'+(ok?"CONFIRMED":"PENDING")+'</span></div></div>';
+    });
+    if(ti.p.length>8)html+='<div style="padding:7px 14px;font-size:11px;color:#555">+'+(ti.p.length-8)+' more packages</div>';
+    html+='</div>';
+  });
+  document.getElementById("dash-content").innerHTML=html;
+}
+
+// ── MISSING — TODAY ONLY ──────────────────────────────────────────────
+function renderMissing(){
+  var todayStr=getTodayStr();
+  var todayPkgs=Object.values(allPkgs).filter(function(p){return p.date===todayStr;});
+
+  if(Object.keys(allPkgs).length===0){
+    document.getElementById("miss-content").innerHTML='<div class="empty">No packages loaded.<br>Run scan_daily_loader.py first.</div>';
+    return;
+  }
+  if(!todayPkgs.length){
+    document.getElementById("miss-content").innerHTML='<div class="empty">No packages for today yet.<br>Run scan_daily_loader.py to load today\'s shipments.</div>';
+    return;
+  }
+
+  var missing=todayPkgs.filter(function(p){return !confirmed[p.tracking];});
+
+  if(!missing.length){
+    document.getElementById("miss-content").innerHTML='<div class="all-clear"><div style="font-size:48px">✅</div><div class="msg">All '+todayPkgs.length+' of today\'s packages confirmed.</div><div class="sub">Ready for carrier pickup.</div></div>';
+    return;
+  }
+
+  var e=getEST(),h=e.getHours();
+  var html='<div style="font-size:11px;color:#555;margin-bottom:8px">Showing today only ('+todayStr+') — previous days already shipped</div>';
+  if(h>=13&&h<14)html+='<div style="background:#7B1F1F;border:1px solid #F44336;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px">Less than 1 hour to carrier pickup — find these packages NOW</div>';
+  html+='<div style="font-size:14px;color:#F44336;font-weight:700;margin-bottom:12px">'+missing.length+' of today\'s packages not yet scanned</div>';
+  missing.forEach(function(p){
+    html+='<div class="miss-card"><div class="miss-tn">'+p.tracking+'</div>';
+    html+='<div class="miss-info">'+(p.order||"?")+" — "+(p.customer||"Unknown")+'</div>';
+    html+='<div class="miss-info">'+(p.team||"")+" — "+(p.carrier||"")+'</div></div>';
+  });
+  document.getElementById("miss-content").innerHTML=html;
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────
+function renderHist(){
+  var cb="hist_"+Date.now();
+  window[cb]=function(data){
+    var rows=data.history||[];
+    if(!rows.length){document.getElementById("hist-content").innerHTML='<div class="empty">No history yet. Builds as you scan each day.</div>';delete window[cb];return;}
+    var byDate={};
+    rows.forEach(function(r){
+      var d=r.date||"Unknown";
+      if(!byDate[d])byDate[d]={confirmed:[],duplicate:[],notfound:[]};
+      var row={tn:r.tracking,order:r.order,customer:r.customer,time:r.time,status:r.status};
+      if(r.status==="CONFIRMED")byDate[d].confirmed.push(row);
+      else if(r.status==="DUPLICATE"||r.status==="HISTORICAL_DUPLICATE")byDate[d].duplicate.push(row);
+      else byDate[d].notfound.push(row);
+    });
+    var html="";
+    Object.entries(byDate).sort(function(a,b){return b[0].localeCompare(a[0]);}).forEach(function(entry){
+      var d=entry[0],s=entry[1];
+      var total=s.confirmed.length+s.duplicate.length+s.notfound.length;
+      html+='<div class="hist-row">';
+      html+='<div class="hist-date">'+d+' <span style="font-size:11px;font-weight:400;color:#555">Total scanned: '+total+'</span></div>';
+      html+='<div class="hist-stats">';
+      html+='<div class="hist-stat">Confirmed <span style="color:#4CAF50">'+s.confirmed.length+'</span></div>';
+      html+='<div class="hist-stat">Duplicates <span style="color:'+(s.duplicate.length>0?"#F44336":"#aaa")+'">'+s.duplicate.length+'</span></div>';
+      html+='<div class="hist-stat">Not Found <span style="color:'+(s.notfound.length>0?"#FFC107":"#aaa")+'">'+s.notfound.length+'</span></div>';
+      html+='</div>';
+      if(s.confirmed.length){
+        html+='<div style="font-size:10px;color:#4CAF50;font-weight:700;margin:8px 0 4px;text-transform:uppercase">Confirmed ('+s.confirmed.length+')</div>';
+        s.confirmed.forEach(function(r){
+          html+='<div class="hrow"><span style="color:#4CAF50;font-weight:700;min-width:22px;font-size:10px">OK</span>';
+          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.tn+'</span>';
+          html+='<span style="color:#bbb;min-width:70px;font-size:10px">'+(r.order||"")+'</span>';
+          html+='<span style="color:#555;min-width:55px;text-align:right;font-size:10px">'+(r.time||"")+'</span></div>';
+        });
+      }
+      if(s.duplicate.length){
+        html+='<div style="font-size:10px;color:#F44336;font-weight:700;margin:8px 0 4px;text-transform:uppercase">Duplicates ('+s.duplicate.length+')</div>';
+        s.duplicate.forEach(function(r){
+          html+='<div class="hrow" style="border-left:3px solid #F44336"><span style="color:#F44336;font-weight:700;min-width:22px;font-size:10px">DUP</span>';
+          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.tn+'</span>';
+          html+='<span style="color:#bbb;min-width:70px;font-size:10px">'+(r.order||"")+'</span>';
+          html+='<span style="color:#555;min-width:55px;text-align:right;font-size:10px">'+(r.time||"")+'</span></div>';
+        });
+      }
+      if(s.notfound.length){
+        html+='<div style="font-size:10px;color:#FFC107;font-weight:700;margin:8px 0 4px;text-transform:uppercase">Not Found ('+s.notfound.length+')</div>';
+        s.notfound.forEach(function(r){
+          html+='<div class="hrow"><span style="color:#FFC107;font-weight:700;min-width:22px;font-size:10px">NF</span>';
+          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.tn+'</span>';
+          html+='<span style="color:#bbb;min-width:70px;font-size:10px">'+(r.order||"")+'</span>';
+          html+='<span style="color:#555;min-width:55px;text-align:right;font-size:10px">'+(r.time||"")+'</span></div>';
+        });
+      }
+      html+='</div>';
+    });
+    document.getElementById("hist-content").innerHTML=html;
+    delete window[cb];var sc=document.getElementById("_h"+cb);if(sc)sc.remove();
+  };
+  var sc=document.createElement("script");sc.id="_h"+cb;
+  sc.src=GAS+"?action=gethistory&callback="+cb+"&t="+Date.now();
+  sc.onerror=function(){document.getElementById("hist-content").innerHTML='<div class="empty">Could not load history.</div>';sc.remove();delete window[cb];};
+  document.head.appendChild(sc);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+// ── SEARCH ────────────────────────────────────────────────────────────
+function doSearch(q){
+  q = q.trim().toLowerCase();
+  var el = document.getElementById("srch-results");
+  if(!q){el.innerHTML='<div class="empty">Type to search packages and history</div>';return;}
+
+  var results = [];
+  // Search packages
+  Object.values(allPkgs).forEach(function(p){
+    if(p.tracking.toLowerCase().indexOf(q)>-1 ||
+       (p.order||"").toLowerCase().indexOf(q)>-1 ||
+       (p.customer||"").toLowerCase().indexOf(q)>-1){
+      results.push({type:"pkg",data:p});
+    }
+  });
+
+  if(!results.length){el.innerHTML='<div class="empty">No results found for "'+q+'"</div>';return;}
+
+  var html='<div style="font-size:11px;color:#555;margin-bottom:8px">'+results.length+' result'+(results.length>1?"s":"")+" found</div>";
+  results.slice(0,50).forEach(function(r){
+    var p=r.data;
+    var ok=confirmed[p.tracking];
+    var statusColor=ok?"#4CAF50":"#FFC107";
+    var statusText=ok?"CONFIRMED":"PENDING";
+    html+='<div style="background:#0D2B4E;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #1F4E79">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+    html+='<span style="font-family:monospace;color:#90CAF9;font-size:12px">'+p.tracking+'</span>';
+    html+='<span style="color:'+statusColor+';font-weight:700;font-size:11px">'+statusText+'</span>';
+    html+='</div>';
+    html+='<div style="font-size:11px;color:#bbb">'+(p.order||"")+" — "+(p.customer||"")+'</div>';
+    html+='<div style="font-size:10px;color:#555;margin-top:3px">'+(p.team||"")+" — "+(p.carrier||"")+" — "+(p.date||"")+'</div>';
+    html+='</div>';
+  });
+  el.innerHTML=html;
+}
+
+function buildSearchDateOpts(){}
+
+// ── REPORT ────────────────────────────────────────────────────────────
+function buildReportDateOpts(){
+  var sel=document.getElementById("rpt-date");
+  var dates=[];
+  Object.values(allPkgs).forEach(function(p){if(p.date&&dates.indexOf(p.date)===-1)dates.push(p.date);});
+  dates.sort().reverse();
+  // Clear and rebuild
+  sel.innerHTML='<option value="">All Dates</option>';
+  dates.forEach(function(d){
+    var opt=document.createElement("option");
+    opt.value=d;opt.textContent=d;
+    if(d===getTodayStr())opt.selected=true;
+    sel.appendChild(opt);
+  });
+}
+
+function renderReport(){
+  var dateFilter=document.getElementById("rpt-date").value;
+  var pkgs=Object.values(allPkgs).filter(function(p){
+    return !dateFilter||p.date===dateFilter;
+  });
+  if(!pkgs.length){document.getElementById("rpt-content").innerHTML='<div class="empty">No data for selected date</div>';return;}
+
+  var conf=pkgs.filter(function(p){return confirmed[p.tracking];});
+  var miss=pkgs.filter(function(p){return !confirmed[p.tracking];});
+  var title=dateFilter?("Daily Scan Report — "+dateFilter):"All-Days Scan Report";
+  var now=getEST();
+  var h=now.getHours(),m=now.getMinutes(),ap=h>=12?"PM":"AM";h=h%12||12;
+  var timeStr=h+":"+(m<10?"0"+m:m)+" "+ap;
+
+  var html='<div id="printable-report">';
+  html+='<div style="background:#1F4E79;border-radius:10px;padding:16px;margin-bottom:12px">';
+  html+='<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">'+title+'</div>';
+  html+='<div style="font-size:11px;color:rgba(255,255,255,.7)">Generated: '+timeStr+' ET | Boost Oxygen LLC</div>';
+  html+='</div>';
+
+  // Summary
+  html+='<div style="background:#0D2B4E;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #1F4E79">';
+  html+='<div style="font-size:12px;font-weight:700;color:#FFD700;margin-bottom:10px;text-transform:uppercase">Summary</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">';
+  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#4CAF50">'+conf.length+'</div><div style="font-size:10px;color:#aaa">Confirmed</div></div>';
+  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#F44336">'+miss.length+'</div><div style="font-size:10px;color:#aaa">Missing</div></div>';
+  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#FFC107">'+dupCount+'</div><div style="font-size:10px;color:#aaa">Duplicates</div></div>';
+  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#fff">'+pkgs.length+'</div><div style="font-size:10px;color:#aaa">Total</div></div>';
+  html+='</div></div>';
+
+  // Confirmed list
+  if(conf.length){
+    html+='<div style="font-size:11px;color:#4CAF50;font-weight:700;margin:10px 0 6px;text-transform:uppercase">Confirmed ('+conf.length+')</div>';
+    conf.forEach(function(p){
+      html+='<div style="display:flex;gap:8px;padding:6px 10px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;border-left:3px solid #4CAF50">';
+      html+='<span style="font-family:monospace;color:#90CAF9;flex:1">'+p.tracking+'</span>';
+      html+='<span style="color:#bbb;width:80px">'+( p.order||"")+'</span>';
+      html+='<span style="color:#555;width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(p.customer||"")+'</span>';
+      html+='<span style="color:#555;width:70px">'+(p.team||"")+'</span>';
+      html+='</div>';
+    });
+  }
+
+  // Missing list
+  if(miss.length){
+    html+='<div style="font-size:11px;color:#F44336;font-weight:700;margin:10px 0 6px;text-transform:uppercase">Not Confirmed / Missing ('+miss.length+')</div>';
+    miss.forEach(function(p){
+      html+='<div style="display:flex;gap:8px;padding:6px 10px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;border-left:3px solid #F44336">';
+      html+='<span style="font-family:monospace;color:#90CAF9;flex:1">'+p.tracking+'</span>';
+      html+='<span style="color:#bbb;width:80px">'+(p.order||"")+'</span>';
+      html+='<span style="color:#555;width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(p.customer||"")+'</span>';
+      html+='<span style="color:#555;width:70px">'+(p.team||"")+'</span>';
+      html+='</div>';
+    });
+  }
+
+  html+='</div>';
+  document.getElementById("rpt-content").innerHTML=html;
+}
+
+function printReport(){
+  renderReport();
+  setTimeout(function(){
+    var content=document.getElementById("printable-report");
+    if(!content){alert("Generate report first");return;}
+    var w=window.open("","_blank");
+    w.document.write("<html><head><title>Boost Oxygen Scan Report</title>");
+    w.document.write("<style>body{font-family:Arial,sans-serif;background:#0D1B2A;color:#fff;padding:20px;font-size:12px}");
+    w.document.write(".header{background:#1F4E79;padding:16px;border-radius:8px;margin-bottom:12px}");
+    w.document.write("@media print{body{background:#fff;color:#000}}</style>");
+    w.document.write("</head><body>");
+    w.document.write(content.innerHTML);
+    w.document.write("</body></html>");
+    w.document.close();
+    w.focus();
+    setTimeout(function(){w.print();},500);
+  },300);
+}
+
+window.addEventListener("load",function(){
+  // Reset all counters clean on load
+  allPkgs={};confirmed={};dupCount=0;
+  document.getElementById("ct-ok").textContent="0";
+  document.getElementById("ct-miss").textContent="0";
+  document.getElementById("ct-dup").textContent="0";
+  loadPkgs();
+  setInterval(loadPkgs,120000);
+  setTimeout(function(){document.getElementById("scan-input").focus();},600);
+});
+</script>
+</body>
+</html>
