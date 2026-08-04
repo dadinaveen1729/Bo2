@@ -361,7 +361,7 @@ function hideFlash(){
   setTimeout(function(){document.getElementById("scan-input").focus();},50);
 }
 
-// SOUNDS
+// SOUNDS + VOICE (max volume — warehouse floor noise)
 function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
 function beep(freq,dur,type,vol){
   try{
@@ -369,25 +369,56 @@ function beep(freq,dur,type,vol){
     var o=audioCtx.createOscillator(),g=audioCtx.createGain();
     o.connect(g);g.connect(audioCtx.destination);
     o.frequency.value=freq;o.type=type||"sine";
-    g.gain.setValueAtTime(vol||0.3,audioCtx.currentTime);
+    g.gain.setValueAtTime(vol||1,audioCtx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur);
     o.start(audioCtx.currentTime);o.stop(audioCtx.currentTime+dur);
   }catch(e){}
 }
-function soundOk(){beep(880,0.18,"sine",0.4);}
+function soundOk(){beep(880,0.22,"sine",1);}
 function soundDuplicate(){
-  beep(200,0.25,"sawtooth",0.6);
-  setTimeout(function(){beep(200,0.25,"sawtooth",0.6);},300);
-  setTimeout(function(){beep(200,0.35,"sawtooth",0.6);},600);
+  beep(200,0.3,"sawtooth",1);
+  setTimeout(function(){beep(200,0.3,"sawtooth",1);},300);
+  setTimeout(function(){beep(200,0.4,"sawtooth",1);},600);
 }
 function soundNotFound(){
-  beep(440,0.12,"triangle",0.3);
-  setTimeout(function(){beep(330,0.2,"triangle",0.3);},150);
+  beep(440,0.15,"triangle",1);
+  setTimeout(function(){beep(330,0.25,"triangle",1);},150);
+}
+var voicesReady=false;
+if(window.speechSynthesis){
+  speechSynthesis.onvoiceschanged=function(){voicesReady=true;};
+}
+function pickVoice(){
+  if(!window.speechSynthesis)return null;
+  var voices=speechSynthesis.getVoices();
+  if(!voices||!voices.length)return null;
+  var pref=voices.find(function(v){return /en-US/i.test(v.lang)&&/Google/i.test(v.name);});
+  if(pref)return pref;
+  pref=voices.find(function(v){return /en/i.test(v.lang);});
+  return pref||voices[0];
+}
+function speak(text){
+  try{
+    if(!window.speechSynthesis)return;
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(text);
+    u.volume=1;u.rate=1;u.pitch=1;
+    var v=pickVoice();
+    if(v)u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
 }
 
 // CLOCK
 function getEST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));}
 function getTodayStr(){var e=getEST();return (e.getMonth()+1)+"/"+e.getDate()+"/"+e.getFullYear();}
+function nowFullStr(){
+  var e=getEST(),h=e.getHours(),m=e.getMinutes(),s=e.getSeconds();
+  var ap=h>=12?"PM":"AM";h=h%12||12;
+  var days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return days[e.getDay()]+" "+months[e.getMonth()]+" "+e.getDate()+", "+e.getFullYear()+" "+h+":"+(m<10?"0"+m:m)+":"+(s<10?"0"+s:s)+" "+ap+" ET";
+}
 function tick(){
   var e=getEST(),h=e.getHours(),m=e.getMinutes(),s=e.getSeconds();
   var ap=h>=12?"PM":"AM";h=h%12||12;
@@ -532,17 +563,20 @@ function processCode(raw){
   var prevScan=null;
   try{prevScan=localStorage.getItem(histKey);}catch(ex){}
 
+  var stamp=nowFullStr();
+
   if((confirmed[tn])&&allPkgs[tn]){
     // Duplicate today
     dupCount++;
     document.getElementById("ct-dup").textContent=dupCount;
     res.className="result r-dup";res.style.display="block";
     document.getElementById("r-icon").textContent="DUPLICATE";
-    document.getElementById("r-det").textContent="Already scanned today | possible double shipment!";
+    document.getElementById("r-det").textContent="Already scanned today | possible double shipment! | "+stamp;
     document.getElementById("r-tn").textContent=tn.slice(-20);
-    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE TODAY</span> | '+tn.slice(-16);
-    showFlash("dup","🚨","DUPLICATE","Already scanned | check for double shipment!",tn.slice(-18));
+    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE TODAY</span> | '+tn.slice(-16)+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    showFlash("dup","🚨","DUPLICATE","Already scanned | check for double shipment!",tn.slice(-18)+" | "+stamp);
     soundDuplicate();
+    speak("Duplicate! Check for double shipment");
     postScan(tn,"DUPLICATE");
 
   }else if(prevScan&&!allPkgs[tn]){
@@ -552,27 +586,32 @@ function processCode(raw){
     res.className="result r-dup";res.style.display="block";
     var prevDate=JSON.parse(prevScan).date;
     document.getElementById("r-icon").textContent="STOP | HISTORICAL DUPLICATE";
-    document.getElementById("r-det").textContent="This tracking was shipped on "+prevDate+" | do NOT ship again!";
+    document.getElementById("r-det").textContent="This tracking was shipped on "+prevDate+" | do NOT ship again! | "+stamp;
     document.getElementById("r-tn").textContent=tn.slice(-20);
-    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE FROM '+prevDate+'</span>';
-    showFlash("dup","🛑","STOP | DUPLICATE","Shipped on "+prevDate+" | do NOT ship again!",tn.slice(-18));
+    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE FROM '+prevDate+'</span><br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    showFlash("dup","🛑","STOP | DUPLICATE","Shipped on "+prevDate+" | do NOT ship again!",tn.slice(-18)+" | "+stamp);
     soundDuplicate();
+    speak("Stop! Already shipped, do not ship again");
     postScan(tn,"HISTORICAL_DUPLICATE");
 
   }else if(matched){
     // Confirmed
     confirmed[tn]=true;
     var pkg=allPkgs[tn];
-    var conf=Object.keys(confirmed).length,total=Object.keys(allPkgs).length;
+    var todayStrNow=getTodayStr();
+    var todayPkgsNow=Object.values(allPkgs).filter(function(p){return p.date===todayStrNow;});
+    var conf=todayPkgsNow.filter(function(p){return confirmed[p.tracking];}).length;
+    var total=todayPkgsNow.length;
     document.getElementById("ct-ok").textContent=conf;
     document.getElementById("ct-miss").textContent=Math.max(0,total-conf);
     res.className="result r-ok";res.style.display="block";
     document.getElementById("r-icon").textContent="CONFIRMED";
-    document.getElementById("r-det").textContent=(pkg.customer||"")+" | "+(pkg.order||"")+" | "+(pkg.team||"");
+    document.getElementById("r-det").textContent=(pkg.customer||"")+" | "+(pkg.order||"")+" | "+(pkg.team||"")+" | "+stamp;
     document.getElementById("r-tn").textContent=tn.slice(-20);
-    lb.innerHTML='<span style="color:#4CAF50;font-weight:700">OK</span> | '+(pkg.order||"")+" | "+(pkg.customer||"");
-    showFlash("ok","✅","CONFIRMED",(pkg.customer||"")+" | "+(pkg.order||""),tn.slice(-18));
+    lb.innerHTML='<span style="color:#4CAF50;font-weight:700">OK</span> | '+(pkg.order||"")+" | "+(pkg.customer||"")+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    showFlash("ok","✅","CONFIRMED",(pkg.customer||"")+" | "+(pkg.order||""),tn.slice(-18)+" | "+stamp);
     soundOk();
+    speak("Confirmed");
     postScan(tn,"CONFIRMED");
     // Save to local history for future duplicate detection
     var e2=getEST(),ds=(e2.getMonth()+1)+"/"+e2.getDate()+"/"+e2.getFullYear();
@@ -583,11 +622,12 @@ function processCode(raw){
     // Not found
     res.className="result r-nf";res.style.display="block";
     document.getElementById("r-icon").textContent="NOT IN LIST";
-    document.getElementById("r-det").textContent="Not found in today's package list | check NetSuite";
+    document.getElementById("r-det").textContent="Not found in today's package list | check NetSuite | "+stamp;
     document.getElementById("r-tn").textContent=raw.slice(-20);
-    lb.innerHTML='<span style="color:#FFC107;font-weight:700">NOT FOUND</span> | '+raw.slice(-16);
-    showFlash("nf","❓","NOT IN LIST","Not found in today's packages",raw.slice(-18));
+    lb.innerHTML='<span style="color:#FFC107;font-weight:700">NOT FOUND</span> | '+raw.slice(-16)+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    showFlash("nf","❓","NOT IN LIST","Not found in today's packages",raw.slice(-18)+" | "+stamp);
     soundNotFound();
+    speak("Not found");
     // Log NOT FOUND to Google Sheets history so it is permanently recorded
     postScan(raw, "NOT_FOUND");
   }
@@ -646,17 +686,14 @@ function loadPkgs(){
     // Connection bar shows date range
     var cb2=document.getElementById("conn-bar");
     if(cb2&&total>0){
-      var uniqueDates=loadedDates.filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
+      var uniqueDates=loadedDates.filter(function(v,i,a){return a.indexOf(v)===i;}).sort(function(a,b){return new Date(a)-new Date(b);});
       var rangeStr=uniqueDates.length>1?uniqueDates[0]+" to "+uniqueDates[uniqueDates.length-1]:todayStr;
       cb2.className="conn-bar conn-ok";
-      cb2.textContent="Connected | "+todayPkgs.length+" for today | "+total+" total ("+rangeStr+")";
+      cb2.textContent="Connected | Total "+total+" from "+rangeStr+" ("+todayPkgs.length+" for today)";
     } else if(cb2){
       cb2.className="conn-bar conn-warn";
       cb2.textContent="Connected | No packages | Run scan_daily_loader.py";
     }
-    var cb2=document.getElementById("conn-bar");
-    if(cb2&&total>0){cb2.className="conn-bar conn-ok";cb2.textContent="Connected | "+total+" packages loaded for "+ds;}
-    else{cb2.className="conn-bar conn-warn";cb2.textContent="Connected | no packages for today | run scan_daily_loader.py";}
     updateBanner();
     delete window[cb];var sc=document.getElementById("_"+cb);if(sc)sc.remove();
   };
@@ -678,6 +715,55 @@ function renderDash(){
   var todayPct=todayPkgs.length>0?Math.round(todayConf/todayPkgs.length*100):0;
   var html='<div class="overall"><div class="overall-title">Today (\''+todayStr+'\') Progress</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+todayConf+'</span></div><div class="ostat">Missing <span style="color:'+(todayPkgs.length-todayConf>0?"#F44336":"#4CAF50")+'">'+Math.max(0,todayPkgs.length-todayConf)+'</span></div><div class="ostat">Total <span>'+todayPkgs.length+'</span></div><div class="ostat">Rate <span>'+todayPct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+todayPct+'%;background:'+(todayPct===100?"#4CAF50":todayPct>60?"#2196F3":"#FFC107")+'"></div></div></div>';
   html+='<div class="overall" style="opacity:.85"><div class="overall-title">All Loaded Dates (Backlog + Today)</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+conf+'</span></div><div class="ostat">Missing <span style="color:'+(total-conf>0?"#F44336":"#4CAF50")+'">'+Math.max(0,total-conf)+'</span></div><div class="ostat">Total <span>'+total+'</span></div><div class="ostat">Rate <span>'+pct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+pct+'%;background:'+(pct===100?"#4CAF50":pct>60?"#2196F3":"#FFC107")+'"></div></div></div>';
+
+  // CARRIER BREAKDOWN — today only
+  var carriers={};
+  todayPkgs.forEach(function(p){
+    var c=p.carrier||"Unknown";
+    if(!carriers[c])carriers[c]={total:0,conf:0};
+    carriers[c].total++;
+    if(confirmed[p.tracking])carriers[c].conf++;
+  });
+  var carrierKeys=Object.keys(carriers).sort(function(a,b){return carriers[b].total-carriers[a].total;});
+  if(carrierKeys.length){
+    html+='<div class="overall"><div class="overall-title">Today by Carrier</div>';
+    carrierKeys.forEach(function(c){
+      var ci=carriers[c],cp=ci.total>0?Math.round(ci.conf/ci.total*100):0;
+      html+='<div class="pkg-row" style="border-top:1px solid #0A1628"><div class="pkg-tn" style="flex:1;color:#fff">'+c+'</div><div class="pkg-st" style="width:auto"><span style="color:'+(cp===100?"#4CAF50":"#FFC107")+'">'+ci.conf+' / '+ci.total+'</span></div></div>';
+    });
+    html+='</div>';
+  }
+
+  // KEY ACCOUNT BREAKDOWN — today only (Walmart / CVS / Amazon / Walgreens / everyone else)
+  var KEY_ACCOUNTS=[
+    {label:"Walmart",  match:/walmart/i},
+    {label:"CVS",      match:/\bcvs\b/i},
+    {label:"Amazon",   match:/amazon/i},
+    {label:"Walgreens",match:/walgreen/i}
+  ];
+  var accounts={};
+  todayPkgs.forEach(function(p){
+    var cust=p.customer||"";
+    var hit=KEY_ACCOUNTS.find(function(k){return k.match.test(cust);});
+    var label=hit?hit.label:"Individual / Other";
+    if(!accounts[label])accounts[label]={total:0,conf:0};
+    accounts[label].total++;
+    if(confirmed[p.tracking])accounts[label].conf++;
+  });
+  var acctKeys=Object.keys(accounts).sort(function(a,b){
+    if(a==="Individual / Other")return 1;
+    if(b==="Individual / Other")return -1;
+    return accounts[b].total-accounts[a].total;
+  });
+  if(acctKeys.length){
+    html+='<div class="overall"><div class="overall-title">Today by Account</div>';
+    acctKeys.forEach(function(a){
+      var ai=accounts[a],ap=ai.total>0?Math.round(ai.conf/ai.total*100):0;
+      html+='<div class="pkg-row" style="border-top:1px solid #0A1628"><div class="pkg-tn" style="flex:1;color:#fff">'+a+'</div><div class="pkg-st" style="width:auto"><span style="color:'+(ap===100?"#4CAF50":"#FFC107")+'">'+ai.conf+' / '+ai.total+'</span></div></div>';
+    });
+    html+='</div>';
+  }
+
   Object.entries(teams).forEach(function(entry){
     var tn=entry[0],ti=entry[1];if(!ti.p.length)return;
     var tc=ti.p.filter(function(p){return confirmed[p.tracking];}).length,tpct=Math.round(tc/ti.p.length*100);
