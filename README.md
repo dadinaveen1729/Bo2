@@ -1,4 +1,4 @@
-# Boost Oxygen — Package Scan Confirm System
+# Boost Oxygen  Package Scan Confirm System
 
 Built from scratch. No vendor. No IT team. Just a problem that needed solving.
 
