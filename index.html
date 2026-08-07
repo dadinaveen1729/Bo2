@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh}
+body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh;font-size:15px}
 
 /* BOOST OXYGEN BRANDED HEADER */
 .top{
@@ -23,16 +23,16 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 .brand{display:flex;align-items:center;gap:12px}
 .brand-logo{
   background:#fff;border-radius:6px;padding:4px 10px;
-  font-size:14px;font-weight:900;color:#1F4E79;letter-spacing:.05em;
+  font-size:16px;font-weight:900;color:#1F4E79;letter-spacing:.05em;
   line-height:1.2;text-transform:uppercase;
 }
-.brand-logo span{color:#C8402A;font-size:18px}
-.brand-text h1{font-size:13px;font-weight:700;color:#fff;line-height:1.4}
-.brand-text .sub{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px}
+.brand-logo span{color:#C8402A;font-size:20px}
+.brand-text h1{font-size:15px;font-weight:700;color:#fff;line-height:1.4}
+.brand-text .sub{font-size:12px;color:rgba(255,255,255,.6);margin-top:1px}
 .top-right{text-align:right}
-.clock{font-size:16px;color:#FFD700;font-weight:700;letter-spacing:.03em}
-.clkd{font-size:10px;color:rgba(255,255,255,.6);margin-top:2px}
-.dev{font-size:9px;color:#FFD700;opacity:.7;margin-top:2px}
+.clock{font-size:19px;color:#FFD700;font-weight:700;letter-spacing:.03em}
+.clkd{font-size:12px;color:rgba(255,255,255,.6);margin-top:2px}
+.dev{font-size:11px;color:#FFD700;opacity:.7;margin-top:2px}
 
 /* BOTTOM BRAND STRIP */
 .brand-strip{
@@ -43,20 +43,20 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 
 /* TABS */
 .tabs{display:flex;background:#0D2B4E;border-bottom:1px solid #1F4E79;overflow-x:auto}
-.tab{flex:1;min-width:70px;padding:12px 6px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;opacity:.5;border-bottom:3px solid transparent;transition:.15s;letter-spacing:.02em}
+.tab{flex:1;min-width:70px;padding:12px 6px;text-align:center;font-size:14px;font-weight:700;cursor:pointer;opacity:.5;border-bottom:3px solid transparent;transition:.15s;letter-spacing:.02em}
 .tab.active{opacity:1;border-bottom:3px solid #FFD700;color:#FFD700}
 
 .panel{display:none;padding:14px}
 .panel.active{display:block}
 
 /* CONNECTION BAR */
-.conn-bar{font-size:11px;text-align:center;padding:6px;margin-bottom:6px;border-radius:6px}
+.conn-bar{font-size:13px;text-align:center;padding:6px;margin-bottom:6px;border-radius:6px}
 .conn-ok{background:rgba(27,94,46,.3);color:#4CAF50;border:1px solid #1B5E20}
 .conn-warn{background:rgba(123,32,32,.3);color:#F44336;border:1px solid #7B1F1F}
 .conn-info{background:rgba(31,78,121,.3);color:#90CAF9;border:1px solid #1F4E79}
 
 /* BANNER */
-.banner{border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:14px;font-weight:700;text-align:center;letter-spacing:.01em}
+.banner{border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:17px;font-weight:700;text-align:center;letter-spacing:.01em}
 .b-info{background:linear-gradient(135deg,#1F4E79,#0D2B4E);border:1px solid #2E75B6}
 .b-ok{background:linear-gradient(135deg,#1B5E20,#2E7D32);border:1px solid #4CAF50}
 .b-warn{background:linear-gradient(135deg,#7B1F1F,#C00000);border:1px solid #F44336}
@@ -64,31 +64,31 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 /* COUNTERS */
 .ctr-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
 .ctr{border-radius:12px;padding:16px 10px;text-align:center;border:1px solid rgba(255,255,255,.08)}
-.ctr .v{font-size:36px;font-weight:700;line-height:1;letter-spacing:-.01em}
-.ctr .l{font-size:11px;opacity:.7;margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
+.ctr .v{font-size:44px;font-weight:700;line-height:1;letter-spacing:-.01em}
+.ctr .l{font-size:13px;opacity:.7;margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
 .c1{background:linear-gradient(135deg,#1B5E20,#2E7D32)}
 .c2{background:linear-gradient(135deg,#7B1F1F,#C00000)}
 .c3{background:linear-gradient(135deg,#7B5800,#B45900)}
 
 /* SCAN INPUT */
 .scan-section{background:#0D2B4E;border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #1F4E79}
-.scan-label{font-size:12px;color:#FFD700;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:6px}
+.scan-label{font-size:14px;color:#FFD700;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:6px}
 .scan-label::before{content:'';width:8px;height:8px;background:#4CAF50;border-radius:50%;animation:blink 1.5s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .scan-input{
   width:100%;padding:16px 14px;
   border:2px solid #2E75B6;border-radius:10px;
-  font-size:20px;background:#0A1628;color:#fff;
+  font-size:26px;background:#0A1628;color:#fff;
   font-family:monospace;letter-spacing:.04em;
   transition:border .15s;
 }
 .scan-input:focus{outline:none;border-color:#FFD700;background:#0D1F35}
-.scan-hint{font-size:11px;color:#555;margin-top:8px;text-align:center;line-height:1.5}
+.scan-hint{font-size:13px;color:#777;margin-top:8px;text-align:center;line-height:1.5}
 
 /* CAMERA */
 .cam-toggle{
   background:transparent;border:1px solid #2E75B6;color:#90CAF9;
-  border-radius:8px;padding:8px 14px;font-size:11px;cursor:pointer;
+  border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;
   margin-bottom:10px;display:block;width:100%;text-align:center;
 }
 .cam-wrap{display:none;position:relative;background:#000;border-radius:12px;overflow:hidden;margin-bottom:10px}
@@ -106,7 +106,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 .br{bottom:-2px;right:-2px;border-bottom:4px solid #FFD700;border-right:4px solid #FFD700}
 .scan-line{position:absolute;left:0;right:0;height:2px;background:#FFD700;box-shadow:0 0 8px #FFD700;animation:sl 1.5s ease-in-out infinite}
 @keyframes sl{0%,100%{top:2%}50%{top:95%}}
-.cam-hint-overlay{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:11px;color:#FFD700}
+.cam-hint-overlay{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:13px;color:#FFD700}
 
 /* RESULT */
 .result{display:none;border-radius:14px;padding:18px;text-align:center;margin-bottom:12px;animation:pop .15s ease}
@@ -114,62 +114,62 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 .r-ok{background:linear-gradient(135deg,#1B5E20,#2E7D32);border:3px solid #4CAF50}
 .r-dup{background:linear-gradient(135deg,#7B1F1F,#C00000);border:3px solid #F44336}
 .r-nf{background:linear-gradient(135deg,#7B5800,#B45900);border:3px solid #FFC107}
-.result .big{font-size:28px;font-weight:700;letter-spacing:.02em}
-.result .det{font-size:14px;margin-top:8px;line-height:1.6;opacity:.9}
-.result .rtn{font-size:11px;opacity:.45;margin-top:5px;font-family:monospace}
+.result .big{font-size:34px;font-weight:700;letter-spacing:.02em}
+.result .det{font-size:17px;margin-top:8px;line-height:1.6;opacity:.9}
+.result .rtn{font-size:13px;opacity:.5;margin-top:5px;font-family:monospace}
 
 /* LAST SCAN */
 .last-box{
   background:#0D2B4E;border-radius:10px;padding:10px 14px;
-  font-size:13px;color:#aaa;margin-bottom:10px;
+  font-size:16px;color:#ccc;margin-bottom:10px;
   min-height:36px;text-align:center;line-height:1.6;
   border:1px solid #1F4E79;
 }
 
 /* DASHBOARD */
 .overall{background:#0D2B4E;border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid #1F4E79}
-.overall-title{font-size:12px;color:#FFD700;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.overall-title{font-size:14px;color:#FFD700;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
 .overall-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
-.ostat{font-size:12px;color:#aaa}
-.ostat span{color:#fff;font-weight:700;font-size:14px}
+.ostat{font-size:14px;color:#aaa}
+.ostat span{color:#fff;font-weight:700;font-size:17px}
 .team-block{background:#0D2B4E;border-radius:12px;margin-bottom:10px;overflow:hidden;border:1px solid #1F4E79}
-.team-hdr{padding:12px 14px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.team-hdr{padding:12px 14px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
 .prog{height:6px;background:#0A1628}
 .prog-fill{height:100%;transition:width .4s}
-.pkg-row{display:flex;align-items:center;padding:8px 14px;border-top:1px solid #0A1628;font-size:12px;gap:8px}
-.pkg-tn{flex:1;font-family:monospace;color:#90CAF9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
-.pkg-ord{width:80px;color:#bbb;font-size:11px}
+.pkg-row{display:flex;align-items:center;padding:8px 14px;border-top:1px solid #0A1628;font-size:14px;gap:8px}
+.pkg-tn{flex:1;font-family:monospace;color:#90CAF9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.pkg-ord{width:80px;color:#bbb;font-size:13px}
 .pkg-st{width:80px;text-align:right}
-.bOk{background:#1B5E20;color:#4CAF50;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700}
-.bPend{border:1px solid #FFC107;color:#FFC107;padding:3px 8px;border-radius:6px;font-size:10px}
-.bDup{background:#7B1F1F;color:#F44336;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700}
+.bOk{background:#1B5E20;color:#4CAF50;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.bPend{border:1px solid #FFC107;color:#FFC107;padding:3px 8px;border-radius:6px;font-size:12px}
+.bDup{background:#7B1F1F;color:#F44336;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
 
 /* MISSING */
 .miss-card{background:#0D2B4E;border-left:4px solid #F44336;border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid #1F4E79}
-.miss-tn{font-family:monospace;font-size:12px;color:#90CAF9;margin-bottom:4px}
-.miss-info{font-size:11px;color:#bbb;margin-top:3px}
+.miss-tn{font-family:monospace;font-size:14px;color:#90CAF9;margin-bottom:4px}
+.miss-info{font-size:13px;color:#ccc;margin-top:3px}
 .all-clear{text-align:center;padding:40px 20px}
 .all-clear .ic{font-size:52px;margin-bottom:12px}
-.all-clear .msg{font-size:16px;font-weight:700;color:#4CAF50}
-.all-clear .sub{font-size:12px;color:#555;margin-top:6px}
+.all-clear .msg{font-size:19px;font-weight:700;color:#4CAF50}
+.all-clear .sub{font-size:14px;color:#777;margin-top:6px}
 
 /* HISTORY */
 .hist-row{background:#0D2B4E;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #1F4E79}
-.hist-date{font-size:13px;font-weight:700;color:#FFD700;margin-bottom:6px}
+.hist-date{font-size:15px;font-weight:700;color:#FFD700;margin-bottom:6px}
 .hist-stats{display:flex;gap:14px;flex-wrap:wrap}
-.hist-stat{font-size:12px;color:#aaa}
+.hist-stat{font-size:14px;color:#aaa}
 .hist-stat span{color:#fff;font-weight:700}
 
-.rbtn{background:#0D2B4E;border:1px solid #2E75B6;color:#90CAF9;border-radius:8px;padding:8px 16px;font-size:11px;cursor:pointer;margin-bottom:12px;margin-right:6px}
-.empty{text-align:center;padding:40px;color:#555;font-size:13px}
-.sec-hdr{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#555;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid #1F4E79}
+.rbtn{background:#0D2B4E;border:1px solid #2E75B6;color:#90CAF9;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;margin-bottom:12px;margin-right:6px}
+.empty{text-align:center;padding:40px;color:#777;font-size:15px}
+.sec-hdr{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#777;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid #1F4E79}
 
 .footer{
-  text-align:center;font-size:10px;color:#2A3F55;
+  text-align:center;font-size:11px;color:#3A5578;
   padding:16px 0 10px;line-height:1.8;
   border-top:1px solid #1F4E79;margin-top:8px;
 }
-.footer strong{color:#3A5F85}
+.footer strong{color:#4A7099}
 .scroll-btns{position:fixed;right:12px;bottom:80px;z-index:998;display:flex;flex-direction:column;gap:6px}
 .scroll-btn{width:44px;height:44px;border-radius:50%;background:#1F4E79;border:2px solid #FFD700;color:#FFD700;font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,.6);line-height:1}
 .hist-sec-hdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:6px 0;border-bottom:1px solid #1F4E79;margin-bottom:4px}
@@ -196,10 +196,10 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 .flash-box.f-ok{background:linear-gradient(135deg,#1B5E20,#2E7D32);border:4px solid #4CAF50;box-shadow:0 0 40px rgba(76,175,80,.5)}
 .flash-box.f-dup{background:linear-gradient(135deg,#7B0000,#C00000);border:4px solid #F44336;box-shadow:0 0 40px rgba(244,67,54,.5)}
 .flash-box.f-nf{background:linear-gradient(135deg,#4A3000,#B45900);border:4px solid #FFC107;box-shadow:0 0 40px rgba(255,193,7,.3)}
-.flash-icon{font-size:52px;margin-bottom:10px;line-height:1}
-.flash-title{font-size:28px;font-weight:700;letter-spacing:.02em;margin-bottom:8px}
-.flash-detail{font-size:15px;opacity:.9;line-height:1.6;margin-bottom:6px}
-.flash-tn{font-size:11px;opacity:.45;font-family:monospace;margin-top:4px}
+.flash-icon{font-size:56px;margin-bottom:10px;line-height:1}
+.flash-title{font-size:34px;font-weight:700;letter-spacing:.02em;margin-bottom:8px}
+.flash-detail{font-size:18px;opacity:.95;line-height:1.6;margin-bottom:6px}
+.flash-tn{font-size:13px;opacity:.55;font-family:monospace;margin-top:4px}
 </style>
 </head>
 <body>
@@ -224,8 +224,8 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 </div>
 
 <div class="tabs">
-  <div class="tab active" id="tb-scan" onclick="showTab('scan')">Scan</div>
-  <div class="tab" id="tb-dash" onclick="showTab('dash')">Dashboard</div>
+  <div class="tab" id="tb-scan" onclick="showTab('scan')">Scan</div>
+  <div class="tab active" id="tb-dash" onclick="showTab('dash')">Dashboard</div>
   <div class="tab" id="tb-miss" onclick="showTab('miss')">Missing</div>
   <div class="tab" id="tb-hist" onclick="showTab('hist')">History</div>
   <div class="tab" id="tb-srch" onclick="showTab('srch')">Search</div>
@@ -235,7 +235,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 <div class="conn-bar conn-info" id="conn-bar">Connecting to Google Sheets...</div>
 
 <!-- SCAN -->
-<div class="panel active" id="tab-scan">
+<div class="panel" id="tab-scan">
   <div class="banner b-info" id="banner">Loading packages...</div>
 
   <div class="ctr-grid">
@@ -276,7 +276,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 </div>
 
 <!-- DASHBOARD -->
-<div class="panel" id="tab-dash">
+<div class="panel active" id="tab-dash">
   <button class="rbtn" onclick="renderDash()">Refresh</button>
   <div id="dash-content"><div class="empty">Loading...</div></div>
 </div>
@@ -468,14 +468,25 @@ function showTab(id){
 }
 
 // CLEAN SCANNER INPUT
-// Inateck GS1-128 scans prepend junk (NF2900 flag, 8988/2900 USPS AIs, 420+ZIP UPS prefix)
-// that is NOT part of the real tracking number. Strip it before any lookup/display.
+// Inateck GS1-128 scans prepend junk that is NOT part of the real tracking number:
+// NF2900 flag, USPS GS1 application identifiers (8988/2900), UPS Mail Innovations
+// 420+ZIP prefix, and assorted unknown 4-digit junk prefixes (9431/9474/etc — new
+// prefix values keep showing up, so the fallback below is length-based, not a fixed
+// list: it trusts that a real USPS 94xxxxxxxxxxxxxxxxxxxx tracking number is always
+// exactly 22 digits and strips whatever extra digits sit before or after it).
 function cleanTrackingNumber(raw){
   let cleaned=raw.replace(/\s+/g,'').trim();
   cleaned=cleaned.replace(/^NF/i,'');
-  cleaned=cleaned.replace(/^8988/,'');
   cleaned=cleaned.replace(/^2900/,'');
   cleaned=cleaned.replace(/^420\d{5}/,'');
+  if(/^\d+$/.test(cleaned)&&cleaned.length>22){
+    var tail=cleaned.slice(-22);
+    if(/^94\d{20}$/.test(tail)){
+      cleaned=tail;
+    }else if(/^94\d{20}/.test(cleaned)){
+      cleaned=cleaned.slice(0,22);
+    }
+  }
   const knownStart=cleaned.match(/(94\d{20}|1Z[A-Z0-9]{16})/i);
   if(knownStart){
     cleaned=knownStart[1];
@@ -695,12 +706,42 @@ function loadPkgs(){
       cb2.textContent="Connected | No packages | Run scan_daily_loader.py";
     }
     updateBanner();
+    if(document.getElementById("tab-dash").classList.contains("active"))renderDash();
+    if(document.getElementById("tab-miss").classList.contains("active"))renderMissing();
     delete window[cb];var sc=document.getElementById("_"+cb);if(sc)sc.remove();
   };
   var sc=document.createElement("script");sc.id="_"+cb;
   sc.src=GAS+"?action=getpackages&date="+encodeURIComponent(ds)+"&callback="+cb+"&t="+Date.now();
   sc.onerror=function(){pkgsLoaded=true;document.getElementById("conn-bar").className="conn-bar conn-warn";document.getElementById("conn-bar").textContent="Cannot connect to Google Sheets | check internet";sc.remove();delete window[cb];};
   document.head.appendChild(sc);
+}
+
+// ACCOUNT DETECTION — normalizes known chains, auto-buckets any other business name.
+// Add more entries here any time a chain should get its own clean label.
+var ACCOUNT_ALIASES={
+  "WAL":"Walmart","WALMART":"Walmart","WALGREEN":"Walgreens","WALGREENS":"Walgreens",
+  "CVS":"CVS","AMAZON":"Amazon","AMZN":"Amazon","COSTCO":"Costco","TARGET":"Target",
+  "KROGER":"Kroger","HOMEDEPOT":"Home Depot","LOWES":"Lowe's","SAMSCLUB":"Sam's Club",
+  "BESTBUY":"Best Buy","ACE":"Ace Hardware","TRACTORSUPPLY":"Tractor Supply","MURDOCH":"Murdoch's"
+};
+function detectAccount(customer){
+  var raw=(customer||"").trim();
+  if(!raw)return "Individual / Other";
+  var compact=raw.toUpperCase().replace(/[^A-Z0-9]+/g," ").trim();
+  if(!compact)return "Individual / Other";
+  var words=compact.split(/\s+/).filter(function(w){return w.length>0;});
+  var bizIndicators=/\b(STORE|WAREHOUSE|DISTRIBUTION|WHOLESALE|PHARMACY|MARKET|SUPPLY|HARDWARE|TRADING|OUTFITTERS|SPORTS|MEDICAL|CLINIC|HOSPITAL|CO|LLC|INC|CORP|LTD|DC|POST)\b/;
+  var hasStoreNum=/#\s*\d+/.test(compact);
+  var isBiz=bizIndicators.test(compact)||hasStoreNum||words.length>=4;
+  if(!isBiz)return "Individual / Other";
+  var sig=words.filter(function(w){return w.length>1&&!/^\d+$/.test(w)&&!/^(STORE|CO|LLC|INC|CORP|LTD|THE)$/.test(w);});
+  var firstKey=sig[0]||words[0]||"OTHER";
+  if(ACCOUNT_ALIASES[firstKey])return ACCOUNT_ALIASES[firstKey];
+  if(sig[1]){
+    var twoKey=firstKey+sig[1];
+    if(ACCOUNT_ALIASES[twoKey])return ACCOUNT_ALIASES[twoKey];
+  }
+  return firstKey.charAt(0)+firstKey.slice(1).toLowerCase();
 }
 
 // DASHBOARD
@@ -734,18 +775,12 @@ function renderDash(){
     html+='</div>';
   }
 
-  // KEY ACCOUNT BREAKDOWN — today only (Walmart / CVS / Amazon / Walgreens / everyone else)
-  var KEY_ACCOUNTS=[
-    {label:"Walmart",  match:/walmart/i},
-    {label:"CVS",      match:/\bcvs\b/i},
-    {label:"Amazon",   match:/amazon/i},
-    {label:"Walgreens",match:/walgreen/i}
-  ];
+  // KEY ACCOUNT BREAKDOWN — today only. Auto-detects ANY business account from the
+  // customer name (not a fixed brand list) so new retailers show up on their own;
+  // ACCOUNT_ALIASES just normalizes known chains to a clean display name.
   var accounts={};
   todayPkgs.forEach(function(p){
-    var cust=p.customer||"";
-    var hit=KEY_ACCOUNTS.find(function(k){return k.match.test(cust);});
-    var label=hit?hit.label:"Individual / Other";
+    var label=detectAccount(p.customer);
     if(!accounts[label])accounts[label]={total:0,conf:0};
     accounts[label].total++;
     if(confirmed[p.tracking])accounts[label].conf++;
@@ -812,11 +847,41 @@ function renderMissing(){
   var html='<div style="font-size:11px;color:#555;margin-bottom:8px">Showing: '+scopeStr+'</div>';
   if(dateFilter===todayStr&&h>=13&&h<14)html+='<div style="background:#7B1F1F;border:1px solid #F44336;border-radius:10px;padding:12px;margin-bottom:10px;font-size:13px">Less than 1 hour to pickup | Find these now</div>';
   html+='<div style="font-size:14px;color:#F44336;font-weight:700;margin-bottom:12px">'+missing.length+' package(s) not yet scanned for '+scopeStr+'</div>';
-  missing.forEach(function(p){
-    html+='<div class="miss-card"><div class="miss-tn">'+p.tracking+'</div>';
-    html+='<div class="miss-info">'+(p.order||"?")+" | "+(p.customer||"Unknown")+'</div>';
-    html+='<div class="miss-info">'+(p.team||"")+" | "+(p.carrier||"")+" | "+(p.date||"no date")+'</div></div>';
+
+  // Carrier breakdown for whatever's currently missing in this scope
+  var byCarrier={};
+  missing.forEach(function(p){var c=p.carrier||"Unknown";byCarrier[c]=(byCarrier[c]||0)+1;});
+  var carrierKeys=Object.keys(byCarrier).sort(function(a,b){return byCarrier[b]-byCarrier[a];});
+  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">';
+  carrierKeys.forEach(function(c){
+    html+='<div style="background:#0D2B4E;border:1px solid #1F4E79;border-radius:8px;padding:6px 12px;font-size:13px">'+c+' <span style="color:#F44336;font-weight:700">'+byCarrier[c]+'</span></div>';
   });
+  html+='</div>';
+
+  function missCard(p){
+    return '<div class="miss-card"><div class="miss-tn">'+p.tracking+'</div>'
+      +'<div class="miss-info">'+(p.order||"?")+" | "+(p.customer||"Unknown")+'</div>'
+      +'<div class="miss-info">'+(p.team||"")+" | "+(p.carrier||"")+" | "+(p.date||"no date")+'</div></div>';
+  }
+
+  if(dateFilter){
+    // single date selected — flat list, already all the same date
+    missing.forEach(function(p){html+=missCard(p);});
+  }else{
+    // "All Dates" — group by each package's own date so it's unambiguous which
+    // day (today, yesterday, or older backlog) each missing package belongs to
+    var byDate={};
+    missing.forEach(function(p){var d=p.date||"No Date";if(!byDate[d])byDate[d]=[];byDate[d].push(p);});
+    var dateKeys=Object.keys(byDate).sort(function(a,b){
+      if(a==="No Date")return 1;
+      if(b==="No Date")return -1;
+      return new Date(a)-new Date(b);
+    });
+    dateKeys.forEach(function(d){
+      html+='<div class="sec-hdr">'+d+' ('+byDate[d].length+' missing)</div>';
+      byDate[d].forEach(function(p){html+=missCard(p);});
+    });
+  }
   document.getElementById("miss-content").innerHTML=html;
 }
 
@@ -1052,7 +1117,7 @@ window.addEventListener("load",function(){
   document.getElementById("ct-ok").textContent="0";
   document.getElementById("ct-miss").textContent="0";
   document.getElementById("ct-dup").textContent="0";
-  showPin();
+  // PIN only guards the Scan tab (see showTab) — opening the app itself never prompts for it.
   loadPkgs();
   setInterval(loadPkgs,120000);
 });
