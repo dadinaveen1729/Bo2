@@ -842,12 +842,16 @@ function detectAccount(customer){
 
 // DASHBOARD
 function renderDash(){
-  var teams={"Online Set 1":{c:"#1565C0",p:[]},"Online Set 2":{c:"#2E7D32",p:[]},"Online Set 3":{c:"#E65100",p:[]},"LTL Priority":{c:"#6A1B9A",p:[]}};
-  Object.values(allPkgs).forEach(function(p){var t=p.team||"Online Set 1";if(!teams[t])teams[t]={c:"#555",p:[]};teams[t].p.push(p);});
   var total=Object.keys(allPkgs).length,conf=Object.keys(confirmed).length,pct=total>0?Math.round(conf/total*100):0;
   if(total===0){document.getElementById("dash-content").innerHTML='<div class="empty">No packages loaded. Run scan_daily_loader.py first.</div>';return;}
   var todayStr=getTodayStr();
   var todayPkgs=Object.values(allPkgs).filter(function(p){return p.date===todayStr;});
+  // Team breakdown scoped to TODAY, matching "Today by Carrier"/"Today by
+  // Account" right above it — this used to silently pull all-time data while
+  // sitting right next to two today-only sections, which is exactly what made
+  // the numbers look wrong/inconsistent.
+  var teams={"Online Set 1":{c:"#1565C0",p:[]},"Online Set 2":{c:"#2E7D32",p:[]},"Online Set 3":{c:"#E65100",p:[]},"LTL Priority":{c:"#6A1B9A",p:[]}};
+  todayPkgs.forEach(function(p){var t=p.team||"Online Set 1";if(!teams[t])teams[t]={c:"#555",p:[]};teams[t].p.push(p);});
   var todayConf=todayPkgs.filter(function(p){return confirmed[p.tracking];}).length;
   var todayPct=todayPkgs.length>0?Math.round(todayConf/todayPkgs.length*100):0;
   var html='<div class="overall"><div class="overall-title">Today (\''+todayStr+'\') Progress</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+todayConf+'</span></div><div class="ostat">Missing <span style="color:'+(todayPkgs.length-todayConf>0?"#F44336":"#4CAF50")+'">'+Math.max(0,todayPkgs.length-todayConf)+'</span></div><div class="ostat">Total <span>'+todayPkgs.length+'</span></div><div class="ostat">Rate <span>'+todayPct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+todayPct+'%;background:'+(todayPct===100?"#4CAF50":todayPct>60?"#2196F3":"#FFC107")+'"></div></div></div>';
@@ -895,6 +899,7 @@ function renderDash(){
     html+='</div>';
   }
 
+  html+='<div class="sec-hdr">Today by Team</div>';
   Object.entries(teams).forEach(function(entry){
     var tn=entry[0],ti=entry[1];if(!ti.p.length)return;
     var tc=ti.p.filter(function(p){return confirmed[p.tracking];}).length,tpct=Math.round(tc/ti.p.length*100);
