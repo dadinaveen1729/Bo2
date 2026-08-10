@@ -1206,7 +1206,7 @@ function printReport(){
 
 // TRACKING DASHBOARD — per-carrier delivery/OTD stats, charts, and a "no
 // movement" discrepancy list (built from Tracking Details, populated daily by
-// reconcileMissingWithCarriers() in the Apps Script backend).
+// carrier_reconcile.py — a local Python script, run via Task Scheduler).
 function buildTrackDateOpts(){
   var sel=document.getElementById("track-date");
   if(!sel)return;
@@ -1258,11 +1258,14 @@ function svgBarChart(items,opts){
   return svg;
 }
 
+// "Stuck" = no carrier movement at all yet (not even a first scan) — the
+// honest signal carrier_reconcile.py actually gives us. A package that's
+// scanned in and moving, just slowly, is "In Transit," not "Stuck."
 function computeCarrierStats(list,carrierName){
   var pkgs=list.filter(function(t){return carrierName?t.carrier.toUpperCase().indexOf(carrierName.toUpperCase())>-1:true;});
   var delivered=pkgs.filter(function(t){return t.delivered;});
-  var stuck=pkgs.filter(function(t){return !t.delivered&&(t.daysSinceScan===""||t.daysSinceScan>=3);});
-  var inTransit=pkgs.filter(function(t){return !t.delivered&&!(t.daysSinceScan===""||t.daysSinceScan>=3);});
+  var stuck=pkgs.filter(function(t){return !t.delivered&&!t.hasMovement;});
+  var inTransit=pkgs.filter(function(t){return !t.delivered&&t.hasMovement;});
   var otdEligible=delivered.filter(function(t){return t.promisedDate&&t.deliveredDate;});
   var onTime=otdEligible.filter(function(t){
     var pd=new Date(t.promisedDate),dd=new Date(t.deliveredDate);
@@ -1273,9 +1276,9 @@ function computeCarrierStats(list,carrierName){
 }
 
 function trackingStuckList(scoped,carrierFilter){
-  var list=scoped.filter(function(t){return !t.delivered&&(t.daysSinceScan===""||t.daysSinceScan>=3);});
+  var list=scoped.filter(function(t){return !t.delivered&&!t.hasMovement;});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
-  list.sort(function(a,b){return (b.daysSinceScan||0)-(a.daysSinceScan||0);});
+  list.sort(function(a,b){return (a.tracking||"").localeCompare(b.tracking||"");});
   return list;
 }
 
@@ -1284,7 +1287,7 @@ function renderTracking(){
   var el=document.getElementById("track-content");
   if(!el)return;
   if(!trackingData.length){
-    el.innerHTML='<div class="empty">No tracking data yet. It fills in automatically once the daily carrier check runs in Google Apps Script (reconcileMissingWithCarriers), or click Refresh after running it manually once.</div>';
+    el.innerHTML='<div class="empty">No tracking data yet. Run carrier_reconcile.py once (double-click run_carrier_reconcile.bat) to populate this, then click Refresh. After that it updates automatically on whatever schedule you set in Task Scheduler.</div>';
     return;
   }
   var carrierFilter=document.getElementById("track-carrier")?document.getElementById("track-carrier").value:"";
@@ -1340,7 +1343,7 @@ function renderTracking(){
   // location so patterns (e.g. a specific facility) jump out immediately.
   var stuckList=trackingStuckList(scoped,carrierFilter);
   html+='<div class="overall"><div class="overall-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
-    +'<span>Needs Investigation — No Movement 3+ Days ('+stuckList.length+')</span>'
+    +'<span>Needs Investigation — No Carrier Movement Yet ('+stuckList.length+')</span>'
     +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStuckList()">Copy list for carrier email</button></div>';
   if(!stuckList.length){
     html+='<div style="color:#4CAF50;font-size:13px;padding:10px 0">No stuck packages right now.</div>';
@@ -1353,7 +1356,7 @@ function renderTracking(){
       byLoc[loc].forEach(function(t){
         html+='<div class="miss-card" style="border-left-color:#F44336"><div class="miss-tn">'+trackLink(t.tracking,t.carrier)+'</div>';
         html+='<div class="miss-info">'+(t.order||"?")+" | "+(t.customer||"Unknown")+'</div>';
-        html+='<div class="miss-info">'+t.carrier+" | "+(t.latestStatus||"No scan yet")+" | "+(t.daysSinceScan!==""?t.daysSinceScan+" days stuck":"unknown age")+'</div></div>';
+        html+='<div class="miss-info">'+t.carrier+" | "+(t.latestStatus||"No scan yet")+(t.lastError?" | "+t.lastError:"")+'</div></div>';
       });
     });
   }
@@ -1367,7 +1370,7 @@ function renderTracking(){
     html+='<div class="empty">No tracked packages for this filter.</div>';
   }
   tableList.slice(0,300).forEach(function(t){
-    var statusColor=t.delivered?"#4CAF50":(t.daysSinceScan!==""&&t.daysSinceScan>=3)?"#F44336":"#2196F3";
+    var statusColor=t.delivered?"#4CAF50":(!t.hasMovement)?"#F44336":"#2196F3";
     html+='<div style="background:#0D2B4E;border-radius:10px;padding:10px 14px;margin-bottom:6px;border:1px solid #1F4E79;border-left:3px solid '+statusColor+'">';
     html+='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">';
     html+='<span style="font-family:monospace;color:#90CAF9;font-size:13px">'+trackLink(t.tracking,t.carrier)+'</span>';
@@ -1394,7 +1397,7 @@ function copyStuckList(){
   if(!stuckList.length){alert("No stuck packages to copy.");return;}
   var lines=["Boost Oxygen — Packages With No Carrier Movement (3+ days) — "+getTodayStr(),""];
   stuckList.forEach(function(t){
-    lines.push(t.tracking+" | "+t.carrier+" | "+(t.order||"")+" | Last status: "+(t.latestStatus||"none")+" | Location: "+(t.latestLocation||"unknown")+" | Days stuck: "+(t.daysSinceScan!==""?t.daysSinceScan:"unknown"));
+    lines.push(t.tracking+" | "+t.carrier+" | "+(t.order||"")+" | Last status: "+(t.latestStatus||"none")+" | Location: "+(t.latestLocation||"unknown")+" | Last checked: "+(t.lastChecked||"unknown"));
   });
   var text=lines.join("\n");
   if(navigator.clipboard&&navigator.clipboard.writeText){
