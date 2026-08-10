@@ -267,6 +267,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
   </div>
 
   <div class="last-box" id="last-box">Waiting for first scan...</div>
+  <div id="sync-badge" style="display:none;font-size:13px;text-align:center;padding:8px;margin-bottom:10px;border-radius:8px;background:rgba(255,193,7,.15);color:#FFC107;border:1px solid #7B5800;font-weight:700"></div>
 
   <div class="result" id="result">
     <div class="big" id="r-icon"></div>
@@ -494,6 +495,28 @@ function cleanTrackingNumber(raw){
   return cleaned;
 }
 
+// CARRIER TRACKING LINKS — every displayed tracking number becomes a clickable
+// link straight to that carrier's own tracking page, so nobody has to copy/paste
+// into FedEx/UPS/USPS's site by hand to check on a package.
+function carrierTrackUrl(carrier,tn){
+  tn=String(tn||"").trim();
+  var c=(carrier||"").toUpperCase();
+  if(!c||c==="UNKNOWN"){
+    if(/^1Z/i.test(tn))c="UPS";
+    else if(/^\d{20,22}$/.test(tn))c="USPS";
+    else if(/^\d{12}$|^\d{15}$/.test(tn))c="FEDEX";
+  }
+  if(c.indexOf("UPS")>-1)return "https://www.ups.com/track?loc=en_US&tracknum="+encodeURIComponent(tn);
+  if(c.indexOf("FEDEX")>-1)return "https://www.fedex.com/fedextrack/?trknbr="+encodeURIComponent(tn);
+  if(c.indexOf("USPS")>-1)return "https://tools.usps.com/go/TrackConfirmAction?tLabels="+encodeURIComponent(tn);
+  return "https://www.google.com/search?q="+encodeURIComponent("track package "+tn);
+}
+function trackLink(tn,carrier,displayText){
+  var url=carrierTrackUrl(carrier,tn);
+  var text=(displayText===undefined||displayText===null)?tn:displayText;
+  return '<a href="'+url+'" target="_blank" rel="noopener noreferrer" style="color:#90CAF9;text-decoration:underline;text-decoration-style:dotted" onclick="event.stopPropagation()">'+text+'</a>';
+}
+
 // SCANNER INPUT
 var scanTimer=null;
 function handleKey(e){
@@ -583,8 +606,8 @@ function processCode(raw){
     res.className="result r-dup";res.style.display="block";
     document.getElementById("r-icon").textContent="DUPLICATE";
     document.getElementById("r-det").textContent="Already scanned today | possible double shipment! | "+stamp;
-    document.getElementById("r-tn").textContent=tn.slice(-20);
-    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE TODAY</span> | '+tn.slice(-16)+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    document.getElementById("r-tn").innerHTML=trackLink(tn,allPkgs[tn]&&allPkgs[tn].carrier,tn.slice(-20));
+    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE TODAY</span> | '+trackLink(tn,allPkgs[tn]&&allPkgs[tn].carrier,tn.slice(-16))+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
     showFlash("dup","🚨","DUPLICATE","Already scanned | check for double shipment!",tn.slice(-18)+" | "+stamp);
     soundDuplicate();
     speak("Duplicate! Check for double shipment");
@@ -598,8 +621,8 @@ function processCode(raw){
     var prevDate=JSON.parse(prevScan).date;
     document.getElementById("r-icon").textContent="STOP | HISTORICAL DUPLICATE";
     document.getElementById("r-det").textContent="This tracking was shipped on "+prevDate+" | do NOT ship again! | "+stamp;
-    document.getElementById("r-tn").textContent=tn.slice(-20);
-    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE FROM '+prevDate+'</span><br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    document.getElementById("r-tn").innerHTML=trackLink(tn,null,tn.slice(-20));
+    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE FROM '+prevDate+'</span> | '+trackLink(tn,null,tn.slice(-16))+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
     showFlash("dup","🛑","STOP | DUPLICATE","Shipped on "+prevDate+" | do NOT ship again!",tn.slice(-18)+" | "+stamp);
     soundDuplicate();
     speak("Stop! Already shipped, do not ship again");
@@ -618,8 +641,8 @@ function processCode(raw){
     res.className="result r-ok";res.style.display="block";
     document.getElementById("r-icon").textContent="CONFIRMED";
     document.getElementById("r-det").textContent=(pkg.customer||"")+" | "+(pkg.order||"")+" | "+(pkg.team||"")+" | "+stamp;
-    document.getElementById("r-tn").textContent=tn.slice(-20);
-    lb.innerHTML='<span style="color:#4CAF50;font-weight:700">OK</span> | '+(pkg.order||"")+" | "+(pkg.customer||"")+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    document.getElementById("r-tn").innerHTML=trackLink(tn,pkg.carrier,tn.slice(-20));
+    lb.innerHTML='<span style="color:#4CAF50;font-weight:700">OK</span> | '+(pkg.order||"")+" | "+(pkg.customer||"")+" | "+trackLink(tn,pkg.carrier,"Track")+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
     showFlash("ok","✅","CONFIRMED",(pkg.customer||"")+" | "+(pkg.order||""),tn.slice(-18)+" | "+stamp);
     soundOk();
     speak("Confirmed");
@@ -634,8 +657,8 @@ function processCode(raw){
     res.className="result r-nf";res.style.display="block";
     document.getElementById("r-icon").textContent="NOT IN LIST";
     document.getElementById("r-det").textContent="Not found in today's package list | check NetSuite | "+stamp;
-    document.getElementById("r-tn").textContent=raw.slice(-20);
-    lb.innerHTML='<span style="color:#FFC107;font-weight:700">NOT FOUND</span> | '+raw.slice(-16)+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    document.getElementById("r-tn").innerHTML=trackLink(raw,null,raw.slice(-20));
+    lb.innerHTML='<span style="color:#FFC107;font-weight:700">NOT FOUND</span> | '+trackLink(raw,null,raw.slice(-16))+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
     showFlash("nf","❓","NOT IN LIST","Not found in today's packages",raw.slice(-18)+" | "+stamp);
     soundNotFound();
     speak("Not found");
@@ -646,7 +669,30 @@ function processCode(raw){
   setTimeout(function(){document.getElementById("scan-input").focus();},100);
 }
 
-// POST TO SHEET
+// POST TO SHEET — DURABLE SYNC QUEUE
+// Every scan is written to localStorage FIRST (survives a crash/reload/closed tab),
+// then sent. The screen showing "CONFIRMED" no longer means "saved" by itself —
+// an item only leaves the queue once loadPkgs() re-fetches the sheet and the
+// server's own status actually matches what we tried to save. Anything not yet
+// verified gets retried automatically. This closes the gap where a scan looked
+// confirmed on screen but the background save silently failed (network hiccup,
+// Apps Script busy during fast/bulk scanning, etc) and the sheet never updated.
+var SYNC_QUEUE_KEY="bo_sync_queue";
+function getSyncQueue(){
+  try{return JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY)||"[]");}catch(ex){return [];}
+}
+function setSyncQueue(q){
+  try{localStorage.setItem(SYNC_QUEUE_KEY,JSON.stringify(q));}catch(ex){}
+  updateSyncBadge(q);
+}
+function updateSyncBadge(q){
+  q=q||getSyncQueue();
+  var el=document.getElementById("sync-badge");
+  if(!el)return;
+  if(!q.length){el.style.display="none";return;}
+  el.style.display="block";
+  el.textContent="⏳ Syncing "+q.length+" scan"+(q.length>1?"s":"")+" to Google Sheets — do not close this page";
+}
 function postScan(tn,status){
   var e=getEST(),h=e.getHours(),m=e.getMinutes();
   var ap=h>=12?"PM":"AM";h=h%12||12;
@@ -656,12 +702,41 @@ function postScan(tn,status){
   var pkg=allPkgs[tn]||allPkgs[findMatch(tn)||""]||{};
   var d={action:"confirmscan",tracking:tn,status:status,scantime:t,
          date:ds,order:pkg.order||"",customer:pkg.customer||"",team:pkg.team||"",carrier:pkg.carrier||""};
-  var ifr=document.createElement("iframe");ifr.name="si_"+Date.now();ifr.style.display="none";document.body.appendChild(ifr);
+  var item={id:"q_"+Date.now()+"_"+Math.random().toString(36).slice(2,8),data:d,attempts:0,lastTry:0,createdAt:Date.now()};
+  var q=getSyncQueue();
+  q.push(item);
+  setSyncQueue(q);
+  sendQueueItem(item);
+}
+function sendQueueItem(item){
+  item.attempts++;
+  item.lastTry=Date.now();
+  var q=getSyncQueue();
+  for(var i=0;i<q.length;i++){if(q[i].id===item.id){q[i]=item;break;}}
+  setSyncQueue(q);
+  var ifr=document.createElement("iframe");ifr.name="si_"+item.id+"_"+item.attempts;ifr.style.display="none";document.body.appendChild(ifr);
   var frm=document.createElement("form");frm.method="POST";frm.action=GAS;frm.target=ifr.name;frm.style.display="none";
-  var inp=document.createElement("input");inp.type="hidden";inp.name="data";inp.value=JSON.stringify(d);
+  var inp=document.createElement("input");inp.type="hidden";inp.name="data";inp.value=JSON.stringify(item.data);
   frm.appendChild(inp);document.body.appendChild(frm);
   ifr.onload=function(){setTimeout(function(){ifr.remove();frm.remove();},2000);};
   frm.submit();setTimeout(function(){frm.remove();},1000);
+}
+// Called after every fresh packages load — the only thing that actually clears
+// a queue item is the server's own data confirming it landed.
+function verifySyncQueue(){
+  var q=getSyncQueue();
+  if(!q.length)return;
+  var now=Date.now();
+  var stillPending=[];
+  q.forEach(function(item){
+    var d=item.data;
+    var serverPkg=allPkgs[d.tracking];
+    if(serverPkg&&serverPkg.status===d.status)return; // verified saved — drop from queue
+    if(!serverPkg&&d.status==="NOT_FOUND"&&item.attempts>=4)return; // audit-only log, can't verify against a package row — best effort
+    if(now-item.lastTry>15000)sendQueueItem(item);
+    stillPending.push(item);
+  });
+  setSyncQueue(stillPending);
 }
 
 // LOAD PACKAGES
@@ -706,6 +781,7 @@ function loadPkgs(){
       cb2.textContent="Connected | No packages | Run scan_daily_loader.py";
     }
     updateBanner();
+    verifySyncQueue();
     if(document.getElementById("tab-dash").classList.contains("active"))renderDash();
     if(document.getElementById("tab-miss").classList.contains("active"))renderMissing();
     delete window[cb];var sc=document.getElementById("_"+cb);if(sc)sc.remove();
@@ -803,7 +879,7 @@ function renderDash(){
     var tn=entry[0],ti=entry[1];if(!ti.p.length)return;
     var tc=ti.p.filter(function(p){return confirmed[p.tracking];}).length,tpct=Math.round(tc/ti.p.length*100);
     html+='<div class="team-block"><div class="team-hdr" style="border-left:5px solid '+ti.c+'"><span>'+tn+'</span><span style="font-size:14px;color:'+(tpct===100?"#4CAF50":"#FFC107")+'">'+tc+' / '+ti.p.length+'</span></div><div class="prog"><div class="prog-fill" style="width:'+tpct+'%;background:'+ti.c+'"></div></div>';
-    ti.p.slice(0,8).forEach(function(p){var ok=confirmed[p.tracking];html+='<div class="pkg-row"><div class="pkg-tn">...'+p.tracking.slice(-14)+'</div><div class="pkg-ord">'+(p.order||"")+'</div><div class="pkg-st"><span class="'+(ok?"bOk":"bPend")+'">'+(ok?"CONFIRMED":"PENDING")+'</span></div></div>';});
+    ti.p.slice(0,8).forEach(function(p){var ok=confirmed[p.tracking];html+='<div class="pkg-row"><div class="pkg-tn">'+trackLink(p.tracking,p.carrier,"..."+p.tracking.slice(-14))+'</div><div class="pkg-ord">'+(p.order||"")+'</div><div class="pkg-st"><span class="'+(ok?"bOk":"bPend")+'">'+(ok?"CONFIRMED":"PENDING")+'</span></div></div>';});
     if(ti.p.length>8)html+='<div style="padding:7px 14px;font-size:11px;color:#555">+'+(ti.p.length-8)+' more packages</div>';
     html+='</div>';
   });
@@ -859,7 +935,7 @@ function renderMissing(){
   html+='</div>';
 
   function missCard(p){
-    return '<div class="miss-card"><div class="miss-tn">'+p.tracking+'</div>'
+    return '<div class="miss-card"><div class="miss-tn">'+trackLink(p.tracking,p.carrier)+'</div>'
       +'<div class="miss-info">'+(p.order||"?")+" | "+(p.customer||"Unknown")+'</div>'
       +'<div class="miss-info">'+(p.team||"")+" | "+(p.carrier||"")+" | "+(p.date||"no date")+'</div></div>';
   }
@@ -896,7 +972,7 @@ function renderHist(){
     rows.forEach(function(r){
       var d=r.date||"Unknown";
       if(!byDate[d])byDate[d]={confirmed:[],duplicate:[],notfound:[]};
-      var row={tn:r.tracking,order:r.order,customer:r.customer,team:r.team,time:r.time,status:r.status};
+      var row={tn:r.tracking,order:r.order,customer:r.customer,team:r.team,time:r.time,status:r.status,carrier:r.carrier};
       if(r.status==="CONFIRMED") byDate[d].confirmed.push(row);
       else if(r.status==="DUPLICATE"||r.status==="HISTORICAL_DUPLICATE") byDate[d].duplicate.push(row);
       else byDate[d].notfound.push(row);
@@ -918,7 +994,7 @@ function renderHist(){
         s.confirmed.forEach(function(r){
           html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center">';
           html+='<span style="color:#4CAF50;font-weight:700;font-size:10px;min-width:16px">OK</span>';
-          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.tn+'</span>';
+          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
           html+='<span style="color:#bbb;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
           html+='<span style="color:#555;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
           html+='</div>';
@@ -930,7 +1006,7 @@ function renderHist(){
         s.duplicate.forEach(function(r){
           html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center;border-left:3px solid #F44336">';
           html+='<span style="color:#F44336;font-weight:700;font-size:10px;min-width:16px">DUP</span>';
-          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.tn+'</span>';
+          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
           html+='<span style="color:#bbb;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
           html+='<span style="color:#555;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
           html+='</div>';
@@ -942,7 +1018,7 @@ function renderHist(){
         s.notfound.forEach(function(r){
           html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center">';
           html+='<span style="color:#FFC107;font-weight:700;font-size:10px;min-width:16px">NF</span>';
-          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.tn+'</span>';
+          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
           html+='<span style="color:#bbb;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
           html+='<span style="color:#555;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
           html+='</div>';
@@ -1011,7 +1087,7 @@ function doSearch(q){
     var ok=confirmed[p.tracking];
     html+='<div style="background:#0D2B4E;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #1F4E79">';
     html+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">';
-    html+='<span style="font-family:monospace;color:#90CAF9;font-size:12px">'+p.tracking+'</span>';
+    html+='<span style="font-family:monospace;color:#90CAF9;font-size:12px">'+trackLink(p.tracking,p.carrier)+'</span>';
     html+='<span style="color:'+(ok?'#4CAF50':'#FFC107')+';font-weight:700;font-size:11px">'+(ok?'CONFIRMED':'PENDING')+'</span>';
     html+='</div>';
     html+='<div style="font-size:11px;color:#bbb">'+(p.order||'')+(p.customer?' | '+p.customer:'')+'</div>';
@@ -1062,7 +1138,7 @@ function renderReport(){
     html+='<div style="font-size:11px;color:#4CAF50;font-weight:700;margin:10px 0 6px;text-transform:uppercase">Confirmed ('+conf.length+')</div>';
     conf.forEach(function(p){
       html+='<div style="display:flex;gap:8px;padding:6px 10px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;border-left:3px solid #4CAF50">';
-      html+='<span style="font-family:monospace;color:#90CAF9;flex:1">'+p.tracking+'</span>';
+      html+='<span style="font-family:monospace;color:#90CAF9;flex:1">'+trackLink(p.tracking,p.carrier)+'</span>';
       html+='<span style="color:#bbb;width:80px">'+(p.order||'')+'</span>';
       html+='<span style="color:#555;width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(p.customer||'')+'</span>';
       html+='</div>';
@@ -1072,7 +1148,7 @@ function renderReport(){
     html+='<div style="font-size:11px;color:#F44336;font-weight:700;margin:10px 0 6px;text-transform:uppercase">Not Confirmed ('+miss.length+')</div>';
     miss.forEach(function(p){
       html+='<div style="display:flex;gap:8px;padding:6px 10px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;border-left:3px solid #F44336">';
-      html+='<span style="font-family:monospace;color:#90CAF9;flex:1">'+p.tracking+'</span>';
+      html+='<span style="font-family:monospace;color:#90CAF9;flex:1">'+trackLink(p.tracking,p.carrier)+'</span>';
       html+='<span style="color:#bbb;width:80px">'+(p.order||'')+'</span>';
       html+='<span style="color:#555;width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(p.customer||'')+'</span>';
       html+='</div>';
@@ -1117,9 +1193,14 @@ window.addEventListener("load",function(){
   document.getElementById("ct-ok").textContent="0";
   document.getElementById("ct-miss").textContent="0";
   document.getElementById("ct-dup").textContent="0";
+  updateSyncBadge(); // show sync status immediately if anything was left pending from a previous session
   // PIN only guards the Scan tab (see showTab) — opening the app itself never prompts for it.
   loadPkgs();
   setInterval(loadPkgs,120000);
+  // While any scan is still unverified, refresh much faster (every 20s instead of
+  // 2min) so a dropped save gets caught and retried quickly instead of sitting
+  // unconfirmed for up to 2 minutes. No-ops (skips the reload) once fully synced.
+  setInterval(function(){if(getSyncQueue().length>0)loadPkgs();},20000);
 });
 </script>
 <!-- SCROLL BUTTONS -->
