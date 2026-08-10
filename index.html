@@ -1112,9 +1112,19 @@ function doSearch(q){
     }
   });
   if(!results.length){el.innerHTML='<div class="empty">No results for "'+q+'"</div>';return;}
+  var trackIdx={};
+  trackingData.forEach(function(t){trackIdx[t.tracking]=t;});
   var html='<div style="font-size:11px;color:#555;margin-bottom:8px">'+results.length+' result'+(results.length>1?'s':'')+' found</div>';
   results.slice(0,60).forEach(function(p){
     var ok=confirmed[p.tracking];
+    var trk=trackIdx[p.tracking];
+    var trkLabel="",trkColor="#777";
+    if(trk){
+      if(trk.delivered){trkLabel="Carrier: Delivered"+(trk.deliveredDate?" "+trk.deliveredDate:"");trkColor="#4CAF50";}
+      else if(trk.lastError){trkLabel="Carrier: check failed";trkColor="#FF9800";}
+      else if(trk.hasMovement){trkLabel="Carrier: In Transit"+(trk.latestLocation?" — "+trk.latestLocation:"");trkColor="#2196F3";}
+      else{trkLabel="Carrier: No movement yet";trkColor="#F44336";}
+    }
     html+='<div style="background:#0D2B4E;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #1F4E79">';
     html+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">';
     html+='<span style="font-family:monospace;color:#90CAF9;font-size:12px">'+trackLink(p.tracking,p.carrier)+'</span>';
@@ -1122,6 +1132,7 @@ function doSearch(q){
     html+='</div>';
     html+='<div style="font-size:11px;color:#bbb">'+(p.order||'')+(p.customer?' | '+p.customer:'')+'</div>';
     html+='<div style="font-size:10px;color:#555;margin-top:3px">'+(p.team||'')+(p.carrier?' | '+p.carrier:'')+(p.date?' | '+p.date:'')+'</div>';
+    if(trkLabel)html+='<div style="font-size:10px;color:'+trkColor+';margin-top:3px;font-weight:700">'+trkLabel+'</div>';
     html+='</div>';
   });
   el.innerHTML=html;
@@ -1258,25 +1269,39 @@ function svgBarChart(items,opts){
   return svg;
 }
 
-// "Stuck" = no carrier movement at all yet (not even a first scan) — the
-// honest signal carrier_reconcile.py actually gives us. A package that's
-// scanned in and moving, just slowly, is "In Transit," not "Stuck."
+// Four honest categories, not three — this matters:
+//   Delivered   = t.delivered
+//   Error       = the carrier API call itself failed (bad key, 403, timeout...) —
+//                 we genuinely don't know this package's status, so it must NEVER
+//                 be counted as "stuck." Lumping these together was the bug that
+//                 made every USPS package with an API error show up as "stuck."
+//   Stuck       = the call succeeded and the carrier has no movement on file yet.
+//   In Transit  = the call succeeded and there's at least one real scan.
 function computeCarrierStats(list,carrierName){
   var pkgs=list.filter(function(t){return carrierName?t.carrier.toUpperCase().indexOf(carrierName.toUpperCase())>-1:true;});
   var delivered=pkgs.filter(function(t){return t.delivered;});
-  var stuck=pkgs.filter(function(t){return !t.delivered&&!t.hasMovement;});
-  var inTransit=pkgs.filter(function(t){return !t.delivered&&t.hasMovement;});
+  var errored=pkgs.filter(function(t){return !t.delivered&&t.lastError;});
+  var stuck=pkgs.filter(function(t){return !t.delivered&&!t.hasMovement&&!t.lastError;});
+  var inTransit=pkgs.filter(function(t){return !t.delivered&&t.hasMovement&&!t.lastError;});
   var otdEligible=delivered.filter(function(t){return t.promisedDate&&t.deliveredDate;});
   var onTime=otdEligible.filter(function(t){
     var pd=new Date(t.promisedDate),dd=new Date(t.deliveredDate);
     return !isNaN(pd)&&!isNaN(dd)&&dd<=pd;
   });
   var otdPct=otdEligible.length?Math.round(onTime.length/otdEligible.length*100):null;
-  return {total:pkgs.length,delivered:delivered.length,inTransit:inTransit.length,stuck:stuck.length,otdPct:otdPct,otdEligible:otdEligible.length};
+  return {total:pkgs.length,delivered:delivered.length,inTransit:inTransit.length,stuck:stuck.length,
+          errored:errored.length,otdPct:otdPct,otdEligible:otdEligible.length};
 }
 
 function trackingStuckList(scoped,carrierFilter){
-  var list=scoped.filter(function(t){return !t.delivered&&!t.hasMovement;});
+  var list=scoped.filter(function(t){return !t.delivered&&!t.hasMovement&&!t.lastError;});
+  if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
+  list.sort(function(a,b){return (a.tracking||"").localeCompare(b.tracking||"");});
+  return list;
+}
+
+function trackingErrorList(scoped,carrierFilter){
+  var list=scoped.filter(function(t){return !t.delivered&&t.lastError;});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   list.sort(function(a,b){return (a.tracking||"").localeCompare(b.tracking||"");});
   return list;
@@ -1315,6 +1340,7 @@ function renderTracking(){
     html+='<div style="font-size:28px;font-weight:700;color:'+otdColor+'">'+(s.otdPct===null?"—":s.otdPct+"%")+'</div>';
     html+='<div style="font-size:11px;color:#aaa;margin-bottom:8px">On-Time Delivery'+(s.otdEligible?(' ('+s.otdEligible+' rated)'):' (no data yet)')+'</div>';
     html+='<div style="font-size:12px;color:#ccc">Delivered <span style="color:#4CAF50;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2196F3;font-weight:700">'+s.inTransit+'</span> &nbsp;Stuck <span style="color:#F44336;font-weight:700">'+s.stuck+'</span></div>';
+    if(s.errored>0)html+='<div style="font-size:11px;color:#FF9800;margin-top:4px">⚠ '+s.errored+' package(s) — API check failed, not counted anywhere above</div>';
     html+='</div>';
   });
   html+='</div>';
@@ -1327,19 +1353,35 @@ function renderTracking(){
   }),{max:100,suffix:"%"});
   html+='</div>';
 
-  html+='<div class="overall"><div class="overall-title">Delivered vs In Transit vs Stuck</div><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around">';
+  html+='<div class="overall"><div class="overall-title">Delivered vs In Transit vs Stuck vs Error</div><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around">';
   carriers.forEach(function(c){
     html+='<div style="text-align:center"><div style="font-size:11px;color:#FFD700;font-weight:700;margin-bottom:6px">'+c+'</div>';
     html+=svgBarChart([
       {label:"Del",value:stats[c].delivered,color:"#4CAF50"},
       {label:"Trans",value:stats[c].inTransit,color:"#2196F3"},
-      {label:"Stuck",value:stats[c].stuck,color:"#F44336"}
-    ],{width:180,height:100});
+      {label:"Stuck",value:stats[c].stuck,color:"#F44336"},
+      {label:"Err",value:stats[c].errored,color:"#FF9800"}
+    ],{width:200,height:100});
     html+='</div>';
   });
   html+='</div></div>';
 
-  // Discrepancies — no carrier movement in 3+ days, grouped by last-known
+  // API Check Failed — genuinely different from Stuck. These are packages we
+  // could not get real data for at all (bad key, 403, timeout, etc). Never
+  // treat this list as "confirmed no movement."
+  var errorList=trackingErrorList(scoped,carrierFilter);
+  if(errorList.length){
+    html+='<div class="overall" style="border-color:#FF9800"><div class="overall-title" style="color:#FF9800">⚠ API Check Failed — Not Real Status ('+errorList.length+')</div>';
+    html+='<div style="font-size:12px;color:#ccc;margin-bottom:10px">These packages were never actually checked — the carrier API call itself failed. Fix the underlying API issue (see carrier_reconcile.py output), then re-run to get real data. Do not treat these as stuck.</div>';
+    var errByReason={};
+    errorList.forEach(function(t){var reason=(t.lastError||"Unknown error").slice(0,40);if(!errByReason[reason])errByReason[reason]=0;errByReason[reason]++;});
+    Object.keys(errByReason).sort(function(a,b){return errByReason[b]-errByReason[a];}).forEach(function(reason){
+      html+='<div style="font-size:11px;color:#FF9800;margin-bottom:3px">'+errByReason[reason]+'x — '+reason+'</div>';
+    });
+    html+='</div>';
+  }
+
+  // Discrepancies — carrier confirmed zero movement, grouped by last-known
   // location so patterns (e.g. a specific facility) jump out immediately.
   var stuckList=trackingStuckList(scoped,carrierFilter);
   html+='<div class="overall"><div class="overall-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
@@ -1356,7 +1398,7 @@ function renderTracking(){
       byLoc[loc].forEach(function(t){
         html+='<div class="miss-card" style="border-left-color:#F44336"><div class="miss-tn">'+trackLink(t.tracking,t.carrier)+'</div>';
         html+='<div class="miss-info">'+(t.order||"?")+" | "+(t.customer||"Unknown")+'</div>';
-        html+='<div class="miss-info">'+t.carrier+" | "+(t.latestStatus||"No scan yet")+(t.lastError?" | "+t.lastError:"")+'</div></div>';
+        html+='<div class="miss-info">'+t.carrier+" | "+(t.latestStatus||"No scan yet")+'</div></div>';
       });
     });
   }
@@ -1370,14 +1412,15 @@ function renderTracking(){
     html+='<div class="empty">No tracked packages for this filter.</div>';
   }
   tableList.slice(0,300).forEach(function(t){
-    var statusColor=t.delivered?"#4CAF50":(!t.hasMovement)?"#F44336":"#2196F3";
+    var statusColor=t.delivered?"#4CAF50":t.lastError?"#FF9800":(!t.hasMovement)?"#F44336":"#2196F3";
+    var statusLabel=t.delivered?"DELIVERED":t.lastError?"API ERROR":(t.latestStatus||"No scan yet");
     html+='<div style="background:#0D2B4E;border-radius:10px;padding:10px 14px;margin-bottom:6px;border:1px solid #1F4E79;border-left:3px solid '+statusColor+'">';
     html+='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">';
     html+='<span style="font-family:monospace;color:#90CAF9;font-size:13px">'+trackLink(t.tracking,t.carrier)+'</span>';
-    html+='<span style="color:'+statusColor+';font-weight:700;font-size:12px">'+(t.delivered?"DELIVERED":(t.latestStatus||"No scan yet"))+'</span>';
+    html+='<span style="color:'+statusColor+';font-weight:700;font-size:12px">'+statusLabel+'</span>';
     html+='</div>';
     html+='<div style="font-size:12px;color:#bbb;margin-top:3px">'+t.carrier+" | "+(t.order||"")+(t.customer?" | "+t.customer:"")+'</div>';
-    html+='<div style="font-size:11px;color:#777;margin-top:3px">'+(t.latestLocation||"")+(t.latestScanDate?" | Last scan: "+t.latestScanDate:"")+(t.promisedDate?" | Promised: "+t.promisedDate:"")+'</div>';
+    html+='<div style="font-size:11px;color:#777;margin-top:3px">'+(t.latestLocation||"")+(t.promisedDate?" | Promised: "+t.promisedDate:"")+'</div>';
     html+='</div>';
   });
   if(tableList.length>300)html+='<div style="text-align:center;color:#555;font-size:12px;padding:10px">+'+(tableList.length-300)+' more — narrow with the filters above</div>';
@@ -1385,6 +1428,10 @@ function renderTracking(){
   el.innerHTML=html;
 }
 
+// Builds a clean, carrier-grouped HTML table (real clickable tracking links)
+// and copies BOTH an HTML version (pastes as a formatted table with working
+// links into Gmail/Outlook) and a plain-text fallback (for plain editors),
+// so this is ready to paste straight into a carrier email.
 function copyStuckList(){
   var carrierFilter=document.getElementById("track-carrier")?document.getElementById("track-carrier").value:"";
   var dateFilter=document.getElementById("track-date")?document.getElementById("track-date").value:"";
@@ -1395,17 +1442,60 @@ function copyStuckList(){
   });
   var stuckList=trackingStuckList(scoped,carrierFilter);
   if(!stuckList.length){alert("No stuck packages to copy.");return;}
-  var lines=["Boost Oxygen — Packages With No Carrier Movement (3+ days) — "+getTodayStr(),""];
-  stuckList.forEach(function(t){
-    lines.push(t.tracking+" | "+t.carrier+" | "+(t.order||"")+" | Last status: "+(t.latestStatus||"none")+" | Location: "+(t.latestLocation||"unknown")+" | Last checked: "+(t.lastChecked||"unknown"));
+
+  var byCarrier={};
+  stuckList.forEach(function(t){if(!byCarrier[t.carrier])byCarrier[t.carrier]=[];byCarrier[t.carrier].push(t);});
+
+  var todayFull=nowFullStr();
+  var htmlParts=['<div style="font-family:Arial,sans-serif;font-size:13px;color:#000">'];
+  htmlParts.push('<h3 style="margin:0 0 10px">Boost Oxygen — Packages With No Carrier Movement — '+todayFull+'</h3>');
+  var textLines=["Boost Oxygen — Packages With No Carrier Movement — "+todayFull,""];
+
+  Object.keys(byCarrier).sort().forEach(function(carrier){
+    var list=byCarrier[carrier];
+    htmlParts.push('<div style="background:#1F4E79;color:#fff;padding:8px 12px;font-weight:bold;margin-top:14px">'+carrier+' | '+list.length+' shipment(s) — '+todayFull+'</div>');
+    htmlParts.push('<table style="border-collapse:collapse;width:100%;margin-bottom:6px" cellpadding="6">');
+    htmlParts.push('<tr style="background:#eee;font-weight:bold;text-align:left">'
+      +'<td>Tracking #</td><td>Order #</td><td>Customer</td><td>Ship Date</td><td>Last Status</td><td>Last Location</td></tr>');
+    textLines.push(carrier+" | "+list.length+" shipment(s)");
+    list.forEach(function(t){
+      var url=carrierTrackUrl(t.carrier,t.tracking);
+      var shipDate=(allPkgs[t.tracking]&&allPkgs[t.tracking].date)||"";
+      htmlParts.push('<tr style="border-bottom:1px solid #ddd">'
+        +'<td><a href="'+url+'" target="_blank">'+t.tracking+'</a></td>'
+        +'<td>'+(t.order||"")+'</td><td>'+(t.customer||"")+'</td><td>'+shipDate+'</td>'
+        +'<td>'+(t.latestStatus||"No scan yet")+'</td><td>'+(t.latestLocation||"Unknown")+'</td></tr>');
+      textLines.push("  "+t.tracking+" | "+(t.order||"")+" | "+(t.customer||"")+" | Ship "+shipDate+" | "+(t.latestStatus||"No scan yet")+" | "+(t.latestLocation||"Unknown")+" | "+url);
+    });
+    htmlParts.push('</table>');
+    textLines.push("");
   });
-  var text=lines.join("\n");
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(function(){
+  htmlParts.push('</div>');
+
+  var htmlStr=htmlParts.join("");
+  var textStr=textLines.join("\n");
+
+  function fallbackPromptCopy(){window.prompt("Copy this list (Ctrl+C / Cmd+C):",textStr);}
+
+  if(navigator.clipboard&&window.ClipboardItem){
+    var item=new ClipboardItem({
+      "text/html":new Blob([htmlStr],{type:"text/html"}),
+      "text/plain":new Blob([textStr],{type:"text/plain"})
+    });
+    navigator.clipboard.write([item]).then(function(){
+      alert("Copied "+stuckList.length+" package(s), formatted with clickable tracking links — paste directly into your email.");
+    }).catch(function(){
+      if(navigator.clipboard.writeText)navigator.clipboard.writeText(textStr).then(function(){
+        alert("Copied "+stuckList.length+" package(s) as plain text (your browser blocked the formatted copy).");
+      }).catch(fallbackPromptCopy);
+      else fallbackPromptCopy();
+    });
+  }else if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(textStr).then(function(){
       alert("Copied "+stuckList.length+" package(s) to clipboard — paste into your email.");
-    }).catch(function(){window.prompt("Copy this list (Ctrl+C / Cmd+C):",text);});
+    }).catch(fallbackPromptCopy);
   }else{
-    window.prompt("Copy this list (Ctrl+C / Cmd+C):",text);
+    fallbackPromptCopy();
   }
 }
 
@@ -1431,6 +1521,7 @@ window.addEventListener("load",function(){
   updateSyncBadge(); // show sync status immediately if anything was left pending from a previous session
   // PIN only guards the Scan tab (see showTab) — opening the app itself never prompts for it.
   loadPkgs();
+  loadTracking(); // so Search shows carrier status even if you never open the Tracking tab
   setInterval(loadPkgs,120000);
   // While any scan is still unverified, refresh much faster (every 20s instead of
   // 2min) so a dropped save gets caught and retried quickly instead of sitting
