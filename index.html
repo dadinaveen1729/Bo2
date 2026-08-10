@@ -230,6 +230,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
   <div class="tab" id="tb-hist" onclick="showTab('hist')">History</div>
   <div class="tab" id="tb-srch" onclick="showTab('srch')">Search</div>
   <div class="tab" id="tb-rpt" onclick="showTab('rpt')">Report</div>
+  <div class="tab" id="tb-track" onclick="showTab('track')">Tracking</div>
 </div>
 
 <div class="conn-bar conn-info" id="conn-bar">Connecting to Google Sheets...</div>
@@ -320,6 +321,23 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
   <div id="rpt-content"><div class="empty">Select a date above and click Generate</div></div>
 </div>
 
+<!-- TRACKING -->
+<div class="panel" id="tab-track">
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+    <select id="track-carrier" style="flex:1;padding:10px;border:1px solid #2E75B6;border-radius:8px;background:#0D2B4E;color:#fff;font-size:13px" onchange="renderTracking()">
+      <option value="">All Carriers</option>
+      <option value="FedEx">FedEx</option>
+      <option value="UPS">UPS</option>
+      <option value="USPS">USPS</option>
+    </select>
+    <select id="track-date" style="flex:1;padding:10px;border:1px solid #2E75B6;border-radius:8px;background:#0D2B4E;color:#fff;font-size:13px" onchange="renderTracking()">
+      <option value="">All Dates</option>
+    </select>
+    <button class="rbtn" style="margin:0" onclick="loadTracking()">Refresh</button>
+  </div>
+  <div id="track-content"><div class="empty">Loading tracking data...</div></div>
+</div>
+
 <div class="footer">
   <strong>Boost Oxygen LLC</strong> | 125 Old Gate Lane, Milford CT 06460<br>
   Developed by Naveen Dadi, Operations Specialist<br>
@@ -339,6 +357,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 <script>
 var GAS="https://script.google.com/macros/s/AKfycbx9XIfULMRWYATgTEm0inf-fA7ngMEhpfJEwjDdx0rrHcgDf4gW2yoZOkbNrT84m3Q3/exec";
 var allPkgs={},confirmed={},dupCount=0,pkgsLoaded=false;
+var trackingData=[];
 var pinUnlocked=false; // declared here so showTab can reference it safely
 var audioCtx=null;
 
@@ -464,6 +483,7 @@ function showTab(id){
   if(id==="hist")renderHist();
   if(id==="srch"){buildReportDateOpts();setTimeout(function(){document.getElementById("srch-input").focus();},100);}
   if(id==="rpt"){buildReportDateOpts();renderReport();}
+  if(id==="track")loadTracking();
   if(id==="scan"&&!pinUnlocked){showPin();return;}
   if(id==="scan")setTimeout(function(){document.getElementById("scan-input").focus();},100);
 }
@@ -1182,6 +1202,208 @@ function printReport(){
     w.document.close();w.focus();
     setTimeout(function(){w.print();},500);
   },300);
+}
+
+// TRACKING DASHBOARD — per-carrier delivery/OTD stats, charts, and a "no
+// movement" discrepancy list (built from Tracking Details, populated daily by
+// reconcileMissingWithCarriers() in the Apps Script backend).
+function buildTrackDateOpts(){
+  var sel=document.getElementById("track-date");
+  if(!sel)return;
+  var dates=[];
+  Object.values(allPkgs).forEach(function(p){if(p.date&&dates.indexOf(p.date)===-1)dates.push(p.date);});
+  dates.sort(function(a,b){return new Date(b)-new Date(a);});
+  var prevVal=sel.value;
+  sel.innerHTML='<option value="">All Dates</option>';
+  dates.forEach(function(d){
+    var opt=document.createElement("option");
+    opt.value=d;opt.textContent=d;
+    sel.appendChild(opt);
+  });
+  if(prevVal&&dates.indexOf(prevVal)>-1)sel.value=prevVal;
+}
+
+function loadTracking(){
+  var el=document.getElementById("track-content");
+  if(el)el.innerHTML='<div class="empty">Loading tracking data...</div>';
+  var cb="trk_"+Date.now();
+  window[cb]=function(data){
+    trackingData=data.tracking||[];
+    renderTracking();
+    delete window[cb];var sc=document.getElementById("_"+cb);if(sc)sc.remove();
+  };
+  var sc=document.createElement("script");sc.id="_"+cb;
+  sc.src=GAS+"?action=gettracking&callback="+cb+"&t="+Date.now();
+  sc.onerror=function(){if(el)el.innerHTML='<div class="empty">Could not load tracking data.</div>';sc.remove();delete window[cb];};
+  document.head.appendChild(sc);
+}
+
+// Small dependency-free inline-SVG bar chart — keeps the app self-contained
+// (no chart library) and works offline on the warehouse floor.
+function svgBarChart(items,opts){
+  opts=opts||{};
+  var w=opts.width||300,h=opts.height||120;
+  var barW=Math.max(20,Math.floor((w-20)/items.length)-10);
+  var maxVal=opts.max||Math.max(1,Math.max.apply(null,items.map(function(i){return i.value;})));
+  var svg='<svg viewBox="0 0 '+w+' '+(h+30)+'" style="width:100%;max-width:'+w+'px;height:auto;display:block;margin:0 auto">';
+  items.forEach(function(it,idx){
+    var barH=Math.round((it.value/maxVal)*h);
+    var x=10+idx*(barW+10);
+    var y=h-barH;
+    svg+='<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(2,barH)+'" rx="4" fill="'+it.color+'"></rect>';
+    svg+='<text x="'+(x+barW/2)+'" y="'+Math.max(12,y-6)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">'+it.value+(opts.suffix||'')+'</text>';
+    svg+='<text x="'+(x+barW/2)+'" y="'+(h+18)+'" text-anchor="middle" font-size="11" fill="#aaa">'+it.label+'</text>';
+  });
+  svg+='</svg>';
+  return svg;
+}
+
+function computeCarrierStats(list,carrierName){
+  var pkgs=list.filter(function(t){return carrierName?t.carrier.toUpperCase().indexOf(carrierName.toUpperCase())>-1:true;});
+  var delivered=pkgs.filter(function(t){return t.delivered;});
+  var stuck=pkgs.filter(function(t){return !t.delivered&&(t.daysSinceScan===""||t.daysSinceScan>=3);});
+  var inTransit=pkgs.filter(function(t){return !t.delivered&&!(t.daysSinceScan===""||t.daysSinceScan>=3);});
+  var otdEligible=delivered.filter(function(t){return t.promisedDate&&t.deliveredDate;});
+  var onTime=otdEligible.filter(function(t){
+    var pd=new Date(t.promisedDate),dd=new Date(t.deliveredDate);
+    return !isNaN(pd)&&!isNaN(dd)&&dd<=pd;
+  });
+  var otdPct=otdEligible.length?Math.round(onTime.length/otdEligible.length*100):null;
+  return {total:pkgs.length,delivered:delivered.length,inTransit:inTransit.length,stuck:stuck.length,otdPct:otdPct,otdEligible:otdEligible.length};
+}
+
+function trackingStuckList(scoped,carrierFilter){
+  var list=scoped.filter(function(t){return !t.delivered&&(t.daysSinceScan===""||t.daysSinceScan>=3);});
+  if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
+  list.sort(function(a,b){return (b.daysSinceScan||0)-(a.daysSinceScan||0);});
+  return list;
+}
+
+function renderTracking(){
+  buildTrackDateOpts();
+  var el=document.getElementById("track-content");
+  if(!el)return;
+  if(!trackingData.length){
+    el.innerHTML='<div class="empty">No tracking data yet. It fills in automatically once the daily carrier check runs in Google Apps Script (reconcileMissingWithCarriers), or click Refresh after running it manually once.</div>';
+    return;
+  }
+  var carrierFilter=document.getElementById("track-carrier")?document.getElementById("track-carrier").value:"";
+  var dateFilter=document.getElementById("track-date")?document.getElementById("track-date").value:"";
+
+  var scoped=trackingData.filter(function(t){
+    if(!dateFilter)return true;
+    var pd=allPkgs[t.tracking];
+    return pd&&pd.date===dateFilter;
+  });
+
+  var carriers=["FedEx","UPS","USPS"];
+  var stats={};
+  carriers.forEach(function(c){stats[c]=computeCarrierStats(scoped,c);});
+
+  var html='';
+
+  // Summary cards — always all 3 carriers side by side, per your "all carriers
+  // on one page" ask. The carrier filter above narrows the list/table below.
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px">';
+  carriers.forEach(function(c){
+    var s=stats[c];
+    var otdColor=s.otdPct===null?"#777":s.otdPct>=90?"#4CAF50":s.otdPct>=75?"#FFC107":"#F44336";
+    html+='<div class="overall" style="margin-bottom:0"><div class="overall-title">'+c+'</div>';
+    html+='<div style="font-size:28px;font-weight:700;color:'+otdColor+'">'+(s.otdPct===null?"—":s.otdPct+"%")+'</div>';
+    html+='<div style="font-size:11px;color:#aaa;margin-bottom:8px">On-Time Delivery'+(s.otdEligible?(' ('+s.otdEligible+' rated)'):' (no data yet)')+'</div>';
+    html+='<div style="font-size:12px;color:#ccc">Delivered <span style="color:#4CAF50;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2196F3;font-weight:700">'+s.inTransit+'</span> &nbsp;Stuck <span style="color:#F44336;font-weight:700">'+s.stuck+'</span></div>';
+    html+='</div>';
+  });
+  html+='</div>';
+
+  // Charts
+  html+='<div class="overall"><div class="overall-title">On-Time Delivery % by Carrier</div>';
+  html+=svgBarChart(carriers.map(function(c){
+    var pct=stats[c].otdPct===null?0:stats[c].otdPct;
+    return {label:c,value:pct,color:stats[c].otdPct===null?"#555":pct>=90?"#4CAF50":pct>=75?"#FFC107":"#F44336"};
+  }),{max:100,suffix:"%"});
+  html+='</div>';
+
+  html+='<div class="overall"><div class="overall-title">Delivered vs In Transit vs Stuck</div><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around">';
+  carriers.forEach(function(c){
+    html+='<div style="text-align:center"><div style="font-size:11px;color:#FFD700;font-weight:700;margin-bottom:6px">'+c+'</div>';
+    html+=svgBarChart([
+      {label:"Del",value:stats[c].delivered,color:"#4CAF50"},
+      {label:"Trans",value:stats[c].inTransit,color:"#2196F3"},
+      {label:"Stuck",value:stats[c].stuck,color:"#F44336"}
+    ],{width:180,height:100});
+    html+='</div>';
+  });
+  html+='</div></div>';
+
+  // Discrepancies — no carrier movement in 3+ days, grouped by last-known
+  // location so patterns (e.g. a specific facility) jump out immediately.
+  var stuckList=trackingStuckList(scoped,carrierFilter);
+  html+='<div class="overall"><div class="overall-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
+    +'<span>Needs Investigation — No Movement 3+ Days ('+stuckList.length+')</span>'
+    +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStuckList()">Copy list for carrier email</button></div>';
+  if(!stuckList.length){
+    html+='<div style="color:#4CAF50;font-size:13px;padding:10px 0">No stuck packages right now.</div>';
+  }else{
+    var byLoc={};
+    stuckList.forEach(function(t){var loc=t.latestLocation||"Unknown location";if(!byLoc[loc])byLoc[loc]=[];byLoc[loc].push(t);});
+    var locKeys=Object.keys(byLoc).sort(function(a,b){return byLoc[b].length-byLoc[a].length;});
+    locKeys.forEach(function(loc){
+      html+='<div class="sec-hdr">'+loc+' ('+byLoc[loc].length+')</div>';
+      byLoc[loc].forEach(function(t){
+        html+='<div class="miss-card" style="border-left-color:#F44336"><div class="miss-tn">'+trackLink(t.tracking,t.carrier)+'</div>';
+        html+='<div class="miss-info">'+(t.order||"?")+" | "+(t.customer||"Unknown")+'</div>';
+        html+='<div class="miss-info">'+t.carrier+" | "+(t.latestStatus||"No scan yet")+" | "+(t.daysSinceScan!==""?t.daysSinceScan+" days stuck":"unknown age")+'</div></div>';
+      });
+    });
+  }
+  html+='</div>';
+
+  // Full per-package tracking table
+  var tableList=scoped;
+  if(carrierFilter)tableList=tableList.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
+  html+='<div class="sec-hdr">All Tracked Packages ('+tableList.length+')</div>';
+  if(!tableList.length){
+    html+='<div class="empty">No tracked packages for this filter.</div>';
+  }
+  tableList.slice(0,300).forEach(function(t){
+    var statusColor=t.delivered?"#4CAF50":(t.daysSinceScan!==""&&t.daysSinceScan>=3)?"#F44336":"#2196F3";
+    html+='<div style="background:#0D2B4E;border-radius:10px;padding:10px 14px;margin-bottom:6px;border:1px solid #1F4E79;border-left:3px solid '+statusColor+'">';
+    html+='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">';
+    html+='<span style="font-family:monospace;color:#90CAF9;font-size:13px">'+trackLink(t.tracking,t.carrier)+'</span>';
+    html+='<span style="color:'+statusColor+';font-weight:700;font-size:12px">'+(t.delivered?"DELIVERED":(t.latestStatus||"No scan yet"))+'</span>';
+    html+='</div>';
+    html+='<div style="font-size:12px;color:#bbb;margin-top:3px">'+t.carrier+" | "+(t.order||"")+(t.customer?" | "+t.customer:"")+'</div>';
+    html+='<div style="font-size:11px;color:#777;margin-top:3px">'+(t.latestLocation||"")+(t.latestScanDate?" | Last scan: "+t.latestScanDate:"")+(t.promisedDate?" | Promised: "+t.promisedDate:"")+'</div>';
+    html+='</div>';
+  });
+  if(tableList.length>300)html+='<div style="text-align:center;color:#555;font-size:12px;padding:10px">+'+(tableList.length-300)+' more — narrow with the filters above</div>';
+
+  el.innerHTML=html;
+}
+
+function copyStuckList(){
+  var carrierFilter=document.getElementById("track-carrier")?document.getElementById("track-carrier").value:"";
+  var dateFilter=document.getElementById("track-date")?document.getElementById("track-date").value:"";
+  var scoped=trackingData.filter(function(t){
+    if(!dateFilter)return true;
+    var pd=allPkgs[t.tracking];
+    return pd&&pd.date===dateFilter;
+  });
+  var stuckList=trackingStuckList(scoped,carrierFilter);
+  if(!stuckList.length){alert("No stuck packages to copy.");return;}
+  var lines=["Boost Oxygen — Packages With No Carrier Movement (3+ days) — "+getTodayStr(),""];
+  stuckList.forEach(function(t){
+    lines.push(t.tracking+" | "+t.carrier+" | "+(t.order||"")+" | Last status: "+(t.latestStatus||"none")+" | Location: "+(t.latestLocation||"unknown")+" | Days stuck: "+(t.daysSinceScan!==""?t.daysSinceScan:"unknown"));
+  });
+  var text=lines.join("\n");
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      alert("Copied "+stuckList.length+" package(s) to clipboard — paste into your email.");
+    }).catch(function(){window.prompt("Copy this list (Ctrl+C / Cmd+C):",text);});
+  }else{
+    window.prompt("Copy this list (Ctrl+C / Cmd+C):",text);
+  }
 }
 
 // COLLAPSIBLE SECTIONS
