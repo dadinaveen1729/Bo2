@@ -233,7 +233,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
   <div class="tab" id="tb-track" onclick="showTab('track')">Tracking</div>
 </div>
 
-<div class="conn-bar conn-info" id="conn-bar">Connecting to Google Sheets...</div>
+<div class="conn-bar conn-info" id="conn-bar">Connecting to Supabase...</div>
 
 <!-- SCAN -->
 <div class="panel" id="tab-scan">
@@ -297,7 +297,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 <!-- HISTORY -->
 <div class="panel" id="tab-hist">
   <button class="rbtn" onclick="renderHist()">Refresh</button>
-  <div class="sec-hdr">All-time scan history | stored permanently in Google Sheets</div>
+  <div class="sec-hdr">All-time scan history | stored permanently in Supabase</div>
   <div id="hist-content"><div class="empty">Loading history...</div></div>
 </div>
 
@@ -355,7 +355,46 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 </div>
 
 <script>
-var GAS="https://script.google.com/macros/s/AKfycbx9XIfULMRWYATgTEm0inf-fA7ngMEhpfJEwjDdx0rrHcgDf4gW2yoZOkbNrT84m3Q3/exec";
+// Backend is Supabase (Postgres) as of 2026-08-11 — replaced the Google
+// Sheet + Apps Script backend (row-limit concerns as volume grows: Sheets
+// caps out around 10M cells). SUPABASE_ANON_KEY is a publishable/public key
+// by design (same trust level GAS's URL had, embedded here same as before);
+// all writes are locked down server-side via RLS + SECURITY DEFINER RPC
+// functions, this key alone can't bypass the app's business rules.
+var SUPABASE_URL="https://oohccefkywcfhlugucag.supabase.co";
+var SUPABASE_ANON_KEY="sb_publishable_bccIZypPxWNiBpW6oYifFw_LlEHvcME";
+var SB_HEADERS={"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY,"Content-Type":"application/json"};
+// PostgREST caps a single response at 1000 rows by default — with 5900+
+// packages and 8900+ history rows, a plain GET silently truncates. Page
+// through with Range headers until Content-Range says there's no more.
+function sbGet(table,query){
+  var PAGE=1000;
+  var url=SUPABASE_URL+"/rest/v1/"+table+"?"+(query||"select=*");
+  function fetchPage(offset,acc){
+    var headers={};
+    for(var k in SB_HEADERS)headers[k]=SB_HEADERS[k];
+    headers["Range-Unit"]="items";
+    headers["Range"]=offset+"-"+(offset+PAGE-1);
+    headers["Prefer"]="count=exact"; // without this PostgREST returns Content-Range: */ * (unknown total)
+    return fetch(url,{headers:headers}).then(function(r){
+      if(!r.ok)throw new Error("Supabase GET "+table+" failed: "+r.status);
+      return r.json().then(function(rows){
+        acc=acc.concat(rows);
+        var cr=r.headers.get("Content-Range")||"";
+        var total=cr.indexOf("/")>-1?parseInt(cr.split("/")[1],10):acc.length;
+        if(rows.length>0&&acc.length<total)return fetchPage(offset+PAGE,acc);
+        return acc;
+      });
+    });
+  }
+  return fetchPage(0,[]);
+}
+function sbRpc(fn,body){
+  return fetch(SUPABASE_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:SB_HEADERS,body:JSON.stringify(body)}).then(function(r){
+    if(!r.ok)return r.text().then(function(t){throw new Error("Supabase RPC "+fn+" failed: "+r.status+" "+t);});
+    return r.json().catch(function(){return null;});
+  });
+}
 var allPkgs={},confirmed={},dupCount=0,pkgsLoaded=false;
 var trackingData=[];
 var pinUnlocked=false; // declared here so showTab can reference it safely
@@ -457,7 +496,7 @@ function updateBanner(){
   var todayPkgs=Object.values(allPkgs).filter(function(p){return p.date===todayStr;});
   var todayConf=todayPkgs.filter(function(p){return confirmed[p.tracking];}).length;
   var todayMiss=Math.max(0,todayPkgs.length-todayConf);
-  if(!pkgsLoaded){b.className="banner b-info";b.textContent="Connecting to Google Sheets...";}
+  if(!pkgsLoaded){b.className="banner b-info";b.textContent="Connecting to Supabase...";}
   else if(!todayPkgs.length){b.className="banner b-warn";b.textContent="No packages for today | Run scan_daily_loader.py";}
   else if(h<12){b.className="banner b-info";b.textContent=todayPkgs.length+" packages ready for today | Scan window opens at 12:00 PM";}
   else if(h<14){
@@ -682,7 +721,7 @@ function processCode(raw){
     showFlash("nf","❓","NOT IN LIST","Not found in today's packages",raw.slice(-18)+" | "+stamp);
     soundNotFound();
     speak("Not found");
-    // Log NOT FOUND to Google Sheets history so it is permanently recorded
+    // Log NOT FOUND to Supabase history so it is permanently recorded
     postScan(raw, "NOT_FOUND");
   }
   setTimeout(function(){res.style.display="none";},3000);
@@ -711,7 +750,7 @@ function updateSyncBadge(q){
   if(!el)return;
   if(!q.length){el.style.display="none";return;}
   el.style.display="block";
-  el.textContent="⏳ Syncing "+q.length+" scan"+(q.length>1?"s":"")+" to Google Sheets — do not close this page";
+  el.textContent="⏳ Syncing "+q.length+" scan"+(q.length>1?"s":"")+" to Supabase — do not close this page";
 }
 function postScan(tn,status){
   var e=getEST(),h=e.getHours(),m=e.getMinutes();
@@ -734,12 +773,9 @@ function sendQueueItem(item){
   var q=getSyncQueue();
   for(var i=0;i<q.length;i++){if(q[i].id===item.id){q[i]=item;break;}}
   setSyncQueue(q);
-  var ifr=document.createElement("iframe");ifr.name="si_"+item.id+"_"+item.attempts;ifr.style.display="none";document.body.appendChild(ifr);
-  var frm=document.createElement("form");frm.method="POST";frm.action=GAS;frm.target=ifr.name;frm.style.display="none";
-  var inp=document.createElement("input");inp.type="hidden";inp.name="data";inp.value=JSON.stringify(item.data);
-  frm.appendChild(inp);document.body.appendChild(frm);
-  ifr.onload=function(){setTimeout(function(){ifr.remove();frm.remove();},2000);};
-  frm.submit();setTimeout(function(){frm.remove();},1000);
+  var d=item.data;
+  sbRpc("confirm_scan",{p_tracking:d.tracking,p_status:d.status,p_scantime:d.scantime,p_date:d.date,p_order:d.order,p_customer:d.customer,p_team:d.team,p_carrier:d.carrier})
+    .catch(function(err){console.error("confirm_scan failed, will retry via sync queue",err);});
 }
 // Called after every fresh packages load — the only thing that actually clears
 // a queue item is the server's own data confirming it landed.
@@ -761,9 +797,17 @@ function verifySyncQueue(){
 
 // LOAD PACKAGES
 function loadPkgs(){
-  var e=getEST(),ds=(e.getMonth()+1)+"/"+e.getDate()+"/"+e.getFullYear();
-  var cb="sc_"+Date.now();
-  window[cb]=function(data){
+  sbGet("packages").then(function(rows){
+    var pkgs=(rows||[]).map(function(r){return{tracking:r.tracking,date:r.date,order:r.order_number,customer:r.customer,team:r.team,carrier:r.carrier,status:r.status,scantime:r.scantime};});
+    onPkgsLoaded({packages:pkgs});
+  }).catch(function(err){
+    pkgsLoaded=true;
+    var cb2=document.getElementById("conn-bar");
+    if(cb2){cb2.className="conn-bar conn-warn";cb2.textContent="Cannot connect to Supabase | check internet";}
+    console.error(err);
+  });
+}
+function onPkgsLoaded(data){
     pkgsLoaded=true;
     var pkgs=data.packages||[];
     allPkgs={};confirmed={};dupCount=0;
@@ -809,12 +853,6 @@ function loadPkgs(){
     verifySyncQueue();
     if(document.getElementById("tab-dash").classList.contains("active"))renderDash();
     if(document.getElementById("tab-miss").classList.contains("active"))renderMissing();
-    delete window[cb];var sc=document.getElementById("_"+cb);if(sc)sc.remove();
-  };
-  var sc=document.createElement("script");sc.id="_"+cb;
-  sc.src=GAS+"?action=getpackages&date="+encodeURIComponent(ds)+"&callback="+cb+"&t="+Date.now();
-  sc.onerror=function(){pkgsLoaded=true;document.getElementById("conn-bar").className="conn-bar conn-warn";document.getElementById("conn-bar").textContent="Cannot connect to Google Sheets | check internet";sc.remove();delete window[cb];};
-  document.head.appendChild(sc);
 }
 
 // ACCOUNT DETECTION — normalizes known chains, auto-buckets any other business name.
@@ -993,10 +1031,17 @@ function renderMissing(){
 
 // HISTORY
 function renderHist(){
-  var cb="hist_"+Date.now();
-  window[cb]=function(data){
+  sbGet("scan_history","select=*&order=created_at.desc").then(function(rows0){
+    var rows=(rows0||[]).map(function(r){return{date:r.date,time:r.time,tracking:r.tracking,order:r.order_number,customer:r.customer,team:r.team,carrier:r.carrier,status:r.status};});
+    onHistLoaded({history:rows});
+  }).catch(function(err){
+    document.getElementById("hist-content").innerHTML='<div class="empty">Could not load history.</div>';
+    console.error(err);
+  });
+}
+function onHistLoaded(data){
     var rows=data.history||[];
-    if(!rows.length){document.getElementById("hist-content").innerHTML='<div class="empty">No history yet. History builds as you scan each day.</div>';delete window[cb];return;}
+    if(!rows.length){document.getElementById("hist-content").innerHTML='<div class="empty">No history yet. History builds as you scan each day.</div>';return;}
     // Group by date, store individual rows
     var byDate={};
     rows.forEach(function(r){
@@ -1058,12 +1103,6 @@ function renderHist(){
       html+='</div>';
     });
     document.getElementById("hist-content").innerHTML=html;
-    delete window[cb];var sc=document.getElementById("_h"+cb);if(sc)sc.remove();
-  };
-  var sc=document.createElement("script");sc.id="_h"+cb;
-  sc.src=GAS+"?action=gethistory&callback="+cb+"&t="+Date.now();
-  sc.onerror=function(){document.getElementById("hist-content").innerHTML='<div class="empty">Could not load history.</div>';sc.remove();delete window[cb];};
-  document.head.appendChild(sc);
 }
 
 // PIN SYSTEM
@@ -1247,16 +1286,18 @@ function buildTrackDateOpts(){
 function loadTracking(){
   var el=document.getElementById("track-content");
   if(el)el.innerHTML='<div class="empty">Loading tracking data...</div>';
-  var cb="trk_"+Date.now();
-  window[cb]=function(data){
-    trackingData=data.tracking||[];
+  sbGet("tracking_details").then(function(rows){
+    trackingData=(rows||[]).map(function(r){return{
+      tracking:r.tracking,carrier:r.carrier,order:r.order_number,customer:r.customer,team:r.team,
+      ourStatus:r.our_status,latestStatus:r.latest_status,latestLocation:r.latest_location,
+      promisedDate:r.promised_date,deliveredDate:r.delivered_date,
+      delivered:!!r.delivered,hasMovement:!!r.has_movement,lastError:r.last_error,lastChecked:r.last_checked
+    };});
     renderTracking();
-    delete window[cb];var sc=document.getElementById("_"+cb);if(sc)sc.remove();
-  };
-  var sc=document.createElement("script");sc.id="_"+cb;
-  sc.src=GAS+"?action=gettracking&callback="+cb+"&t="+Date.now();
-  sc.onerror=function(){if(el)el.innerHTML='<div class="empty">Could not load tracking data.</div>';sc.remove();delete window[cb];};
-  document.head.appendChild(sc);
+  }).catch(function(err){
+    if(el)el.innerHTML='<div class="empty">Could not load tracking data.</div>';
+    console.error(err);
+  });
 }
 
 // Small dependency-free inline-SVG bar chart — keeps the app self-contained
