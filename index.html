@@ -773,7 +773,12 @@ function loadPkgs(){
     pkgs.forEach(function(p){
       if(p.tracking&&p.tracking.length>=10){
         allPkgs[p.tracking.trim()]=p;
-        if(p.status==="CONFIRMED"||p.status==="CONFIRMED_AUTO") confirmed[p.tracking.trim()]=true;
+        // DUPLICATE/HISTORICAL_DUPLICATE only ever get set on a package that was
+        // ALREADY confirmed (that's what triggers the duplicate alert in the
+        // first place) — so they must still count as confirmed here. Otherwise
+        // an accidental re-scan of an already-found package makes it look
+        // "never scanned" and it reappears in Missing, even though it was found.
+        if(p.status==="CONFIRMED"||p.status==="CONFIRMED_AUTO"||p.status==="DUPLICATE"||p.status==="HISTORICAL_DUPLICATE") confirmed[p.tracking.trim()]=true;
         if((p.status==="DUPLICATE"||p.status==="HISTORICAL_DUPLICATE")&&p.date===todayStr) dupCount++;
         if(p.date) loadedDates.push(p.date);
       }
