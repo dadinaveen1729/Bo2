@@ -1311,7 +1311,8 @@ function loadTracking(){
       tracking:r.tracking,carrier:r.carrier,order:r.order_number,customer:r.customer,team:r.team,
       ourStatus:r.our_status,latestStatus:r.latest_status,latestLocation:r.latest_location,
       promisedDate:r.promised_date,deliveredDate:r.delivered_date,lastEventDate:r.last_event_date,
-      delivered:!!r.delivered,hasMovement:!!r.has_movement,lastError:r.last_error,lastChecked:r.last_checked
+      delivered:!!r.delivered,hasMovement:!!r.has_movement,awaitingPickup:!!r.awaiting_pickup,
+      lastError:r.last_error,lastChecked:r.last_checked
     };});
     renderTracking();
   }).catch(function(err){
@@ -1353,15 +1354,36 @@ function svgBarChart(items,opts){
 // (the USPS pileups at Milford / Springfield / Wallingford). "hasMovement" alone
 // called those healthy, because they moved once days ago — which is exactly why
 // they never showed up anywhere and nobody chased them.
-var STALL_DAYS=3;
+var STALL_DAYS=3;      // moving, then nothing for this long → chase the carrier
+var LABEL_STALE_DAYS=2; // label printed, carrier never took it → chase the dock
 function daysSince(dateStr){
   if(!dateStr)return null;
   var d=new Date(dateStr);
   if(isNaN(d))return null;
   return Math.floor((Date.now()-d.getTime())/86400000);
 }
+// Age falls back to the ship date when there's no scan at all — a label with
+// zero events still has an age, and that's exactly the case worth flagging.
+function ageOf(t){
+  var d=daysSince(t.lastEventDate);
+  if(d!==null)return d;
+  var pkg=allPkgs[t.tracking];
+  return pkg?daysSince(pkg.date):null;
+}
+// LABEL CREATED, NEVER PICKED UP — "Shipment information sent to FedEx",
+// "Shipment Ready for UPS", "Shipping Label Created, USPS Awaiting Item".
+// The package never physically left us. This is the FedEx/UPS case the
+// warehouse actually cares about.
+function isAwaitingPickup(t){
+  if(t.delivered||t.lastError)return false;
+  if(!t.awaitingPickup&&t.hasMovement)return false;
+  var d=ageOf(t);
+  return d!==null&&d>=LABEL_STALE_DAYS;
+}
+// STALLED IN TRANSIT — really was picked up and moving, then stopped. This is
+// the USPS case (Wallingford / Springfield / Milford pileups).
 function isStalled(t){
-  if(t.delivered||t.lastError||!t.hasMovement)return false;
+  if(t.delivered||t.lastError||!t.hasMovement||t.awaitingPickup)return false;
   var d=daysSince(t.lastEventDate);
   return d!==null&&d>=STALL_DAYS;
 }
@@ -1370,9 +1392,10 @@ function computeCarrierStats(list,carrierName){
   var pkgs=list.filter(function(t){return carrierName?t.carrier.toUpperCase().indexOf(carrierName.toUpperCase())>-1:true;});
   var delivered=pkgs.filter(function(t){return t.delivered;});
   var errored=pkgs.filter(function(t){return !t.delivered&&t.lastError;});
-  var stuck=pkgs.filter(function(t){return !t.delivered&&!t.hasMovement&&!t.lastError;});
+  var awaiting=pkgs.filter(isAwaitingPickup);
   var stalled=pkgs.filter(isStalled);
-  var inTransit=pkgs.filter(function(t){return !t.delivered&&t.hasMovement&&!t.lastError&&!isStalled(t);});
+  var inTransit=pkgs.filter(function(t){return !t.delivered&&t.hasMovement&&!t.lastError&&!isStalled(t)&&!isAwaitingPickup(t);});
+  var stuck=awaiting;
   var otdEligible=delivered.filter(function(t){return t.promisedDate&&t.deliveredDate;});
   var onTime=otdEligible.filter(function(t){
     var pd=new Date(t.promisedDate),dd=new Date(t.deliveredDate);
@@ -1384,9 +1407,10 @@ function computeCarrierStats(list,carrierName){
 }
 
 function trackingStuckList(scoped,carrierFilter){
-  var list=scoped.filter(function(t){return !t.delivered&&!t.hasMovement&&!t.lastError;});
+  var list=scoped.filter(isAwaitingPickup);
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
-  list.sort(function(a,b){return (a.tracking||"").localeCompare(b.tracking||"");});
+  // Oldest label first — those are the ones that never made it onto a truck.
+  list.sort(function(a,b){return (ageOf(b)||0)-(ageOf(a)||0);});
   return list;
 }
 
@@ -1437,7 +1461,7 @@ function renderTracking(){
     html+='<div class="overall" style="margin-bottom:0"><div class="overall-title">'+c+'</div>';
     html+='<div style="font-size:28px;font-weight:700;color:'+otdColor+'">'+(s.otdPct===null?"—":s.otdPct+"%")+'</div>';
     html+='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">On-Time Delivery'+(s.otdEligible?(' ('+s.otdEligible+' rated)'):' (no delivery dates captured yet)')+'</div>';
-    html+='<div style="font-size:12px;color:#4B5563">Delivered <span style="color:#16A34A;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2563EB;font-weight:700">'+s.inTransit+'</span> &nbsp;Stalled <span style="color:#DC2626;font-weight:700">'+s.stalled+'</span> &nbsp;No Scan <span style="color:#B45309;font-weight:700">'+s.stuck+'</span></div>';
+    html+='<div style="font-size:12px;color:#4B5563">Delivered <span style="color:#16A34A;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2563EB;font-weight:700">'+s.inTransit+'</span> &nbsp;Stalled <span style="color:#DC2626;font-weight:700">'+s.stalled+'</span> &nbsp;Not Picked Up <span style="color:#B45309;font-weight:700">'+s.stuck+'</span></div>';
     if(s.errored>0)html+='<div style="font-size:11px;color:#D97706;margin-top:4px">⚠ '+s.errored+' package(s) — API check failed, not counted anywhere above</div>';
     html+='</div>';
   });
@@ -1461,14 +1485,14 @@ function renderTracking(){
   }
   html+='</div>';
 
-  html+='<div class="overall"><div class="overall-title">Delivered vs In Transit vs Stalled vs No Scan vs Error</div><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around">';
+  html+='<div class="overall"><div class="overall-title">Delivered vs In Transit vs Stalled vs Not Picked Up vs Error</div><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around">';
   carriers.forEach(function(c){
     html+='<div style="text-align:center"><div style="font-size:11px;color:#1F4E79;font-weight:700;margin-bottom:6px">'+c+'</div>';
     html+=svgBarChart([
       {label:"Del",value:stats[c].delivered,color:"#16A34A"},
       {label:"Trans",value:stats[c].inTransit,color:"#2563EB"},
       {label:"Stall",value:stats[c].stalled,color:"#DC2626"},
-      {label:"NoScan",value:stats[c].stuck,color:"#B45309"},
+      {label:"NoPick",value:stats[c].stuck,color:"#B45309"},
       {label:"Err",value:stats[c].errored,color:"#D97706"}
     ],{width:230,height:100});
     html+='</div>';
@@ -1532,25 +1556,37 @@ function renderTracking(){
   }
   html+='</div>';
 
-  // Discrepancies — carrier confirmed zero movement, grouped by last-known
-  // location so patterns (e.g. a specific facility) jump out immediately.
+  // LABEL CREATED, NEVER PICKED UP — grouped by carrier, because the fix is
+  // internal (find it on the dock / re-hand it to the driver), not a carrier
+  // trace. Per the warehouse this is the only FedEx/UPS case worth chasing.
   var stuckList=trackingStuckList(scoped,carrierFilter);
-  html+='<div class="overall"><div class="overall-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
-    +'<span>Needs Investigation — No Carrier Movement Yet ('+stuckList.length+')</span>'
-    +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStuckList()">Copy list for carrier email</button></div>';
+  html+='<div class="overall" style="border-color:#B45309;border-left:4px solid #B45309">'
+    +'<div class="overall-title" style="color:#B45309;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
+    +'<span>📦 Label Created — No Movement in Tracking ('+stuckList.length+')</span>'
+    +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStuckList()">Copy list</button></div>';
   if(!stuckList.length){
-    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">No stuck packages right now.</div>';
+    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing sitting on a label — every package has been picked up.</div>';
   }else{
-    var byLoc={};
-    stuckList.forEach(function(t){var loc=t.latestLocation||"Unknown location";if(!byLoc[loc])byLoc[loc]=[];byLoc[loc].push(t);});
-    var locKeys=Object.keys(byLoc).sort(function(a,b){return byLoc[b].length-byLoc[a].length;});
-    locKeys.forEach(function(loc){
-      html+='<div class="sec-hdr">'+loc+' ('+byLoc[loc].length+')</div>';
-      byLoc[loc].forEach(function(t){
-        html+='<div class="miss-card" style="border-left-color:#DC2626"><div class="miss-tn">'+trackLink(t.tracking,t.carrier)+'</div>';
-        html+='<div class="miss-info">'+(t.order||"?")+" | "+(t.customer||"Unknown")+'</div>';
-        html+='<div class="miss-info">'+t.carrier+" | "+(t.latestStatus||"No scan yet")+'</div></div>';
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">A label was printed '+LABEL_STALE_DAYS+'+ days ago but the carrier has no pickup scan — these most likely never left the building. Check the dock first, then the carrier.</div>';
+    var byCar={};
+    stuckList.forEach(function(t){var c=t.carrier||"Unknown";if(!byCar[c])byCar[c]=[];byCar[c].push(t);});
+    Object.keys(byCar).sort(function(a,b){return byCar[b].length-byCar[a].length;}).forEach(function(c){
+      var g=byCar[c];
+      var worst=Math.max.apply(null,g.map(function(t){return ageOf(t)||0;}));
+      html+='<div class="sec-hdr" style="color:#B45309;display:flex;justify-content:space-between;align-items:center;gap:8px">'
+        +'<span>'+c+' ('+g.length+')</span>'
+        +'<span style="font-weight:400;text-transform:none;letter-spacing:0">oldest: '+worst+' days</span></div>';
+      g.slice(0,25).forEach(function(t){
+        var d=ageOf(t);
+        var sev=d>=7?"#92400E":d>=4?"#B45309":"#D97706";
+        html+='<div style="display:flex;gap:8px;padding:7px 10px;background:#FFFBEB;border-radius:6px;margin-bottom:3px;font-size:12px;align-items:center;border-left:3px solid '+sev+'">';
+        html+='<span style="font-weight:800;color:'+sev+';min-width:52px">'+(d===null?"?":d+"d")+'</span>';
+        html+='<span style="font-family:Consolas,monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(t.tracking,t.carrier)+'</span>';
+        html+='<span style="color:#4B5563;min-width:80px">'+(t.order||"")+'</span>';
+        html+='<span style="color:#6B7280;min-width:110px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(t.customer||"")+'</span>';
+        html+='</div>';
       });
+      if(g.length>25)html+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(g.length-25)+' more — use Copy list for the full set</div>';
     });
   }
   html+='</div>';
@@ -1592,31 +1628,34 @@ function copyStuckList(){
     return pd&&pd.date===dateFilter;
   });
   var stuckList=trackingStuckList(scoped,carrierFilter);
-  if(!stuckList.length){alert("No stuck packages to copy.");return;}
+  if(!stuckList.length){alert("Nothing sitting on a label — nothing to copy.");return;}
 
   var byCarrier={};
   stuckList.forEach(function(t){if(!byCarrier[t.carrier])byCarrier[t.carrier]=[];byCarrier[t.carrier].push(t);});
 
   var todayFull=nowFullStr();
   var htmlParts=['<div style="font-family:Arial,sans-serif;font-size:13px;color:#000">'];
-  htmlParts.push('<h3 style="margin:0 0 10px">Boost Oxygen — Packages With No Carrier Movement — '+todayFull+'</h3>');
-  var textLines=["Boost Oxygen — Packages With No Carrier Movement — "+todayFull,""];
+  htmlParts.push('<h3 style="margin:0 0 10px">Boost Oxygen — Label Created, No Movement in Tracking — '+todayFull+'</h3>');
+  htmlParts.push('<p style="margin:0 0 10px">A shipping label was created for each of these '+LABEL_STALE_DAYS+'+ days ago, but there is still no pickup scan in tracking.</p>');
+  var textLines=["Boost Oxygen — Label Created, No Movement in Tracking — "+todayFull,""];
 
   Object.keys(byCarrier).sort().forEach(function(carrier){
     var list=byCarrier[carrier];
     htmlParts.push('<div style="background:#1F4E79;color:#fff;padding:8px 12px;font-weight:bold;margin-top:14px">'+carrier+' | '+list.length+' shipment(s) — '+todayFull+'</div>');
     htmlParts.push('<table style="border-collapse:collapse;width:100%;margin-bottom:6px" cellpadding="6">');
     htmlParts.push('<tr style="background:#eee;font-weight:bold;text-align:left">'
-      +'<td>Tracking #</td><td>Order #</td><td>Customer</td><td>Ship Date</td><td>Last Status</td><td>Last Location</td></tr>');
+      +'<td>Days Since Label</td><td>Tracking #</td><td>Order #</td><td>Customer</td><td>Ship Date</td><td>Last Status</td></tr>');
     textLines.push(carrier+" | "+list.length+" shipment(s)");
     list.forEach(function(t){
       var url=carrierTrackUrl(t.carrier,t.tracking);
       var shipDate=(allPkgs[t.tracking]&&allPkgs[t.tracking].date)||"";
+      var d=ageOf(t);
       htmlParts.push('<tr style="border-bottom:1px solid #ddd">'
+        +'<td style="color:#B45309;font-weight:bold">'+(d===null?"?":d)+'</td>'
         +'<td><a href="'+url+'" target="_blank">'+t.tracking+'</a></td>'
         +'<td>'+(t.order||"")+'</td><td>'+(t.customer||"")+'</td><td>'+shipDate+'</td>'
-        +'<td>'+(t.latestStatus||"No scan yet")+'</td><td>'+(t.latestLocation||"Unknown")+'</td></tr>');
-      textLines.push("  "+t.tracking+" | "+(t.order||"")+" | "+(t.customer||"")+" | Ship "+shipDate+" | "+(t.latestStatus||"No scan yet")+" | "+(t.latestLocation||"Unknown")+" | "+url);
+        +'<td>'+(t.latestStatus||"No scan yet")+'</td></tr>');
+      textLines.push("  "+(d===null?"?":d+"d")+" | "+t.tracking+" | "+(t.order||"")+" | "+(t.customer||"")+" | Ship "+shipDate+" | "+(t.latestStatus||"No scan yet")+" | "+url);
     });
     htmlParts.push('</table>');
     textLines.push("");
