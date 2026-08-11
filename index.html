@@ -68,19 +68,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .conn-info{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-brd)}
 
 /* BANNER */
-.banner{border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:17px;font-weight:700;text-align:center;letter-spacing:.01em;border:1px solid}
+.banner{border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:17px;font-weight:800;text-align:center;letter-spacing:.01em;border:2px solid}
 .b-info{background:var(--blue-bg);color:var(--navy);border-color:var(--blue-brd)}
-.b-ok{background:var(--green-bg);color:var(--green-dk);border-color:var(--green-brd)}
-.b-warn{background:var(--red-bg);color:var(--red-dk);border-color:var(--red-brd)}
+.b-ok{background:var(--green);color:#fff;border-color:var(--green-dk)}
+.b-warn{background:var(--red-a);color:#fff;border-color:var(--red-dk)}
 
-/* COUNTERS */
+/* COUNTERS — fully colored tiles so the three states read instantly from
+   across the warehouse floor, not just a thin accent line. */
 .ctr-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
-.ctr{background:var(--card);border-radius:12px;padding:16px 10px;text-align:center;border:1px solid var(--border);border-top:3px solid;box-shadow:var(--shadow-sm)}
-.ctr .v{font-size:40px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--text)}
-.ctr .l{font-size:12px;color:var(--text-3);margin-top:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
-.c1{border-top-color:var(--green)}
-.c2{border-top-color:var(--red-a)}
-.c3{border-top-color:var(--amber)}
+.ctr{border-radius:12px;padding:16px 10px;text-align:center;border:2px solid;box-shadow:var(--shadow-sm)}
+.ctr .v{font-size:40px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.ctr .l{font-size:12px;margin-top:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;opacity:.85}
+.c1{background:var(--green-bg);border-color:var(--green);color:var(--green-dk)}
+.c2{background:var(--red-bg);border-color:var(--red-a);color:var(--red-dk)}
+.c3{background:var(--amber-bg);border-color:var(--amber);color:var(--amber-dk)}
 
 /* SCAN INPUT */
 .scan-section{background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
@@ -123,12 +124,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 /* RESULT */
 .result{display:none;border-radius:14px;padding:18px;text-align:center;margin-bottom:12px;animation:pop .15s ease;border:1px solid}
 @keyframes pop{from{transform:scale(.93)}to{transform:scale(1)}}
-.r-ok{background:var(--green-bg);border-color:var(--green-brd);color:var(--green-dk)}
-.r-dup{background:var(--red-bg);border-color:var(--red-brd);color:var(--red-dk)}
-.r-nf{background:var(--amber-bg);border-color:var(--amber-brd);color:var(--amber-dk)}
-.result .big{font-size:32px;font-weight:800;letter-spacing:.01em}
-.result .det{font-size:16px;margin-top:8px;line-height:1.6;opacity:.9}
-.result .rtn{font-size:13px;opacity:.6;margin-top:5px;font-family:Consolas,monospace}
+.r-ok{background:var(--green);border-color:var(--green-dk);color:#fff}
+.r-dup{background:var(--red-a);border-color:var(--red-dk);color:#fff}
+.r-nf{background:var(--amber);border-color:var(--amber-dk);color:#fff}
+.result .big{font-size:32px;font-weight:900;letter-spacing:.01em}
+.result .det{font-size:16px;margin-top:8px;line-height:1.6;opacity:.95}
+.result .rtn{font-size:13px;opacity:.75;margin-top:5px;font-family:Consolas,monospace}
 
 /* LAST SCAN */
 .last-box{
@@ -152,13 +153,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .pkg-tn{flex:1;font-family:Consolas,monospace;color:var(--link);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
 .pkg-ord{width:80px;color:var(--text-3);font-size:13px}
 .pkg-st{width:80px;text-align:right}
-.bOk{background:var(--green-bg);color:var(--green-dk);padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
-.bPend{border:1px solid var(--amber-brd);background:var(--amber-bg);color:var(--amber-dk);padding:3px 8px;border-radius:6px;font-size:12px;font-weight:600}
-.bDup{background:var(--red-bg);color:var(--red-dk);padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.bOk{background:var(--green);color:#fff;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.bPend{background:var(--amber);color:#fff;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.bDup{background:var(--red-a);color:#fff;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
 
 /* MISSING */
-.miss-card{background:var(--card);border-left:4px solid var(--red-a);border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid var(--border);border-left-width:4px;box-shadow:var(--shadow-sm)}
-.miss-tn{font-family:Consolas,monospace;font-size:14px;color:var(--link);margin-bottom:4px}
+.miss-card{background:var(--red-bg);border:1px solid var(--red-brd);border-left:5px solid var(--red-a);border-radius:10px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
+.miss-tn{font-family:Consolas,monospace;font-size:14px;color:var(--red-dk);font-weight:700;margin-bottom:4px}
 .miss-info{font-size:13px;color:var(--text-2);margin-top:3px}
 .all-clear{text-align:center;padding:40px 20px}
 .all-clear .ic{font-size:52px;margin-bottom:12px}
@@ -183,7 +184,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 }
 .footer strong{color:var(--text-3)}
 .scroll-btns{position:fixed;right:12px;bottom:80px;z-index:998;display:flex;flex-direction:column;gap:6px}
-.scroll-btn{width:44px;height:44px;border-radius:50%;background:#fff;border:1px solid var(--border);color:var(--navy);font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);line-height:1}
+/* Half-transparent so they never obscure the row underneath; solid on hover. */
+.scroll-btn{width:44px;height:44px;border-radius:50%;background:#fff;border:1px solid var(--border);color:var(--navy);font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);line-height:1;opacity:.5;transition:opacity .15s}
+.scroll-btn:hover,.scroll-btn:active{opacity:1}
 .hist-sec-hdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:4px}
 .hist-sec-hdr:active{opacity:.7}
 .carr{transition:transform .2s}
@@ -199,23 +202,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 }
 .flash-overlay.show{display:flex}
 @keyframes fadeInBg{from{opacity:0}to{opacity:1}}
+/* Full-bleed color: at a glance from a distance, mid-scan, the COLOR is the
+   message — green good / red duplicate / amber not-found. White text on a
+   saturated panel reads far faster than a white card with a colored edge. */
 .flash-box{
   width:85%;max-width:380px;border-radius:20px;
-  padding:32px 24px;text-align:center;
-  background:#fff;box-shadow:0 20px 50px rgba(0,0,0,.3);
+  padding:32px 24px;text-align:center;color:#fff;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);
   animation:popIn .2s cubic-bezier(.34,1.56,.64,1);
 }
 @keyframes popIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
-.flash-box.f-ok{border-top:6px solid var(--green)}
-.flash-box.f-dup{border-top:6px solid var(--red-a)}
-.flash-box.f-nf{border-top:6px solid var(--amber)}
-.flash-box.f-ok .flash-title{color:var(--green-dk)}
-.flash-box.f-dup .flash-title{color:var(--red-dk)}
-.flash-box.f-nf .flash-title{color:var(--amber-dk)}
+.flash-box.f-ok{background:linear-gradient(160deg,#16A34A,#15803D);box-shadow:0 0 0 6px rgba(22,163,74,.25),0 20px 50px rgba(0,0,0,.35)}
+.flash-box.f-dup{background:linear-gradient(160deg,#DC2626,#B91C1C);box-shadow:0 0 0 6px rgba(220,38,38,.25),0 20px 50px rgba(0,0,0,.35);animation:popIn .2s cubic-bezier(.34,1.56,.64,1),shake .4s ease .2s}
+.flash-box.f-nf{background:linear-gradient(160deg,#F59E0B,#D97706);box-shadow:0 0 0 6px rgba(245,158,11,.25),0 20px 50px rgba(0,0,0,.35)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
 .flash-icon{font-size:56px;margin-bottom:10px;line-height:1}
-.flash-title{font-size:32px;font-weight:800;letter-spacing:.01em;margin-bottom:8px}
-.flash-detail{font-size:17px;color:var(--text-2);line-height:1.6;margin-bottom:6px}
-.flash-tn{font-size:13px;color:var(--text-4);font-family:Consolas,monospace;margin-top:4px}
+.flash-title{font-size:34px;font-weight:900;letter-spacing:.02em;margin-bottom:8px;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.25)}
+.flash-detail{font-size:17px;color:rgba(255,255,255,.95);line-height:1.6;margin-bottom:6px}
+.flash-tn{font-size:13px;color:rgba(255,255,255,.75);font-family:Consolas,monospace;margin-top:4px}
 </style>
 </head>
 <body>
@@ -1084,8 +1088,8 @@ function onHistLoaded(data){
         html+='<div style="font-size:10px;color:#16A34A;font-weight:700;margin:6px 0 4px;text-transform:uppercase;letter-spacing:.05em">Confirmed ('+ s.confirmed.length+')</div>';
         s.confirmed.forEach(function(r){
           var isAuto=r.status==="CONFIRMED_AUTO";
-          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#F9FAFB;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center'+(isAuto?';border-left:3px solid #2563EB':'')+'">';
-          html+='<span style="color:'+(isAuto?"#2563EB":"#16A34A")+';font-weight:700;font-size:10px;min-width:30px">'+(isAuto?"AUTO":"OK")+'</span>';
+          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:'+(isAuto?"#EFF6FF":"#ECFDF3")+';border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center;border-left:3px solid '+(isAuto?"#2563EB":"#16A34A")+'">';
+          html+='<span style="color:#fff;background:'+(isAuto?"#2563EB":"#16A34A")+';padding:1px 5px;border-radius:4px;font-weight:700;font-size:10px;min-width:34px;text-align:center">'+(isAuto?"AUTO":"OK")+'</span>';
           html+='<span style="font-family:monospace;color:#2563EB;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
           html+='<span style="color:#6B7280;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
           html+='<span style="color:#6B7280;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
@@ -1096,8 +1100,8 @@ function onHistLoaded(data){
       if(s.duplicate.length){
         html+='<div style="font-size:10px;color:#DC2626;font-weight:700;margin:8px 0 4px;text-transform:uppercase;letter-spacing:.05em">Duplicates ('+ s.duplicate.length+')</div>';
         s.duplicate.forEach(function(r){
-          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#F9FAFB;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center;border-left:3px solid #DC2626">';
-          html+='<span style="color:#DC2626;font-weight:700;font-size:10px;min-width:16px">DUP</span>';
+          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#FEF2F2;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center;border-left:3px solid #DC2626">';
+          html+='<span style="color:#fff;background:#DC2626;padding:1px 5px;border-radius:4px;font-weight:700;font-size:10px;min-width:34px;text-align:center">DUP</span>';
           html+='<span style="font-family:monospace;color:#2563EB;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
           html+='<span style="color:#6B7280;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
           html+='<span style="color:#6B7280;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
@@ -1108,8 +1112,8 @@ function onHistLoaded(data){
       if(s.notfound.length){
         html+='<div style="font-size:10px;color:#D97706;font-weight:700;margin:8px 0 4px;text-transform:uppercase;letter-spacing:.05em">Not Found ('+ s.notfound.length+')</div>';
         s.notfound.forEach(function(r){
-          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#F9FAFB;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center">';
-          html+='<span style="color:#D97706;font-weight:700;font-size:10px;min-width:16px">NF</span>';
+          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#FFFBEB;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center;border-left:3px solid #D97706">';
+          html+='<span style="color:#fff;background:#D97706;padding:1px 5px;border-radius:4px;font-weight:700;font-size:10px;min-width:34px;text-align:center">NF</span>';
           html+='<span style="font-family:monospace;color:#2563EB;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
           html+='<span style="color:#6B7280;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
           html+='<span style="color:#6B7280;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
@@ -1306,7 +1310,7 @@ function loadTracking(){
     trackingData=(rows||[]).map(function(r){return{
       tracking:r.tracking,carrier:r.carrier,order:r.order_number,customer:r.customer,team:r.team,
       ourStatus:r.our_status,latestStatus:r.latest_status,latestLocation:r.latest_location,
-      promisedDate:r.promised_date,deliveredDate:r.delivered_date,
+      promisedDate:r.promised_date,deliveredDate:r.delivered_date,lastEventDate:r.last_event_date,
       delivered:!!r.delivered,hasMovement:!!r.has_movement,lastError:r.last_error,lastChecked:r.last_checked
     };});
     renderTracking();
@@ -1344,12 +1348,31 @@ function svgBarChart(items,opts){
 //                 made every USPS package with an API error show up as "stuck."
 //   Stuck       = the call succeeded and the carrier has no movement on file yet.
 //   In Transit  = the call succeeded and there's at least one real scan.
+// STALLED = the package really did get scanned, but nothing has happened since
+// and it's been sitting too long. This is the case that actually costs us money
+// (the USPS pileups at Milford / Springfield / Wallingford). "hasMovement" alone
+// called those healthy, because they moved once days ago — which is exactly why
+// they never showed up anywhere and nobody chased them.
+var STALL_DAYS=3;
+function daysSince(dateStr){
+  if(!dateStr)return null;
+  var d=new Date(dateStr);
+  if(isNaN(d))return null;
+  return Math.floor((Date.now()-d.getTime())/86400000);
+}
+function isStalled(t){
+  if(t.delivered||t.lastError||!t.hasMovement)return false;
+  var d=daysSince(t.lastEventDate);
+  return d!==null&&d>=STALL_DAYS;
+}
+
 function computeCarrierStats(list,carrierName){
   var pkgs=list.filter(function(t){return carrierName?t.carrier.toUpperCase().indexOf(carrierName.toUpperCase())>-1:true;});
   var delivered=pkgs.filter(function(t){return t.delivered;});
   var errored=pkgs.filter(function(t){return !t.delivered&&t.lastError;});
   var stuck=pkgs.filter(function(t){return !t.delivered&&!t.hasMovement&&!t.lastError;});
-  var inTransit=pkgs.filter(function(t){return !t.delivered&&t.hasMovement&&!t.lastError;});
+  var stalled=pkgs.filter(isStalled);
+  var inTransit=pkgs.filter(function(t){return !t.delivered&&t.hasMovement&&!t.lastError&&!isStalled(t);});
   var otdEligible=delivered.filter(function(t){return t.promisedDate&&t.deliveredDate;});
   var onTime=otdEligible.filter(function(t){
     var pd=new Date(t.promisedDate),dd=new Date(t.deliveredDate);
@@ -1357,13 +1380,21 @@ function computeCarrierStats(list,carrierName){
   });
   var otdPct=otdEligible.length?Math.round(onTime.length/otdEligible.length*100):null;
   return {total:pkgs.length,delivered:delivered.length,inTransit:inTransit.length,stuck:stuck.length,
-          errored:errored.length,otdPct:otdPct,otdEligible:otdEligible.length};
+          stalled:stalled.length,errored:errored.length,otdPct:otdPct,otdEligible:otdEligible.length};
 }
 
 function trackingStuckList(scoped,carrierFilter){
   var list=scoped.filter(function(t){return !t.delivered&&!t.hasMovement&&!t.lastError;});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   list.sort(function(a,b){return (a.tracking||"").localeCompare(b.tracking||"");});
+  return list;
+}
+
+function trackingStalledList(scoped,carrierFilter){
+  var list=scoped.filter(isStalled);
+  if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
+  // Longest-sitting first — those are the ones to chase.
+  list.sort(function(a,b){return (daysSince(b.lastEventDate)||0)-(daysSince(a.lastEventDate)||0);});
   return list;
 }
 
@@ -1405,8 +1436,8 @@ function renderTracking(){
     var otdColor=s.otdPct===null?"#6B7280":s.otdPct>=90?"#16A34A":s.otdPct>=75?"#D97706":"#DC2626";
     html+='<div class="overall" style="margin-bottom:0"><div class="overall-title">'+c+'</div>';
     html+='<div style="font-size:28px;font-weight:700;color:'+otdColor+'">'+(s.otdPct===null?"—":s.otdPct+"%")+'</div>';
-    html+='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">On-Time Delivery'+(s.otdEligible?(' ('+s.otdEligible+' rated)'):' (no data yet)')+'</div>';
-    html+='<div style="font-size:12px;color:#4B5563">Delivered <span style="color:#16A34A;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2563EB;font-weight:700">'+s.inTransit+'</span> &nbsp;Stuck <span style="color:#DC2626;font-weight:700">'+s.stuck+'</span></div>';
+    html+='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">On-Time Delivery'+(s.otdEligible?(' ('+s.otdEligible+' rated)'):' (no delivery dates captured yet)')+'</div>';
+    html+='<div style="font-size:12px;color:#4B5563">Delivered <span style="color:#16A34A;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2563EB;font-weight:700">'+s.inTransit+'</span> &nbsp;Stalled <span style="color:#DC2626;font-weight:700">'+s.stalled+'</span> &nbsp;No Scan <span style="color:#B45309;font-weight:700">'+s.stuck+'</span></div>';
     if(s.errored>0)html+='<div style="font-size:11px;color:#D97706;margin-top:4px">⚠ '+s.errored+' package(s) — API check failed, not counted anywhere above</div>';
     html+='</div>';
   });
@@ -1414,21 +1445,32 @@ function renderTracking(){
 
   // Charts
   html+='<div class="overall"><div class="overall-title">On-Time Delivery % by Carrier</div>';
-  html+=svgBarChart(carriers.map(function(c){
-    var pct=stats[c].otdPct===null?0:stats[c].otdPct;
-    return {label:c,value:pct,color:stats[c].otdPct===null?"#6B7280":pct>=90?"#16A34A":pct>=75?"#D97706":"#DC2626"};
-  }),{max:100,suffix:"%"});
+  var otdReady=carriers.filter(function(c){return stats[c].otdPct!==null;});
+  if(!otdReady.length){
+    // Drawing 0% bars here would read as "0% on-time performance", which is a
+    // very different (and alarming) claim than "not measured yet". Say which.
+    html+='<div style="font-size:13px;color:#6B7280;padding:6px 0 2px">Not enough data to rate on-time delivery yet.</div>'
+      +'<div style="font-size:12px;color:#6B7280;line-height:1.6">On-time % needs both a <b>promised</b> date and an <b>actual delivery</b> date for the same package. Carriers stop returning the promised date once a package delivers, so it can only be captured while the package is still moving — which means this fills in going forward, as today\'s in-transit packages arrive. It cannot be reconstructed for packages that were already delivered before tracking started.</div>';
+  }else{
+    html+=svgBarChart(carriers.map(function(c){
+      var pct=stats[c].otdPct===null?0:stats[c].otdPct;
+      return {label:c,value:pct,color:stats[c].otdPct===null?"#D1D5DB":pct>=90?"#16A34A":pct>=75?"#D97706":"#DC2626"};
+    }),{max:100,suffix:"%"});
+    var pending=carriers.filter(function(c){return stats[c].otdPct===null;});
+    if(pending.length)html+='<div style="font-size:11px;color:#6B7280;margin-top:6px">'+pending.join(", ")+': no rated deliveries yet — builds up as in-transit packages arrive.</div>';
+  }
   html+='</div>';
 
-  html+='<div class="overall"><div class="overall-title">Delivered vs In Transit vs Stuck vs Error</div><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around">';
+  html+='<div class="overall"><div class="overall-title">Delivered vs In Transit vs Stalled vs No Scan vs Error</div><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around">';
   carriers.forEach(function(c){
     html+='<div style="text-align:center"><div style="font-size:11px;color:#1F4E79;font-weight:700;margin-bottom:6px">'+c+'</div>';
     html+=svgBarChart([
       {label:"Del",value:stats[c].delivered,color:"#16A34A"},
       {label:"Trans",value:stats[c].inTransit,color:"#2563EB"},
-      {label:"Stuck",value:stats[c].stuck,color:"#DC2626"},
+      {label:"Stall",value:stats[c].stalled,color:"#DC2626"},
+      {label:"NoScan",value:stats[c].stuck,color:"#B45309"},
       {label:"Err",value:stats[c].errored,color:"#D97706"}
-    ],{width:200,height:100});
+    ],{width:230,height:100});
     html+='</div>';
   });
   html+='</div></div>';
@@ -1447,6 +1489,48 @@ function renderTracking(){
     });
     html+='</div>';
   }
+
+  // STALLED — scanned at some point, then nothing for STALL_DAYS+. Grouped by
+  // the facility they're sitting in, because that's how you actually chase them
+  // (one email per facility, not one per package).
+  var stalledList=trackingStalledList(scoped,carrierFilter);
+  html+='<div class="overall" style="border-color:#DC2626;border-left:4px solid #DC2626">'
+    +'<div class="overall-title" style="color:#DC2626;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
+    +'<span>🚨 Stalled — No Movement in '+STALL_DAYS+'+ Days ('+stalledList.length+')</span>'
+    +'<span style="display:flex;gap:6px;flex-wrap:wrap">'
+    +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStalledList()">Copy list</button>'
+    +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px;background:#FEF2F2;border-color:#FECACA;color:#B91C1C" onclick="emailStalledList()">✉ Email carrier</button>'
+    +'</span></div>';
+  if(!stalledList.length){
+    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing stalled — every in-transit package has moved within the last '+STALL_DAYS+' days.</div>';
+  }else{
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">These were scanned by the carrier and then stopped moving. Grouped by the facility they are sitting in.</div>';
+    var stByLoc={};
+    stalledList.forEach(function(t){
+      var loc=t.latestLocation||"Unknown location";
+      if(!stByLoc[loc])stByLoc[loc]=[];
+      stByLoc[loc].push(t);
+    });
+    Object.keys(stByLoc).sort(function(a,b){return stByLoc[b].length-stByLoc[a].length;}).forEach(function(loc){
+      var group=stByLoc[loc];
+      var worst=Math.max.apply(null,group.map(function(t){return daysSince(t.lastEventDate)||0;}));
+      html+='<div class="sec-hdr" style="color:#B91C1C;display:flex;justify-content:space-between;align-items:center;gap:8px">'
+        +'<span>'+loc+' ('+group.length+')</span>'
+        +'<span style="font-weight:400;text-transform:none;letter-spacing:0">oldest: '+worst+' days</span></div>';
+      group.slice(0,25).forEach(function(t){
+        var d=daysSince(t.lastEventDate);
+        var sev=d>=7?"#B91C1C":d>=5?"#DC2626":"#EA580C";
+        html+='<div style="display:flex;gap:8px;padding:7px 10px;background:#FEF2F2;border-radius:6px;margin-bottom:3px;font-size:12px;align-items:center;border-left:3px solid '+sev+'">';
+        html+='<span style="font-weight:800;color:'+sev+';min-width:52px">'+(d===null?"?":d+"d")+'</span>';
+        html+='<span style="font-family:Consolas,monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(t.tracking,t.carrier)+'</span>';
+        html+='<span style="color:#4B5563;min-width:80px">'+(t.order||"")+'</span>';
+        html+='<span style="color:#6B7280;min-width:70px;text-align:right">'+(t.carrier||"")+'</span>';
+        html+='</div>';
+      });
+      if(group.length>25)html+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(group.length-25)+' more at this location — use Copy list / Email carrier for the full set</div>';
+    });
+  }
+  html+='</div>';
 
   // Discrepancies — carrier confirmed zero movement, grouped by last-known
   // location so patterns (e.g. a specific facility) jump out immediately.
@@ -1564,6 +1648,101 @@ function copyStuckList(){
   }else{
     fallbackPromptCopy();
   }
+}
+
+// ── STALLED PACKAGES: copy + email the carrier ───────────────────────────
+// Shared so the copy button and the email button can never disagree about
+// which packages they're talking about.
+function stalledScoped(){
+  var carrierFilter=document.getElementById("track-carrier")?document.getElementById("track-carrier").value:"";
+  var dateFilter=document.getElementById("track-date")?document.getElementById("track-date").value:"";
+  var scoped=trackingData.filter(function(t){
+    if(!dateFilter)return true;
+    var pd=allPkgs[t.tracking];
+    return pd&&pd.date===dateFilter;
+  });
+  return trackingStalledList(scoped,carrierFilter);
+}
+
+function buildStalledReport(list){
+  var todayFull=nowFullStr();
+  var byLoc={};
+  list.forEach(function(t){
+    var loc=t.latestLocation||"Unknown location";
+    if(!byLoc[loc])byLoc[loc]=[];
+    byLoc[loc].push(t);
+  });
+  var h=['<div style="font-family:Arial,sans-serif;font-size:13px;color:#000">'];
+  h.push('<p>Hello,</p><p>The shipments below were accepted and scanned, but have shown <b>no tracking movement for '+STALL_DAYS+'+ days</b>. Could you please check on their status and advise? They are grouped by the last facility that scanned them.</p>');
+  var t=["Boost Oxygen — Stalled Shipments (no movement "+STALL_DAYS+"+ days) — "+todayFull,""];
+
+  Object.keys(byLoc).sort(function(a,b){return byLoc[b].length-byLoc[a].length;}).forEach(function(loc){
+    var g=byLoc[loc];
+    h.push('<div style="background:#1F4E79;color:#fff;padding:8px 12px;font-weight:bold;margin-top:14px">'+loc+' — '+g.length+' shipment(s)</div>');
+    h.push('<table style="border-collapse:collapse;width:100%;margin-bottom:6px" cellpadding="6">');
+    h.push('<tr style="background:#eee;font-weight:bold;text-align:left">'
+      +'<td>Days Stalled</td><td>Tracking #</td><td>Order #</td><td>Customer</td><td>Ship Date</td><td>Last Scan</td><td>Last Status</td></tr>');
+    t.push(loc+" — "+g.length+" shipment(s)");
+    g.forEach(function(p){
+      var url=carrierTrackUrl(p.carrier,p.tracking);
+      var shipDate=(allPkgs[p.tracking]&&allPkgs[p.tracking].date)||"";
+      var d=daysSince(p.lastEventDate);
+      h.push('<tr style="border-bottom:1px solid #ddd">'
+        +'<td style="color:#B91C1C;font-weight:bold">'+(d===null?"?":d)+'</td>'
+        +'<td><a href="'+url+'" target="_blank">'+p.tracking+'</a></td>'
+        +'<td>'+(p.order||"")+'</td><td>'+(p.customer||"")+'</td><td>'+shipDate+'</td>'
+        +'<td>'+(p.lastEventDate||"")+'</td><td>'+(p.latestStatus||"")+'</td></tr>');
+      t.push("  "+(d===null?"?":d+"d")+" | "+p.tracking+" | "+(p.order||"")+" | "+(p.customer||"")+" | Ship "+shipDate+" | Last scan "+(p.lastEventDate||"")+" | "+(p.latestStatus||"")+" | "+url);
+    });
+    h.push('</table>');
+    t.push("");
+  });
+  h.push('<p>Thank you,<br>Boost Oxygen Shipping Team</p></div>');
+  return {html:h.join(""),text:t.join("\n"),count:list.length};
+}
+
+function writeToClipboard(htmlStr,textStr,okMsg){
+  function fallback(){window.prompt("Copy this list (Ctrl+C / Cmd+C):",textStr);}
+  if(navigator.clipboard&&window.ClipboardItem){
+    var item=new ClipboardItem({
+      "text/html":new Blob([htmlStr],{type:"text/html"}),
+      "text/plain":new Blob([textStr],{type:"text/plain"})
+    });
+    navigator.clipboard.write([item]).then(function(){alert(okMsg);}).catch(function(){
+      if(navigator.clipboard.writeText)navigator.clipboard.writeText(textStr).then(function(){
+        alert("Copied as plain text (your browser blocked the formatted copy).");
+      }).catch(fallback);
+      else fallback();
+    });
+  }else if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(textStr).then(function(){alert(okMsg);}).catch(fallback);
+  }else{fallback();}
+}
+
+function copyStalledList(){
+  var list=stalledScoped();
+  if(!list.length){alert("Nothing stalled to copy.");return;}
+  var r=buildStalledReport(list);
+  writeToClipboard(r.html,r.text,"Copied "+r.count+" stalled package(s), grouped by facility with clickable tracking links — paste straight into your email.");
+}
+
+function emailStalledList(){
+  var list=stalledScoped();
+  if(!list.length){alert("Nothing stalled — no email needed.");return;}
+  var r=buildStalledReport(list);
+  // The formatted table goes on the clipboard rather than into the mailto body:
+  // mailto: URLs get truncated by most mail clients well before a list this size,
+  // and they can't carry the clickable-link formatting at all.
+  writeToClipboard(r.html,r.text,
+    "Copied "+r.count+" stalled package(s) to your clipboard.\n\nYour email draft is opening now — just press Ctrl+V in the message body to paste the full formatted table.");
+  var locs=Object.keys(list.reduce(function(a,t){a[t.latestLocation||"Unknown"]=1;return a;},{}));
+  var subject="Boost Oxygen — "+r.count+" shipment(s) with no movement "+STALL_DAYS+"+ days — "+nowFullStr();
+  var body="Hello,\n\n"
+    +"The "+r.count+" shipment(s) below were accepted and scanned, but have shown no tracking movement for "+STALL_DAYS+"+ days.\n"
+    +"Affected facilities: "+locs.slice(0,6).join("; ")+(locs.length>6?" (and "+(locs.length-6)+" more)":"")+"\n\n"
+    +"[ PASTE HERE — press Ctrl+V to insert the full list with tracking links ]\n\n"
+    +"Could you please check on these and advise?\n\nThank you,\nBoost Oxygen Shipping Team";
+  window.location.href="mailto:?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
 }
 
 // COLLAPSIBLE SECTIONS
