@@ -1461,7 +1461,7 @@ function renderTracking(){
     html+='<div class="overall" style="margin-bottom:0"><div class="overall-title">'+c+'</div>';
     html+='<div style="font-size:28px;font-weight:700;color:'+otdColor+'">'+(s.otdPct===null?"—":s.otdPct+"%")+'</div>';
     html+='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">On-Time Delivery'+(s.otdEligible?(' ('+s.otdEligible+' rated)'):' (no delivery dates captured yet)')+'</div>';
-    html+='<div style="font-size:12px;color:#4B5563">Delivered <span style="color:#16A34A;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2563EB;font-weight:700">'+s.inTransit+'</span> &nbsp;Stalled <span style="color:#DC2626;font-weight:700">'+s.stalled+'</span> &nbsp;Not Picked Up <span style="color:#B45309;font-weight:700">'+s.stuck+'</span></div>';
+    html+='<div style="font-size:12px;color:#4B5563">Delivered <span style="color:#16A34A;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2563EB;font-weight:700">'+s.inTransit+'</span> &nbsp;Stuck <span style="color:#DC2626;font-weight:700">'+s.stalled+'</span> &nbsp;Label Only <span style="color:#B45309;font-weight:700">'+s.stuck+'</span></div>';
     if(s.errored>0)html+='<div style="font-size:11px;color:#D97706;margin-top:4px">⚠ '+s.errored+' package(s) — API check failed, not counted anywhere above</div>';
     html+='</div>';
   });
@@ -1485,14 +1485,14 @@ function renderTracking(){
   }
   html+='</div>';
 
-  html+='<div class="overall"><div class="overall-title">Delivered vs In Transit vs Stalled vs Not Picked Up vs Error</div><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around">';
+  html+='<div class="overall"><div class="overall-title">Delivered vs In Transit vs Stuck vs Label Only vs Error</div><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around">';
   carriers.forEach(function(c){
     html+='<div style="text-align:center"><div style="font-size:11px;color:#1F4E79;font-weight:700;margin-bottom:6px">'+c+'</div>';
     html+=svgBarChart([
       {label:"Del",value:stats[c].delivered,color:"#16A34A"},
       {label:"Trans",value:stats[c].inTransit,color:"#2563EB"},
-      {label:"Stall",value:stats[c].stalled,color:"#DC2626"},
-      {label:"NoPick",value:stats[c].stuck,color:"#B45309"},
+      {label:"Stuck",value:stats[c].stalled,color:"#DC2626"},
+      {label:"Label",value:stats[c].stuck,color:"#B45309"},
       {label:"Err",value:stats[c].errored,color:"#D97706"}
     ],{width:230,height:100});
     html+='</div>';
@@ -1520,7 +1520,7 @@ function renderTracking(){
   var stalledList=trackingStalledList(scoped,carrierFilter);
   html+='<div class="overall" style="border-color:#DC2626;border-left:4px solid #DC2626">'
     +'<div class="overall-title" style="color:#DC2626;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
-    +'<span>🚨 Stalled — No Movement in '+STALL_DAYS+'+ Days ('+stalledList.length+')</span>'
+    +'<span>🚨 Stuck With Carrier — No Movement in '+STALL_DAYS+'+ Days ('+stalledList.length+')</span>'
     +'<span style="display:flex;gap:6px;flex-wrap:wrap">'
     +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStalledList()">Copy list</button>'
     +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px;background:#FEF2F2;border-color:#FECACA;color:#B91C1C" onclick="emailStalledList()">✉ Email carrier</button>'
@@ -1528,7 +1528,7 @@ function renderTracking(){
   if(!stalledList.length){
     html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing stalled — every in-transit package has moved within the last '+STALL_DAYS+' days.</div>';
   }else{
-    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">These were scanned by the carrier and then stopped moving. Grouped by the facility they are sitting in.</div>';
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The carrier <b>has these in their possession</b> (accepted, received, or in transit) but nothing has scanned for '+STALL_DAYS+'+ days. Grouped by the facility holding them, worst first — <b>this is what to escalate to the carrier.</b></div>';
     var stByLoc={};
     stalledList.forEach(function(t){
       var loc=t.latestLocation||"Unknown location";
@@ -1562,12 +1562,12 @@ function renderTracking(){
   var stuckList=trackingStuckList(scoped,carrierFilter);
   html+='<div class="overall" style="border-color:#B45309;border-left:4px solid #B45309">'
     +'<div class="overall-title" style="color:#B45309;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
-    +'<span>📦 Label Created — No Movement in Tracking ('+stuckList.length+')</span>'
+    +'<span>📦 Never Handed to Carrier — Label Only ('+stuckList.length+')</span>'
     +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStuckList()">Copy list</button></div>';
   if(!stuckList.length){
-    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing sitting on a label — every package has been picked up.</div>';
+    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing sitting on a label — every package has been handed over.</div>';
   }else{
-    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">A label was printed '+LABEL_STALE_DAYS+'+ days ago but the carrier has no pickup scan — these most likely never left the building. Check the dock first, then the carrier.</div>';
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The newest tracking event on these is still <b>"Shipping Label Created / Shipment information sent"</b> — the carrier has never taken possession, so the package is almost certainly still with us. <b>This is ours to fix, not the carrier\'s.</b> Check the dock/staging area, then verify on the carrier site (or paste the number into the Search tab).</div>';
     var byCar={};
     stuckList.forEach(function(t){var c=t.carrier||"Unknown";if(!byCar[c])byCar[c]=[];byCar[c].push(t);});
     Object.keys(byCar).sort(function(a,b){return byCar[b].length-byCar[a].length;}).forEach(function(c){
@@ -1712,8 +1712,9 @@ function buildStalledReport(list){
     byLoc[loc].push(t);
   });
   var h=['<div style="font-family:Arial,sans-serif;font-size:13px;color:#000">'];
-  h.push('<p>Hello,</p><p>The shipments below were accepted and scanned, but have shown <b>no tracking movement for '+STALL_DAYS+'+ days</b>. Could you please check on their status and advise? They are grouped by the last facility that scanned them.</p>');
-  var t=["Boost Oxygen — Stalled Shipments (no movement "+STALL_DAYS+"+ days) — "+todayFull,""];
+  h.push('<p>Hello,</p><p>We are following up on <b>'+list.length+' shipment(s)</b> that are in your possession but have shown <b>no tracking scan for '+STALL_DAYS+'+ days</b>. Each one below was accepted/received at your facility and has not moved since the date shown.</p>'
+    +'<p>They are grouped by the facility holding them, oldest first. Could you please locate these and advise on status?</p>');
+  var t=["Boost Oxygen — Shipments held with no scan for "+STALL_DAYS+"+ days — "+todayFull,""];
 
   Object.keys(byLoc).sort(function(a,b){return byLoc[b].length-byLoc[a].length;}).forEach(function(loc){
     var g=byLoc[loc];
@@ -1775,9 +1776,9 @@ function emailStalledList(){
   writeToClipboard(r.html,r.text,
     "Copied "+r.count+" stalled package(s) to your clipboard.\n\nYour email draft is opening now — just press Ctrl+V in the message body to paste the full formatted table.");
   var locs=Object.keys(list.reduce(function(a,t){a[t.latestLocation||"Unknown"]=1;return a;},{}));
-  var subject="Boost Oxygen — "+r.count+" shipment(s) with no movement "+STALL_DAYS+"+ days — "+nowFullStr();
+  var subject="Boost Oxygen — "+r.count+" shipment(s) held with no scan for "+STALL_DAYS+"+ days — "+nowFullStr();
   var body="Hello,\n\n"
-    +"The "+r.count+" shipment(s) below were accepted and scanned, but have shown no tracking movement for "+STALL_DAYS+"+ days.\n"
+    +"We are following up on "+r.count+" shipment(s) that are in your possession but have shown no tracking scan for "+STALL_DAYS+"+ days.\n"
     +"Affected facilities: "+locs.slice(0,6).join("; ")+(locs.length>6?" (and "+(locs.length-6)+" more)":"")+"\n\n"
     +"[ PASTE HERE — press Ctrl+V to insert the full list with tracking links ]\n\n"
     +"Could you please check on these and advise?\n\nThank you,\nBoost Oxygen Shipping Team";
