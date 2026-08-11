@@ -6,15 +6,27 @@
 <title>Boost Oxygen | Scan Confirm</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <style>
+:root{
+  --navy:#1F4E79;--navy-dark:#153A5C;--red:#C8402A;
+  --bg:#F5F6F8;--card:#FFFFFF;--border:#E5E7EB;--border-soft:#EEF0F3;
+  --text:#111827;--text-2:#4B5563;--text-3:#6B7280;--text-4:#9CA3AF;
+  --link:#2563EB;
+  --green:#16A34A;--green-bg:#ECFDF3;--green-brd:#A7F3D0;--green-dk:#166534;
+  --red-a:#DC2626;--red-bg:#FEF2F2;--red-brd:#FECACA;--red-dk:#B91C1C;
+  --amber:#D97706;--amber-bg:#FFFBEB;--amber-brd:#FDE68A;--amber-dk:#92400E;
+  --blue:#2563EB;--blue-bg:#EFF6FF;--blue-brd:#BFDBFE;
+  --shadow-sm:0 1px 2px rgba(16,24,40,.06);
+  --shadow-md:0 2px 8px rgba(16,24,40,.08);
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh;font-size:15px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased}
 
 /* BOOST OXYGEN BRANDED HEADER */
 .top{
-  background:linear-gradient(135deg,#1F4E79 0%,#0D2B4E 100%);
+  background:var(--navy);
   padding:0;
   position:sticky;top:0;z-index:100;
-  box-shadow:0 3px 12px rgba(0,0,0,.5);
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
 }
 .top-inner{
   display:flex;justify-content:space-between;align-items:center;
@@ -23,72 +35,72 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 .brand{display:flex;align-items:center;gap:12px}
 .brand-logo{
   background:#fff;border-radius:6px;padding:4px 10px;
-  font-size:16px;font-weight:900;color:#1F4E79;letter-spacing:.05em;
+  font-size:16px;font-weight:900;color:var(--navy);letter-spacing:.05em;
   line-height:1.2;text-transform:uppercase;
 }
-.brand-logo span{color:#C8402A;font-size:20px}
+.brand-logo span{color:var(--red);font-size:20px}
 .brand-text h1{font-size:15px;font-weight:700;color:#fff;line-height:1.4}
-.brand-text .sub{font-size:12px;color:rgba(255,255,255,.6);margin-top:1px}
+.brand-text .sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:1px}
 .top-right{text-align:right}
-.clock{font-size:19px;color:#FFD700;font-weight:700;letter-spacing:.03em}
-.clkd{font-size:12px;color:rgba(255,255,255,.6);margin-top:2px}
-.dev{font-size:11px;color:#FFD700;opacity:.7;margin-top:2px}
+.clock{font-size:19px;color:#fff;font-weight:700;letter-spacing:.03em}
+.clkd{font-size:12px;color:rgba(255,255,255,.65);margin-top:2px}
+.dev{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
 
 /* BOTTOM BRAND STRIP */
 .brand-strip{
-  background:linear-gradient(90deg,#C8402A,#E05A3A);
-  height:4px;
+  background:var(--red);
+  height:3px;
   width:100%;
 }
 
 /* TABS */
-.tabs{display:flex;background:#0D2B4E;border-bottom:1px solid #1F4E79;overflow-x:auto}
-.tab{flex:1;min-width:70px;padding:12px 6px;text-align:center;font-size:14px;font-weight:700;cursor:pointer;opacity:.5;border-bottom:3px solid transparent;transition:.15s;letter-spacing:.02em}
-.tab.active{opacity:1;border-bottom:3px solid #FFD700;color:#FFD700}
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{flex:1;min-width:70px;padding:13px 6px;text-align:center;font-size:14px;font-weight:600;cursor:pointer;color:var(--text-3);border-bottom:3px solid transparent;transition:.15s;letter-spacing:.01em}
+.tab.active{color:var(--navy);border-bottom:3px solid var(--red);font-weight:700}
 
 .panel{display:none;padding:14px}
 .panel.active{display:block}
 
 /* CONNECTION BAR */
-.conn-bar{font-size:13px;text-align:center;padding:6px;margin-bottom:6px;border-radius:6px}
-.conn-ok{background:rgba(27,94,46,.3);color:#4CAF50;border:1px solid #1B5E20}
-.conn-warn{background:rgba(123,32,32,.3);color:#F44336;border:1px solid #7B1F1F}
-.conn-info{background:rgba(31,78,121,.3);color:#90CAF9;border:1px solid #1F4E79}
+.conn-bar{font-size:13px;text-align:center;padding:6px;margin-bottom:6px;border-radius:6px;font-weight:600}
+.conn-ok{background:var(--green-bg);color:var(--green-dk);border:1px solid var(--green-brd)}
+.conn-warn{background:var(--red-bg);color:var(--red-dk);border:1px solid var(--red-brd)}
+.conn-info{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-brd)}
 
 /* BANNER */
-.banner{border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:17px;font-weight:700;text-align:center;letter-spacing:.01em}
-.b-info{background:linear-gradient(135deg,#1F4E79,#0D2B4E);border:1px solid #2E75B6}
-.b-ok{background:linear-gradient(135deg,#1B5E20,#2E7D32);border:1px solid #4CAF50}
-.b-warn{background:linear-gradient(135deg,#7B1F1F,#C00000);border:1px solid #F44336}
+.banner{border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:17px;font-weight:700;text-align:center;letter-spacing:.01em;border:1px solid}
+.b-info{background:var(--blue-bg);color:var(--navy);border-color:var(--blue-brd)}
+.b-ok{background:var(--green-bg);color:var(--green-dk);border-color:var(--green-brd)}
+.b-warn{background:var(--red-bg);color:var(--red-dk);border-color:var(--red-brd)}
 
 /* COUNTERS */
 .ctr-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
-.ctr{border-radius:12px;padding:16px 10px;text-align:center;border:1px solid rgba(255,255,255,.08)}
-.ctr .v{font-size:44px;font-weight:700;line-height:1;letter-spacing:-.01em}
-.ctr .l{font-size:13px;opacity:.7;margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
-.c1{background:linear-gradient(135deg,#1B5E20,#2E7D32)}
-.c2{background:linear-gradient(135deg,#7B1F1F,#C00000)}
-.c3{background:linear-gradient(135deg,#7B5800,#B45900)}
+.ctr{background:var(--card);border-radius:12px;padding:16px 10px;text-align:center;border:1px solid var(--border);border-top:3px solid;box-shadow:var(--shadow-sm)}
+.ctr .v{font-size:40px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--text)}
+.ctr .l{font-size:12px;color:var(--text-3);margin-top:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.c1{border-top-color:var(--green)}
+.c2{border-top-color:var(--red-a)}
+.c3{border-top-color:var(--amber)}
 
 /* SCAN INPUT */
-.scan-section{background:#0D2B4E;border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #1F4E79}
-.scan-label{font-size:14px;color:#FFD700;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:6px}
-.scan-label::before{content:'';width:8px;height:8px;background:#4CAF50;border-radius:50%;animation:blink 1.5s ease-in-out infinite}
+.scan-section{background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.scan-label{font-size:13px;color:var(--navy);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:6px}
+.scan-label::before{content:'';width:8px;height:8px;background:var(--green);border-radius:50%;animation:blink 1.5s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .scan-input{
   width:100%;padding:16px 14px;
-  border:2px solid #2E75B6;border-radius:10px;
-  font-size:26px;background:#0A1628;color:#fff;
-  font-family:monospace;letter-spacing:.04em;
-  transition:border .15s;
+  border:2px solid var(--border);border-radius:10px;
+  font-size:26px;background:var(--bg);color:var(--text);
+  font-family:'SFMono-Regular',Consolas,monospace;letter-spacing:.04em;
+  transition:border .15s,background .15s;
 }
-.scan-input:focus{outline:none;border-color:#FFD700;background:#0D1F35}
-.scan-hint{font-size:13px;color:#777;margin-top:8px;text-align:center;line-height:1.5}
+.scan-input:focus{outline:none;border-color:var(--navy);background:#fff}
+.scan-hint{font-size:13px;color:var(--text-3);margin-top:8px;text-align:center;line-height:1.5}
 
 /* CAMERA */
 .cam-toggle{
-  background:transparent;border:1px solid #2E75B6;color:#90CAF9;
-  border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;
+  background:#fff;border:1px solid var(--border);color:var(--navy);
+  border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;font-weight:600;
   margin-bottom:10px;display:block;width:100%;text-align:center;
 }
 .cam-wrap{display:none;position:relative;background:#000;border-radius:12px;overflow:hidden;margin-bottom:10px}
@@ -109,70 +121,70 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 .cam-hint-overlay{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:13px;color:#FFD700}
 
 /* RESULT */
-.result{display:none;border-radius:14px;padding:18px;text-align:center;margin-bottom:12px;animation:pop .15s ease}
+.result{display:none;border-radius:14px;padding:18px;text-align:center;margin-bottom:12px;animation:pop .15s ease;border:1px solid}
 @keyframes pop{from{transform:scale(.93)}to{transform:scale(1)}}
-.r-ok{background:linear-gradient(135deg,#1B5E20,#2E7D32);border:3px solid #4CAF50}
-.r-dup{background:linear-gradient(135deg,#7B1F1F,#C00000);border:3px solid #F44336}
-.r-nf{background:linear-gradient(135deg,#7B5800,#B45900);border:3px solid #FFC107}
-.result .big{font-size:34px;font-weight:700;letter-spacing:.02em}
-.result .det{font-size:17px;margin-top:8px;line-height:1.6;opacity:.9}
-.result .rtn{font-size:13px;opacity:.5;margin-top:5px;font-family:monospace}
+.r-ok{background:var(--green-bg);border-color:var(--green-brd);color:var(--green-dk)}
+.r-dup{background:var(--red-bg);border-color:var(--red-brd);color:var(--red-dk)}
+.r-nf{background:var(--amber-bg);border-color:var(--amber-brd);color:var(--amber-dk)}
+.result .big{font-size:32px;font-weight:800;letter-spacing:.01em}
+.result .det{font-size:16px;margin-top:8px;line-height:1.6;opacity:.9}
+.result .rtn{font-size:13px;opacity:.6;margin-top:5px;font-family:Consolas,monospace}
 
 /* LAST SCAN */
 .last-box{
-  background:#0D2B4E;border-radius:10px;padding:10px 14px;
-  font-size:16px;color:#ccc;margin-bottom:10px;
+  background:var(--card);border-radius:10px;padding:10px 14px;
+  font-size:16px;color:var(--text-2);margin-bottom:10px;
   min-height:36px;text-align:center;line-height:1.6;
-  border:1px solid #1F4E79;
+  border:1px solid var(--border);
 }
 
 /* DASHBOARD */
-.overall{background:#0D2B4E;border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid #1F4E79}
-.overall-title{font-size:14px;color:#FFD700;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.overall{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.overall-title{font-size:13px;color:var(--navy);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
 .overall-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
-.ostat{font-size:14px;color:#aaa}
-.ostat span{color:#fff;font-weight:700;font-size:17px}
-.team-block{background:#0D2B4E;border-radius:12px;margin-bottom:10px;overflow:hidden;border:1px solid #1F4E79}
-.team-hdr{padding:12px 14px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
-.prog{height:6px;background:#0A1628}
+.ostat{font-size:14px;color:var(--text-3)}
+.ostat span{color:var(--text);font-weight:700}
+.team-block{background:var(--card);border-radius:12px;margin-bottom:10px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.team-hdr{padding:12px 14px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center;background:#FAFBFC}
+.prog{height:6px;background:var(--border-soft)}
 .prog-fill{height:100%;transition:width .4s}
-.pkg-row{display:flex;align-items:center;padding:8px 14px;border-top:1px solid #0A1628;font-size:14px;gap:8px}
-.pkg-tn{flex:1;font-family:monospace;color:#90CAF9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
-.pkg-ord{width:80px;color:#bbb;font-size:13px}
+.pkg-row{display:flex;align-items:center;padding:8px 14px;border-top:1px solid var(--border-soft);font-size:14px;gap:8px}
+.pkg-tn{flex:1;font-family:Consolas,monospace;color:var(--link);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.pkg-ord{width:80px;color:var(--text-3);font-size:13px}
 .pkg-st{width:80px;text-align:right}
-.bOk{background:#1B5E20;color:#4CAF50;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
-.bPend{border:1px solid #FFC107;color:#FFC107;padding:3px 8px;border-radius:6px;font-size:12px}
-.bDup{background:#7B1F1F;color:#F44336;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.bOk{background:var(--green-bg);color:var(--green-dk);padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.bPend{border:1px solid var(--amber-brd);background:var(--amber-bg);color:var(--amber-dk);padding:3px 8px;border-radius:6px;font-size:12px;font-weight:600}
+.bDup{background:var(--red-bg);color:var(--red-dk);padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700}
 
 /* MISSING */
-.miss-card{background:#0D2B4E;border-left:4px solid #F44336;border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid #1F4E79}
-.miss-tn{font-family:monospace;font-size:14px;color:#90CAF9;margin-bottom:4px}
-.miss-info{font-size:13px;color:#ccc;margin-top:3px}
+.miss-card{background:var(--card);border-left:4px solid var(--red-a);border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid var(--border);border-left-width:4px;box-shadow:var(--shadow-sm)}
+.miss-tn{font-family:Consolas,monospace;font-size:14px;color:var(--link);margin-bottom:4px}
+.miss-info{font-size:13px;color:var(--text-2);margin-top:3px}
 .all-clear{text-align:center;padding:40px 20px}
 .all-clear .ic{font-size:52px;margin-bottom:12px}
-.all-clear .msg{font-size:19px;font-weight:700;color:#4CAF50}
-.all-clear .sub{font-size:14px;color:#777;margin-top:6px}
+.all-clear .msg{font-size:19px;font-weight:700;color:var(--green)}
+.all-clear .sub{font-size:14px;color:var(--text-3);margin-top:6px}
 
 /* HISTORY */
-.hist-row{background:#0D2B4E;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #1F4E79}
-.hist-date{font-size:15px;font-weight:700;color:#FFD700;margin-bottom:6px}
+.hist-row{background:var(--card);border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.hist-date{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px}
 .hist-stats{display:flex;gap:14px;flex-wrap:wrap}
-.hist-stat{font-size:14px;color:#aaa}
-.hist-stat span{color:#fff;font-weight:700}
+.hist-stat{font-size:14px;color:var(--text-3)}
+.hist-stat span{color:var(--text);font-weight:700}
 
-.rbtn{background:#0D2B4E;border:1px solid #2E75B6;color:#90CAF9;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;margin-bottom:12px;margin-right:6px}
-.empty{text-align:center;padding:40px;color:#777;font-size:15px}
-.sec-hdr{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#777;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid #1F4E79}
+.rbtn{background:#fff;border:1px solid var(--border);color:var(--navy);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px;margin-right:6px}
+.empty{text-align:center;padding:40px;color:var(--text-3);font-size:15px}
+.sec-hdr{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 
 .footer{
-  text-align:center;font-size:11px;color:#3A5578;
+  text-align:center;font-size:11px;color:var(--text-4);
   padding:16px 0 10px;line-height:1.8;
-  border-top:1px solid #1F4E79;margin-top:8px;
+  border-top:1px solid var(--border);margin-top:8px;
 }
-.footer strong{color:#4A7099}
+.footer strong{color:var(--text-3)}
 .scroll-btns{position:fixed;right:12px;bottom:80px;z-index:998;display:flex;flex-direction:column;gap:6px}
-.scroll-btn{width:44px;height:44px;border-radius:50%;background:#1F4E79;border:2px solid #FFD700;color:#FFD700;font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,.6);line-height:1}
-.hist-sec-hdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:6px 0;border-bottom:1px solid #1F4E79;margin-bottom:4px}
+.scroll-btn{width:44px;height:44px;border-radius:50%;background:#fff;border:1px solid var(--border);color:var(--navy);font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);line-height:1}
+.hist-sec-hdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:4px}
 .hist-sec-hdr:active{opacity:.7}
 .carr{transition:transform .2s}
 .closed .carr{transform:rotate(-90deg)}
@@ -181,7 +193,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 .flash-overlay{
   display:none;
   position:fixed;inset:0;z-index:999;
-  background:rgba(0,0,0,.7);
+  background:rgba(17,24,39,.55);
   align-items:center;justify-content:center;
   animation:fadeInBg .15s ease;
 }
@@ -190,16 +202,20 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 .flash-box{
   width:85%;max-width:380px;border-radius:20px;
   padding:32px 24px;text-align:center;
+  background:#fff;box-shadow:0 20px 50px rgba(0,0,0,.3);
   animation:popIn .2s cubic-bezier(.34,1.56,.64,1);
 }
 @keyframes popIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
-.flash-box.f-ok{background:linear-gradient(135deg,#1B5E20,#2E7D32);border:4px solid #4CAF50;box-shadow:0 0 40px rgba(76,175,80,.5)}
-.flash-box.f-dup{background:linear-gradient(135deg,#7B0000,#C00000);border:4px solid #F44336;box-shadow:0 0 40px rgba(244,67,54,.5)}
-.flash-box.f-nf{background:linear-gradient(135deg,#4A3000,#B45900);border:4px solid #FFC107;box-shadow:0 0 40px rgba(255,193,7,.3)}
+.flash-box.f-ok{border-top:6px solid var(--green)}
+.flash-box.f-dup{border-top:6px solid var(--red-a)}
+.flash-box.f-nf{border-top:6px solid var(--amber)}
+.flash-box.f-ok .flash-title{color:var(--green-dk)}
+.flash-box.f-dup .flash-title{color:var(--red-dk)}
+.flash-box.f-nf .flash-title{color:var(--amber-dk)}
 .flash-icon{font-size:56px;margin-bottom:10px;line-height:1}
-.flash-title{font-size:34px;font-weight:700;letter-spacing:.02em;margin-bottom:8px}
-.flash-detail{font-size:18px;opacity:.95;line-height:1.6;margin-bottom:6px}
-.flash-tn{font-size:13px;opacity:.55;font-family:monospace;margin-top:4px}
+.flash-title{font-size:32px;font-weight:800;letter-spacing:.01em;margin-bottom:8px}
+.flash-detail{font-size:17px;color:var(--text-2);line-height:1.6;margin-bottom:6px}
+.flash-tn{font-size:13px;color:var(--text-4);font-family:Consolas,monospace;margin-top:4px}
 </style>
 </head>
 <body>
@@ -268,7 +284,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
   </div>
 
   <div class="last-box" id="last-box">Waiting for first scan...</div>
-  <div id="sync-badge" style="display:none;font-size:13px;text-align:center;padding:8px;margin-bottom:10px;border-radius:8px;background:rgba(255,193,7,.15);color:#FFC107;border:1px solid #7B5800;font-weight:700"></div>
+  <div id="sync-badge" style="display:none;font-size:13px;text-align:center;padding:8px;margin-bottom:10px;border-radius:8px;background:#FFFBEB;color:#92400E;border:1px solid #FDE68A;font-weight:700"></div>
 
   <div class="result" id="result">
     <div class="big" id="r-icon"></div>
@@ -286,7 +302,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 <!-- MISSING -->
 <div class="panel" id="tab-miss">
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-    <select id="miss-date" style="flex:1;padding:10px;border:1px solid #2E75B6;border-radius:8px;background:#0D2B4E;color:#fff;font-size:12px" onchange="renderMissing()">
+    <select id="miss-date" style="flex:1;padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:12px" onchange="renderMissing()">
       <option value="">All Dates</option>
     </select>
     <button class="rbtn" style="margin:0" onclick="renderMissing()">Refresh</button>
@@ -303,7 +319,7 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 
 <div class="panel" id="tab-srch">
   <input type="text" id="srch-input"
-    style="width:100%;padding:12px 14px;border:2px solid #2E75B6;border-radius:10px;font-size:15px;background:#0A1628;color:#fff;margin-bottom:10px"
+    style="width:100%;padding:12px 14px;border:2px solid #D1D5DB;border-radius:10px;font-size:15px;background:#fff;color:#111827;margin-bottom:10px"
     placeholder="Search tracking number, order number, or customer name..."
     oninput="doSearch(this.value)"
     autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
@@ -312,11 +328,11 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 
 <div class="panel" id="tab-rpt">
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-    <select id="rpt-date" style="flex:1;padding:10px;border:1px solid #2E75B6;border-radius:8px;background:#0D2B4E;color:#fff;font-size:12px">
+    <select id="rpt-date" style="flex:1;padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:12px">
       <option value="">All Dates</option>
     </select>
     <button class="rbtn" style="margin:0" onclick="renderReport()">Generate</button>
-    <button class="rbtn" style="margin:0;background:#1B5E20;border-color:#4CAF50;color:#4CAF50" onclick="printReport()">Print / PDF</button>
+    <button class="rbtn" style="margin:0;background:#ECFDF3;border-color:#A7F3D0;color:#166534" onclick="printReport()">Print / PDF</button>
   </div>
   <div id="rpt-content"><div class="empty">Select a date above and click Generate</div></div>
 </div>
@@ -324,13 +340,13 @@ body{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh
 <!-- TRACKING -->
 <div class="panel" id="tab-track">
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-    <select id="track-carrier" style="flex:1;padding:10px;border:1px solid #2E75B6;border-radius:8px;background:#0D2B4E;color:#fff;font-size:13px" onchange="renderTracking()">
+    <select id="track-carrier" style="flex:1;padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px" onchange="renderTracking()">
       <option value="">All Carriers</option>
       <option value="FedEx">FedEx</option>
       <option value="UPS">UPS</option>
       <option value="USPS">USPS</option>
     </select>
-    <select id="track-date" style="flex:1;padding:10px;border:1px solid #2E75B6;border-radius:8px;background:#0D2B4E;color:#fff;font-size:13px" onchange="renderTracking()">
+    <select id="track-date" style="flex:1;padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px" onchange="renderTracking()">
       <option value="">All Dates</option>
     </select>
     <button class="rbtn" style="margin:0" onclick="loadTracking()">Refresh</button>
@@ -573,7 +589,7 @@ function carrierTrackUrl(carrier,tn){
 function trackLink(tn,carrier,displayText){
   var url=carrierTrackUrl(carrier,tn);
   var text=(displayText===undefined||displayText===null)?tn:displayText;
-  return '<a href="'+url+'" target="_blank" rel="noopener noreferrer" style="color:#90CAF9;text-decoration:underline;text-decoration-style:dotted" onclick="event.stopPropagation()">'+text+'</a>';
+  return '<a href="'+url+'" target="_blank" rel="noopener noreferrer" style="color:#2563EB;text-decoration:underline;text-decoration-style:dotted" onclick="event.stopPropagation()">'+text+'</a>';
 }
 
 // SCANNER INPUT
@@ -666,7 +682,7 @@ function processCode(raw){
     document.getElementById("r-icon").textContent="DUPLICATE";
     document.getElementById("r-det").textContent="Already scanned today | possible double shipment! | "+stamp;
     document.getElementById("r-tn").innerHTML=trackLink(tn,allPkgs[tn]&&allPkgs[tn].carrier,tn.slice(-20));
-    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE TODAY</span> | '+trackLink(tn,allPkgs[tn]&&allPkgs[tn].carrier,tn.slice(-16))+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    lb.innerHTML='<span style="color:#DC2626;font-weight:700">DUPLICATE TODAY</span> | '+trackLink(tn,allPkgs[tn]&&allPkgs[tn].carrier,tn.slice(-16))+'<br><span style="font-size:10px;color:#6B7280">'+stamp+'</span>';
     showFlash("dup","🚨","DUPLICATE","Already scanned | check for double shipment!",tn.slice(-18)+" | "+stamp);
     soundDuplicate();
     speak("Duplicate! Check for double shipment");
@@ -681,7 +697,7 @@ function processCode(raw){
     document.getElementById("r-icon").textContent="STOP | HISTORICAL DUPLICATE";
     document.getElementById("r-det").textContent="This tracking was shipped on "+prevDate+" | do NOT ship again! | "+stamp;
     document.getElementById("r-tn").innerHTML=trackLink(tn,null,tn.slice(-20));
-    lb.innerHTML='<span style="color:#F44336;font-weight:700">DUPLICATE FROM '+prevDate+'</span> | '+trackLink(tn,null,tn.slice(-16))+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    lb.innerHTML='<span style="color:#DC2626;font-weight:700">DUPLICATE FROM '+prevDate+'</span> | '+trackLink(tn,null,tn.slice(-16))+'<br><span style="font-size:10px;color:#6B7280">'+stamp+'</span>';
     showFlash("dup","🛑","STOP | DUPLICATE","Shipped on "+prevDate+" | do NOT ship again!",tn.slice(-18)+" | "+stamp);
     soundDuplicate();
     speak("Stop! Already shipped, do not ship again");
@@ -701,7 +717,7 @@ function processCode(raw){
     document.getElementById("r-icon").textContent="CONFIRMED";
     document.getElementById("r-det").textContent=(pkg.customer||"")+" | "+(pkg.order||"")+" | "+(pkg.team||"")+" | "+stamp;
     document.getElementById("r-tn").innerHTML=trackLink(tn,pkg.carrier,tn.slice(-20));
-    lb.innerHTML='<span style="color:#4CAF50;font-weight:700">OK</span> | '+(pkg.order||"")+" | "+(pkg.customer||"")+" | "+trackLink(tn,pkg.carrier,"Track")+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    lb.innerHTML='<span style="color:#16A34A;font-weight:700">OK</span> | '+(pkg.order||"")+" | "+(pkg.customer||"")+" | "+trackLink(tn,pkg.carrier,"Track")+'<br><span style="font-size:10px;color:#6B7280">'+stamp+'</span>';
     showFlash("ok","✅","CONFIRMED",(pkg.customer||"")+" | "+(pkg.order||""),tn.slice(-18)+" | "+stamp);
     soundOk();
     speak("Confirmed");
@@ -717,7 +733,7 @@ function processCode(raw){
     document.getElementById("r-icon").textContent="NOT IN LIST";
     document.getElementById("r-det").textContent="Not found in today's package list | check NetSuite | "+stamp;
     document.getElementById("r-tn").innerHTML=trackLink(raw,null,raw.slice(-20));
-    lb.innerHTML='<span style="color:#FFC107;font-weight:700">NOT FOUND</span> | '+trackLink(raw,null,raw.slice(-16))+'<br><span style="font-size:10px;color:#888">'+stamp+'</span>';
+    lb.innerHTML='<span style="color:#D97706;font-weight:700">NOT FOUND</span> | '+trackLink(raw,null,raw.slice(-16))+'<br><span style="font-size:10px;color:#6B7280">'+stamp+'</span>';
     showFlash("nf","❓","NOT IN LIST","Not found in today's packages",raw.slice(-18)+" | "+stamp);
     soundNotFound();
     speak("Not found");
@@ -894,11 +910,11 @@ function renderDash(){
   // sitting right next to two today-only sections, which is exactly what made
   // the numbers look wrong/inconsistent.
   var teams={"Online Set 1":{c:"#1565C0",p:[]},"Online Set 2":{c:"#2E7D32",p:[]},"Online Set 3":{c:"#E65100",p:[]},"LTL Priority":{c:"#6A1B9A",p:[]}};
-  todayPkgs.forEach(function(p){var t=p.team||"Online Set 1";if(!teams[t])teams[t]={c:"#555",p:[]};teams[t].p.push(p);});
+  todayPkgs.forEach(function(p){var t=p.team||"Online Set 1";if(!teams[t])teams[t]={c:"#6B7280",p:[]};teams[t].p.push(p);});
   var todayConf=todayPkgs.filter(function(p){return confirmed[p.tracking];}).length;
   var todayPct=todayPkgs.length>0?Math.round(todayConf/todayPkgs.length*100):0;
-  var html='<div class="overall"><div class="overall-title">Today (\''+todayStr+'\') Progress</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+todayConf+'</span></div><div class="ostat">Missing <span style="color:'+(todayPkgs.length-todayConf>0?"#F44336":"#4CAF50")+'">'+Math.max(0,todayPkgs.length-todayConf)+'</span></div><div class="ostat">Total <span>'+todayPkgs.length+'</span></div><div class="ostat">Rate <span>'+todayPct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+todayPct+'%;background:'+(todayPct===100?"#4CAF50":todayPct>60?"#2196F3":"#FFC107")+'"></div></div></div>';
-  html+='<div class="overall" style="opacity:.85"><div class="overall-title">All Loaded Dates (Backlog + Today)</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+conf+'</span></div><div class="ostat">Missing <span style="color:'+(total-conf>0?"#F44336":"#4CAF50")+'">'+Math.max(0,total-conf)+'</span></div><div class="ostat">Total <span>'+total+'</span></div><div class="ostat">Rate <span>'+pct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+pct+'%;background:'+(pct===100?"#4CAF50":pct>60?"#2196F3":"#FFC107")+'"></div></div></div>';
+  var html='<div class="overall"><div class="overall-title">Today (\''+todayStr+'\') Progress</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+todayConf+'</span></div><div class="ostat">Missing <span style="color:'+(todayPkgs.length-todayConf>0?"#DC2626":"#16A34A")+'">'+Math.max(0,todayPkgs.length-todayConf)+'</span></div><div class="ostat">Total <span>'+todayPkgs.length+'</span></div><div class="ostat">Rate <span>'+todayPct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+todayPct+'%;background:'+(todayPct===100?"#16A34A":todayPct>60?"#2563EB":"#D97706")+'"></div></div></div>';
+  html+='<div class="overall" style="opacity:.85"><div class="overall-title">All Loaded Dates (Backlog + Today)</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+conf+'</span></div><div class="ostat">Missing <span style="color:'+(total-conf>0?"#DC2626":"#16A34A")+'">'+Math.max(0,total-conf)+'</span></div><div class="ostat">Total <span>'+total+'</span></div><div class="ostat">Rate <span>'+pct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+pct+'%;background:'+(pct===100?"#16A34A":pct>60?"#2563EB":"#D97706")+'"></div></div></div>';
 
   // CARRIER BREAKDOWN — today only
   var carriers={};
@@ -913,7 +929,7 @@ function renderDash(){
     html+='<div class="overall"><div class="overall-title">Today by Carrier</div>';
     carrierKeys.forEach(function(c){
       var ci=carriers[c],cp=ci.total>0?Math.round(ci.conf/ci.total*100):0;
-      html+='<div class="pkg-row" style="border-top:1px solid #0A1628"><div class="pkg-tn" style="flex:1;color:#fff">'+c+'</div><div class="pkg-st" style="width:auto"><span style="color:'+(cp===100?"#4CAF50":"#FFC107")+'">'+ci.conf+' / '+ci.total+'</span></div></div>';
+      html+='<div class="pkg-row" style="border-top:1px solid #EEF0F3"><div class="pkg-tn" style="flex:1;color:#111827;font-family:inherit">'+c+'</div><div class="pkg-st" style="width:auto"><span style="color:'+(cp===100?"#16A34A":"#D97706")+';font-weight:700">'+ci.conf+' / '+ci.total+'</span></div></div>';
     });
     html+='</div>';
   }
@@ -937,7 +953,7 @@ function renderDash(){
     html+='<div class="overall"><div class="overall-title">Today by Account</div>';
     acctKeys.forEach(function(a){
       var ai=accounts[a],ap=ai.total>0?Math.round(ai.conf/ai.total*100):0;
-      html+='<div class="pkg-row" style="border-top:1px solid #0A1628"><div class="pkg-tn" style="flex:1;color:#fff">'+a+'</div><div class="pkg-st" style="width:auto"><span style="color:'+(ap===100?"#4CAF50":"#FFC107")+'">'+ai.conf+' / '+ai.total+'</span></div></div>';
+      html+='<div class="pkg-row" style="border-top:1px solid #EEF0F3"><div class="pkg-tn" style="flex:1;color:#111827;font-family:inherit">'+a+'</div><div class="pkg-st" style="width:auto"><span style="color:'+(ap===100?"#16A34A":"#D97706")+';font-weight:700">'+ai.conf+' / '+ai.total+'</span></div></div>';
     });
     html+='</div>';
   }
@@ -946,9 +962,9 @@ function renderDash(){
   Object.entries(teams).forEach(function(entry){
     var tn=entry[0],ti=entry[1];if(!ti.p.length)return;
     var tc=ti.p.filter(function(p){return confirmed[p.tracking];}).length,tpct=Math.round(tc/ti.p.length*100);
-    html+='<div class="team-block"><div class="team-hdr" style="border-left:5px solid '+ti.c+'"><span>'+tn+'</span><span style="font-size:14px;color:'+(tpct===100?"#4CAF50":"#FFC107")+'">'+tc+' / '+ti.p.length+'</span></div><div class="prog"><div class="prog-fill" style="width:'+tpct+'%;background:'+ti.c+'"></div></div>';
-    ti.p.slice(0,8).forEach(function(p){var ok=confirmed[p.tracking];var isAuto=p.status==="CONFIRMED_AUTO";html+='<div class="pkg-row"><div class="pkg-tn">'+trackLink(p.tracking,p.carrier,"..."+p.tracking.slice(-14))+'</div><div class="pkg-ord">'+(p.order||"")+'</div><div class="pkg-st"><span class="'+(ok?"bOk":"bPend")+'"'+(isAuto?' style="background:#0D3A5C;color:#64B5F6"':'')+'>'+(isAuto?"AUTO":ok?"CONFIRMED":"PENDING")+'</span></div></div>';});
-    if(ti.p.length>8)html+='<div style="padding:7px 14px;font-size:11px;color:#555">+'+(ti.p.length-8)+' more packages</div>';
+    html+='<div class="team-block"><div class="team-hdr" style="border-left:5px solid '+ti.c+'"><span>'+tn+'</span><span style="font-size:14px;color:'+(tpct===100?"#16A34A":"#D97706")+'">'+tc+' / '+ti.p.length+'</span></div><div class="prog"><div class="prog-fill" style="width:'+tpct+'%;background:'+ti.c+'"></div></div>';
+    ti.p.slice(0,8).forEach(function(p){var ok=confirmed[p.tracking];var isAuto=p.status==="CONFIRMED_AUTO";html+='<div class="pkg-row"><div class="pkg-tn">'+trackLink(p.tracking,p.carrier,"..."+p.tracking.slice(-14))+'</div><div class="pkg-ord">'+(p.order||"")+'</div><div class="pkg-st"><span class="'+(ok?"bOk":"bPend")+'"'+(isAuto?' style="background:#EFF6FF;color:#2563EB"':'')+'>'+(isAuto?"AUTO":ok?"CONFIRMED":"PENDING")+'</span></div></div>';});
+    if(ti.p.length>8)html+='<div style="padding:7px 14px;font-size:11px;color:#6B7280">+'+(ti.p.length-8)+' more packages</div>';
     html+='</div>';
   });
   document.getElementById("dash-content").innerHTML=html;
@@ -988,9 +1004,9 @@ function renderMissing(){
     document.getElementById("miss-content").innerHTML='<div class="all-clear"><div style="font-size:48px">All Clear</div><div class="msg">All '+scopePkgs.length+' package(s) for '+scopeStr+' confirmed.</div><div class="sub">Ready for carrier pickup.</div></div>';return;
   }
   var e=getEST(),h=e.getHours();
-  var html='<div style="font-size:11px;color:#555;margin-bottom:8px">Showing: '+scopeStr+'</div>';
-  if(dateFilter===todayStr&&h>=13&&h<14)html+='<div style="background:#7B1F1F;border:1px solid #F44336;border-radius:10px;padding:12px;margin-bottom:10px;font-size:13px">Less than 1 hour to pickup | Find these now</div>';
-  html+='<div style="font-size:14px;color:#F44336;font-weight:700;margin-bottom:12px">'+missing.length+' package(s) not yet scanned for '+scopeStr+'</div>';
+  var html='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">Showing: '+scopeStr+'</div>';
+  if(dateFilter===todayStr&&h>=13&&h<14)html+='<div style="background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;border-radius:10px;padding:12px;margin-bottom:10px;font-size:13px;font-weight:600">Less than 1 hour to pickup | Find these now</div>';
+  html+='<div style="font-size:14px;color:#DC2626;font-weight:700;margin-bottom:12px">'+missing.length+' package(s) not yet scanned for '+scopeStr+'</div>';
 
   // Carrier breakdown for whatever's currently missing in this scope
   var byCarrier={};
@@ -998,7 +1014,7 @@ function renderMissing(){
   var carrierKeys=Object.keys(byCarrier).sort(function(a,b){return byCarrier[b]-byCarrier[a];});
   html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">';
   carrierKeys.forEach(function(c){
-    html+='<div style="background:#0D2B4E;border:1px solid #1F4E79;border-radius:8px;padding:6px 12px;font-size:13px">'+c+' <span style="color:#F44336;font-weight:700">'+byCarrier[c]+'</span></div>';
+    html+='<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:6px 12px;font-size:13px;color:#111827">'+c+' <span style="color:#DC2626;font-weight:700">'+byCarrier[c]+'</span></div>';
   });
   html+='</div>';
 
@@ -1057,46 +1073,46 @@ function onHistLoaded(data){
       var d=entry[0],s=entry[1];
       var total=s.confirmed.length+s.duplicate.length+s.notfound.length;
       html+='<div class="hist-row">';
-      html+='<div class="hist-date">'+d+' &nbsp;<span style="font-size:11px;font-weight:400;color:#aaa">Total scanned: '+total+'</span></div>';
+      html+='<div class="hist-date">'+d+' &nbsp;<span style="font-size:11px;font-weight:400;color:#6B7280">Total scanned: '+total+'</span></div>';
       html+='<div class="hist-stats" style="margin-bottom:8px">';
-      html+='<div class="hist-stat">Confirmed <span style="color:#4CAF50">'+s.confirmed.length+'</span></div>';
-      html+='<div class="hist-stat">Duplicates <span style="color:'+(s.duplicate.length>0?"#F44336":"#aaa")+'">'+s.duplicate.length+'</span></div>';
-      html+='<div class="hist-stat">Not Found <span style="color:'+(s.notfound.length>0?"#FFC107":"#aaa")+'">'+s.notfound.length+'</span></div>';
+      html+='<div class="hist-stat">Confirmed <span style="color:#16A34A">'+s.confirmed.length+'</span></div>';
+      html+='<div class="hist-stat">Duplicates <span style="color:'+(s.duplicate.length>0?"#DC2626":"#6B7280")+'">'+s.duplicate.length+'</span></div>';
+      html+='<div class="hist-stat">Not Found <span style="color:'+(s.notfound.length>0?"#D97706":"#6B7280")+'">'+s.notfound.length+'</span></div>';
       html+='</div>';
       // Show confirmed packages
       if(s.confirmed.length){
-        html+='<div style="font-size:10px;color:#4CAF50;font-weight:700;margin:6px 0 4px;text-transform:uppercase;letter-spacing:.05em">Confirmed ('+ s.confirmed.length+')</div>';
+        html+='<div style="font-size:10px;color:#16A34A;font-weight:700;margin:6px 0 4px;text-transform:uppercase;letter-spacing:.05em">Confirmed ('+ s.confirmed.length+')</div>';
         s.confirmed.forEach(function(r){
           var isAuto=r.status==="CONFIRMED_AUTO";
-          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center'+(isAuto?';border-left:3px solid #64B5F6':'')+'">';
-          html+='<span style="color:'+(isAuto?"#64B5F6":"#4CAF50")+';font-weight:700;font-size:10px;min-width:30px">'+(isAuto?"AUTO":"OK")+'</span>';
-          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
-          html+='<span style="color:#bbb;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
-          html+='<span style="color:#555;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
+          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#F9FAFB;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center'+(isAuto?';border-left:3px solid #2563EB':'')+'">';
+          html+='<span style="color:'+(isAuto?"#2563EB":"#16A34A")+';font-weight:700;font-size:10px;min-width:30px">'+(isAuto?"AUTO":"OK")+'</span>';
+          html+='<span style="font-family:monospace;color:#2563EB;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
+          html+='<span style="color:#6B7280;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
+          html+='<span style="color:#6B7280;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
           html+='</div>';
         });
       }
       // Show duplicates
       if(s.duplicate.length){
-        html+='<div style="font-size:10px;color:#F44336;font-weight:700;margin:8px 0 4px;text-transform:uppercase;letter-spacing:.05em">Duplicates ('+ s.duplicate.length+')</div>';
+        html+='<div style="font-size:10px;color:#DC2626;font-weight:700;margin:8px 0 4px;text-transform:uppercase;letter-spacing:.05em">Duplicates ('+ s.duplicate.length+')</div>';
         s.duplicate.forEach(function(r){
-          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center;border-left:3px solid #F44336">';
-          html+='<span style="color:#F44336;font-weight:700;font-size:10px;min-width:16px">DUP</span>';
-          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
-          html+='<span style="color:#bbb;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
-          html+='<span style="color:#555;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
+          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#F9FAFB;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center;border-left:3px solid #DC2626">';
+          html+='<span style="color:#DC2626;font-weight:700;font-size:10px;min-width:16px">DUP</span>';
+          html+='<span style="font-family:monospace;color:#2563EB;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
+          html+='<span style="color:#6B7280;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
+          html+='<span style="color:#6B7280;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
           html+='</div>';
         });
       }
       // Show not found
       if(s.notfound.length){
-        html+='<div style="font-size:10px;color:#FFC107;font-weight:700;margin:8px 0 4px;text-transform:uppercase;letter-spacing:.05em">Not Found ('+ s.notfound.length+')</div>';
+        html+='<div style="font-size:10px;color:#D97706;font-weight:700;margin:8px 0 4px;text-transform:uppercase;letter-spacing:.05em">Not Found ('+ s.notfound.length+')</div>';
         s.notfound.forEach(function(r){
-          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center">';
-          html+='<span style="color:#FFC107;font-weight:700;font-size:10px;min-width:16px">NF</span>';
-          html+='<span style="font-family:monospace;color:#90CAF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
-          html+='<span style="color:#bbb;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
-          html+='<span style="color:#555;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
+          html+='<div style="display:flex;gap:8px;padding:5px 8px;background:#F9FAFB;border-radius:6px;margin-bottom:3px;font-size:11px;align-items:center">';
+          html+='<span style="color:#D97706;font-weight:700;font-size:10px;min-width:16px">NF</span>';
+          html+='<span style="font-family:monospace;color:#2563EB;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
+          html+='<span style="color:#6B7280;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
+          html+='<span style="color:#6B7280;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
           html+='</div>';
         });
       }
@@ -1163,24 +1179,24 @@ function doSearch(q){
   if(!results.length){el.innerHTML='<div class="empty">No results for "'+q+'"</div>';return;}
   var trackIdx={};
   trackingData.forEach(function(t){trackIdx[t.tracking]=t;});
-  var html='<div style="font-size:11px;color:#555;margin-bottom:8px">'+results.length+' result'+(results.length>1?'s':'')+' found</div>';
+  var html='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">'+results.length+' result'+(results.length>1?'s':'')+' found</div>';
   results.slice(0,60).forEach(function(p){
     var ok=confirmed[p.tracking];
     var trk=trackIdx[p.tracking];
-    var trkLabel="",trkColor="#777";
+    var trkLabel="",trkColor="#6B7280";
     if(trk){
-      if(trk.delivered){trkLabel="Carrier: Delivered"+(trk.deliveredDate?" "+trk.deliveredDate:"");trkColor="#4CAF50";}
-      else if(trk.lastError){trkLabel="Carrier: check failed";trkColor="#FF9800";}
-      else if(trk.hasMovement){trkLabel="Carrier: In Transit"+(trk.latestLocation?" — "+trk.latestLocation:"");trkColor="#2196F3";}
-      else{trkLabel="Carrier: No movement yet";trkColor="#F44336";}
+      if(trk.delivered){trkLabel="Carrier: Delivered"+(trk.deliveredDate?" "+trk.deliveredDate:"");trkColor="#16A34A";}
+      else if(trk.lastError){trkLabel="Carrier: check failed";trkColor="#D97706";}
+      else if(trk.hasMovement){trkLabel="Carrier: In Transit"+(trk.latestLocation?" — "+trk.latestLocation:"");trkColor="#2563EB";}
+      else{trkLabel="Carrier: No movement yet";trkColor="#DC2626";}
     }
-    html+='<div style="background:#0D2B4E;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #1F4E79">';
+    html+='<div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #E5E7EB;box-shadow:0 1px 2px rgba(16,24,40,.06)">';
     html+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">';
-    html+='<span style="font-family:monospace;color:#90CAF9;font-size:12px">'+trackLink(p.tracking,p.carrier)+'</span>';
-    html+='<span style="color:'+(ok?'#4CAF50':'#FFC107')+';font-weight:700;font-size:11px">'+(ok?'CONFIRMED':'PENDING')+'</span>';
+    html+='<span style="font-family:monospace;color:#2563EB;font-size:12px">'+trackLink(p.tracking,p.carrier)+'</span>';
+    html+='<span style="color:'+(ok?'#16A34A':'#D97706')+';font-weight:700;font-size:11px">'+(ok?'CONFIRMED':'PENDING')+'</span>';
     html+='</div>';
-    html+='<div style="font-size:11px;color:#bbb">'+(p.order||'')+(p.customer?' | '+p.customer:'')+'</div>';
-    html+='<div style="font-size:10px;color:#555;margin-top:3px">'+(p.team||'')+(p.carrier?' | '+p.carrier:'')+(p.date?' | '+p.date:'')+'</div>';
+    html+='<div style="font-size:11px;color:#6B7280">'+(p.order||'')+(p.customer?' | '+p.customer:'')+'</div>';
+    html+='<div style="font-size:10px;color:#6B7280;margin-top:3px">'+(p.team||'')+(p.carrier?' | '+p.carrier:'')+(p.date?' | '+p.date:'')+'</div>';
     if(trkLabel)html+='<div style="font-size:10px;color:'+trkColor+';margin-top:3px;font-weight:700">'+trkLabel+'</div>';
     html+='</div>';
   });
@@ -1217,30 +1233,30 @@ function renderReport(){
   html+='<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">'+title+'</div>';
   html+='<div style="font-size:11px;color:rgba(255,255,255,.7)">Generated: '+tStr+' ET | Boost Oxygen LLC</div>';
   html+='</div>';
-  html+='<div style="background:#0D2B4E;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #1F4E79">';
+  html+='<div style="background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #E5E7EB;box-shadow:0 1px 2px rgba(16,24,40,.06)">';
   html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">';
-  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#4CAF50">'+conf.length+'</div><div style="font-size:10px;color:#aaa">Confirmed</div></div>';
-  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#F44336">'+miss.length+'</div><div style="font-size:10px;color:#aaa">Missing</div></div>';
-  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#FFC107">'+dupCount+'</div><div style="font-size:10px;color:#aaa">Duplicates</div></div>';
-  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#fff">'+pkgs.length+'</div><div style="font-size:10px;color:#aaa">Total</div></div>';
+  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#16A34A">'+conf.length+'</div><div style="font-size:10px;color:#6B7280">Confirmed</div></div>';
+  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#DC2626">'+miss.length+'</div><div style="font-size:10px;color:#6B7280">Missing</div></div>';
+  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#D97706">'+dupCount+'</div><div style="font-size:10px;color:#6B7280">Duplicates</div></div>';
+  html+='<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#111827">'+pkgs.length+'</div><div style="font-size:10px;color:#6B7280">Total</div></div>';
   html+='</div></div>';
   if(conf.length){
-    html+='<div style="font-size:11px;color:#4CAF50;font-weight:700;margin:10px 0 6px;text-transform:uppercase">Confirmed ('+conf.length+')</div>';
+    html+='<div style="font-size:11px;color:#16A34A;font-weight:700;margin:10px 0 6px;text-transform:uppercase">Confirmed ('+conf.length+')</div>';
     conf.forEach(function(p){
-      html+='<div style="display:flex;gap:8px;padding:6px 10px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;border-left:3px solid #4CAF50">';
-      html+='<span style="font-family:monospace;color:#90CAF9;flex:1">'+trackLink(p.tracking,p.carrier)+'</span>';
-      html+='<span style="color:#bbb;width:80px">'+(p.order||'')+'</span>';
-      html+='<span style="color:#555;width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(p.customer||'')+'</span>';
+      html+='<div style="display:flex;gap:8px;padding:6px 10px;background:#F9FAFB;border-radius:6px;margin-bottom:3px;font-size:11px;border-left:3px solid #16A34A">';
+      html+='<span style="font-family:monospace;color:#2563EB;flex:1">'+trackLink(p.tracking,p.carrier)+'</span>';
+      html+='<span style="color:#6B7280;width:80px">'+(p.order||'')+'</span>';
+      html+='<span style="color:#6B7280;width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(p.customer||'')+'</span>';
       html+='</div>';
     });
   }
   if(miss.length){
-    html+='<div style="font-size:11px;color:#F44336;font-weight:700;margin:10px 0 6px;text-transform:uppercase">Not Confirmed ('+miss.length+')</div>';
+    html+='<div style="font-size:11px;color:#DC2626;font-weight:700;margin:10px 0 6px;text-transform:uppercase">Not Confirmed ('+miss.length+')</div>';
     miss.forEach(function(p){
-      html+='<div style="display:flex;gap:8px;padding:6px 10px;background:#0A1628;border-radius:6px;margin-bottom:3px;font-size:11px;border-left:3px solid #F44336">';
-      html+='<span style="font-family:monospace;color:#90CAF9;flex:1">'+trackLink(p.tracking,p.carrier)+'</span>';
-      html+='<span style="color:#bbb;width:80px">'+(p.order||'')+'</span>';
-      html+='<span style="color:#555;width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(p.customer||'')+'</span>';
+      html+='<div style="display:flex;gap:8px;padding:6px 10px;background:#F9FAFB;border-radius:6px;margin-bottom:3px;font-size:11px;border-left:3px solid #DC2626">';
+      html+='<span style="font-family:monospace;color:#2563EB;flex:1">'+trackLink(p.tracking,p.carrier)+'</span>';
+      html+='<span style="color:#6B7280;width:80px">'+(p.order||'')+'</span>';
+      html+='<span style="color:#6B7280;width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(p.customer||'')+'</span>';
       html+='</div>';
     });
   }
@@ -1255,7 +1271,7 @@ function printReport(){
     if(!content){return;}
     var w=window.open("","_blank");
     w.document.write("<html><head><title>Boost Oxygen Scan Report</title>");
-    w.document.write("<style>body{font-family:Arial,sans-serif;background:#0D1B2A;color:#fff;padding:20px;font-size:12px}@media print{body{background:#fff;color:#000}}</style>");
+    w.document.write("<style>body{font-family:-apple-system,'Segoe UI',Arial,sans-serif;background:#fff;color:#111827;padding:20px;font-size:12px}@media print{body{background:#fff;color:#000}}</style>");
     w.document.write("</head><body>");
     w.document.write(content.innerHTML);
     w.document.write("</body></html>");
@@ -1313,8 +1329,8 @@ function svgBarChart(items,opts){
     var x=10+idx*(barW+10);
     var y=h-barH;
     svg+='<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(2,barH)+'" rx="4" fill="'+it.color+'"></rect>';
-    svg+='<text x="'+(x+barW/2)+'" y="'+Math.max(12,y-6)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">'+it.value+(opts.suffix||'')+'</text>';
-    svg+='<text x="'+(x+barW/2)+'" y="'+(h+18)+'" text-anchor="middle" font-size="11" fill="#aaa">'+it.label+'</text>';
+    svg+='<text x="'+(x+barW/2)+'" y="'+Math.max(12,y-6)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#111827">'+it.value+(opts.suffix||'')+'</text>';
+    svg+='<text x="'+(x+barW/2)+'" y="'+(h+18)+'" text-anchor="middle" font-size="11" fill="#6B7280">'+it.label+'</text>';
   });
   svg+='</svg>';
   return svg;
@@ -1386,12 +1402,12 @@ function renderTracking(){
   html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px">';
   carriers.forEach(function(c){
     var s=stats[c];
-    var otdColor=s.otdPct===null?"#777":s.otdPct>=90?"#4CAF50":s.otdPct>=75?"#FFC107":"#F44336";
+    var otdColor=s.otdPct===null?"#6B7280":s.otdPct>=90?"#16A34A":s.otdPct>=75?"#D97706":"#DC2626";
     html+='<div class="overall" style="margin-bottom:0"><div class="overall-title">'+c+'</div>';
     html+='<div style="font-size:28px;font-weight:700;color:'+otdColor+'">'+(s.otdPct===null?"—":s.otdPct+"%")+'</div>';
-    html+='<div style="font-size:11px;color:#aaa;margin-bottom:8px">On-Time Delivery'+(s.otdEligible?(' ('+s.otdEligible+' rated)'):' (no data yet)')+'</div>';
-    html+='<div style="font-size:12px;color:#ccc">Delivered <span style="color:#4CAF50;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2196F3;font-weight:700">'+s.inTransit+'</span> &nbsp;Stuck <span style="color:#F44336;font-weight:700">'+s.stuck+'</span></div>';
-    if(s.errored>0)html+='<div style="font-size:11px;color:#FF9800;margin-top:4px">⚠ '+s.errored+' package(s) — API check failed, not counted anywhere above</div>';
+    html+='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">On-Time Delivery'+(s.otdEligible?(' ('+s.otdEligible+' rated)'):' (no data yet)')+'</div>';
+    html+='<div style="font-size:12px;color:#4B5563">Delivered <span style="color:#16A34A;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2563EB;font-weight:700">'+s.inTransit+'</span> &nbsp;Stuck <span style="color:#DC2626;font-weight:700">'+s.stuck+'</span></div>';
+    if(s.errored>0)html+='<div style="font-size:11px;color:#D97706;margin-top:4px">⚠ '+s.errored+' package(s) — API check failed, not counted anywhere above</div>';
     html+='</div>';
   });
   html+='</div>';
@@ -1400,18 +1416,18 @@ function renderTracking(){
   html+='<div class="overall"><div class="overall-title">On-Time Delivery % by Carrier</div>';
   html+=svgBarChart(carriers.map(function(c){
     var pct=stats[c].otdPct===null?0:stats[c].otdPct;
-    return {label:c,value:pct,color:stats[c].otdPct===null?"#555":pct>=90?"#4CAF50":pct>=75?"#FFC107":"#F44336"};
+    return {label:c,value:pct,color:stats[c].otdPct===null?"#6B7280":pct>=90?"#16A34A":pct>=75?"#D97706":"#DC2626"};
   }),{max:100,suffix:"%"});
   html+='</div>';
 
   html+='<div class="overall"><div class="overall-title">Delivered vs In Transit vs Stuck vs Error</div><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around">';
   carriers.forEach(function(c){
-    html+='<div style="text-align:center"><div style="font-size:11px;color:#FFD700;font-weight:700;margin-bottom:6px">'+c+'</div>';
+    html+='<div style="text-align:center"><div style="font-size:11px;color:#1F4E79;font-weight:700;margin-bottom:6px">'+c+'</div>';
     html+=svgBarChart([
-      {label:"Del",value:stats[c].delivered,color:"#4CAF50"},
-      {label:"Trans",value:stats[c].inTransit,color:"#2196F3"},
-      {label:"Stuck",value:stats[c].stuck,color:"#F44336"},
-      {label:"Err",value:stats[c].errored,color:"#FF9800"}
+      {label:"Del",value:stats[c].delivered,color:"#16A34A"},
+      {label:"Trans",value:stats[c].inTransit,color:"#2563EB"},
+      {label:"Stuck",value:stats[c].stuck,color:"#DC2626"},
+      {label:"Err",value:stats[c].errored,color:"#D97706"}
     ],{width:200,height:100});
     html+='</div>';
   });
@@ -1422,12 +1438,12 @@ function renderTracking(){
   // treat this list as "confirmed no movement."
   var errorList=trackingErrorList(scoped,carrierFilter);
   if(errorList.length){
-    html+='<div class="overall" style="border-color:#FF9800"><div class="overall-title" style="color:#FF9800">⚠ API Check Failed — Not Real Status ('+errorList.length+')</div>';
-    html+='<div style="font-size:12px;color:#ccc;margin-bottom:10px">These packages were never actually checked — the carrier API call itself failed. Fix the underlying API issue (see carrier_reconcile.py output), then re-run to get real data. Do not treat these as stuck.</div>';
+    html+='<div class="overall" style="border-color:#D97706"><div class="overall-title" style="color:#D97706">⚠ API Check Failed — Not Real Status ('+errorList.length+')</div>';
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">These packages were never actually checked — the carrier API call itself failed. Fix the underlying API issue (see carrier_reconcile.py output), then re-run to get real data. Do not treat these as stuck.</div>';
     var errByReason={};
     errorList.forEach(function(t){var reason=(t.lastError||"Unknown error").slice(0,40);if(!errByReason[reason])errByReason[reason]=0;errByReason[reason]++;});
     Object.keys(errByReason).sort(function(a,b){return errByReason[b]-errByReason[a];}).forEach(function(reason){
-      html+='<div style="font-size:11px;color:#FF9800;margin-bottom:3px">'+errByReason[reason]+'x — '+reason+'</div>';
+      html+='<div style="font-size:11px;color:#D97706;margin-bottom:3px">'+errByReason[reason]+'x — '+reason+'</div>';
     });
     html+='</div>';
   }
@@ -1439,7 +1455,7 @@ function renderTracking(){
     +'<span>Needs Investigation — No Carrier Movement Yet ('+stuckList.length+')</span>'
     +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStuckList()">Copy list for carrier email</button></div>';
   if(!stuckList.length){
-    html+='<div style="color:#4CAF50;font-size:13px;padding:10px 0">No stuck packages right now.</div>';
+    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">No stuck packages right now.</div>';
   }else{
     var byLoc={};
     stuckList.forEach(function(t){var loc=t.latestLocation||"Unknown location";if(!byLoc[loc])byLoc[loc]=[];byLoc[loc].push(t);});
@@ -1447,7 +1463,7 @@ function renderTracking(){
     locKeys.forEach(function(loc){
       html+='<div class="sec-hdr">'+loc+' ('+byLoc[loc].length+')</div>';
       byLoc[loc].forEach(function(t){
-        html+='<div class="miss-card" style="border-left-color:#F44336"><div class="miss-tn">'+trackLink(t.tracking,t.carrier)+'</div>';
+        html+='<div class="miss-card" style="border-left-color:#DC2626"><div class="miss-tn">'+trackLink(t.tracking,t.carrier)+'</div>';
         html+='<div class="miss-info">'+(t.order||"?")+" | "+(t.customer||"Unknown")+'</div>';
         html+='<div class="miss-info">'+t.carrier+" | "+(t.latestStatus||"No scan yet")+'</div></div>';
       });
@@ -1463,18 +1479,18 @@ function renderTracking(){
     html+='<div class="empty">No tracked packages for this filter.</div>';
   }
   tableList.slice(0,300).forEach(function(t){
-    var statusColor=t.delivered?"#4CAF50":t.lastError?"#FF9800":(!t.hasMovement)?"#F44336":"#2196F3";
+    var statusColor=t.delivered?"#16A34A":t.lastError?"#D97706":(!t.hasMovement)?"#DC2626":"#2563EB";
     var statusLabel=t.delivered?"DELIVERED":t.lastError?"API ERROR":(t.latestStatus||"No scan yet");
-    html+='<div style="background:#0D2B4E;border-radius:10px;padding:10px 14px;margin-bottom:6px;border:1px solid #1F4E79;border-left:3px solid '+statusColor+'">';
+    html+='<div style="background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:6px;border:1px solid #E5E7EB;border-left:3px solid '+statusColor+'">';
     html+='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">';
-    html+='<span style="font-family:monospace;color:#90CAF9;font-size:13px">'+trackLink(t.tracking,t.carrier)+'</span>';
+    html+='<span style="font-family:monospace;color:#2563EB;font-size:13px">'+trackLink(t.tracking,t.carrier)+'</span>';
     html+='<span style="color:'+statusColor+';font-weight:700;font-size:12px">'+statusLabel+'</span>';
     html+='</div>';
-    html+='<div style="font-size:12px;color:#bbb;margin-top:3px">'+t.carrier+" | "+(t.order||"")+(t.customer?" | "+t.customer:"")+'</div>';
-    html+='<div style="font-size:11px;color:#777;margin-top:3px">'+(t.latestLocation||"")+(t.promisedDate?" | Promised: "+t.promisedDate:"")+'</div>';
+    html+='<div style="font-size:12px;color:#6B7280;margin-top:3px">'+t.carrier+" | "+(t.order||"")+(t.customer?" | "+t.customer:"")+'</div>';
+    html+='<div style="font-size:11px;color:#6B7280;margin-top:3px">'+(t.latestLocation||"")+(t.promisedDate?" | Promised: "+t.promisedDate:"")+'</div>';
     html+='</div>';
   });
-  if(tableList.length>300)html+='<div style="text-align:center;color:#555;font-size:12px;padding:10px">+'+(tableList.length-300)+' more — narrow with the filters above</div>';
+  if(tableList.length>300)html+='<div style="text-align:center;color:#6B7280;font-size:12px;padding:10px">+'+(tableList.length-300)+' more — narrow with the filters above</div>';
 
   el.innerHTML=html;
 }
@@ -1590,7 +1606,7 @@ window.addEventListener("load",function(){
 <div id="pin-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,22,40,.97);align-items:center;justify-content:center">
   <div style="text-align:center;padding:30px;width:100%;max-width:340px">
     <div style="font-size:20px;font-weight:900;color:#1F4E79;background:#fff;border-radius:6px;display:inline-block;padding:4px 12px;margin-bottom:10px">BOOST<span style="color:#C8402A">+</span> OXYGEN</div>
-    <div style="font-size:13px;color:#aaa;margin-bottom:6px">Package Scan Confirm</div>
+    <div style="font-size:13px;color:#6B7280;margin-bottom:6px">Package Scan Confirm</div>
     <div style="font-size:14px;color:#fff;font-weight:700;margin-bottom:20px">Enter PIN to access Scanner</div>
     <div style="display:flex;gap:14px;justify-content:center;margin-bottom:24px">
       <div style="width:14px;height:14px;border-radius:50%;border:2px solid #2E75B6" id="pd0"></div>
@@ -1608,12 +1624,12 @@ window.addEventListener("load",function(){
       <button onclick="pk(7)" style="height:58px;background:#0D2B4E;border:1px solid #2E75B6;border-radius:10px;color:#fff;font-size:24px;font-weight:700;cursor:pointer">7</button>
       <button onclick="pk(8)" style="height:58px;background:#0D2B4E;border:1px solid #2E75B6;border-radius:10px;color:#fff;font-size:24px;font-weight:700;cursor:pointer">8</button>
       <button onclick="pk(9)" style="height:58px;background:#0D2B4E;border:1px solid #2E75B6;border-radius:10px;color:#fff;font-size:24px;font-weight:700;cursor:pointer">9</button>
-      <button onclick="pclr()" style="height:58px;background:#7B1F1F;border:1px solid #F44336;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">CLR</button>
+      <button onclick="pclr()" style="height:58px;background:#7B1F1F;border:1px solid #DC2626;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">CLR</button>
       <button onclick="pk(0)" style="height:58px;background:#0D2B4E;border:1px solid #2E75B6;border-radius:10px;color:#fff;font-size:24px;font-weight:700;cursor:pointer">0</button>
-      <button onclick="psub()" style="height:58px;background:#1B5E20;border:1px solid #4CAF50;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">OK</button>
+      <button onclick="psub()" style="height:58px;background:#1B5E20;border:1px solid #16A34A;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">OK</button>
     </div>
-    <div id="perr" style="color:#F44336;font-size:13px;min-height:18px;margin-bottom:10px"></div>
-    <button onclick="pinExit()" style="background:transparent;border:1px solid #2E75B6;color:#90CAF9;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;width:100%">Exit — go to other tabs</button>
+    <div id="perr" style="color:#DC2626;font-size:13px;min-height:18px;margin-bottom:10px"></div>
+    <button onclick="pinExit()" style="background:transparent;border:1px solid #2E75B6;color:#2563EB;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;width:100%">Exit — go to other tabs</button>
   </div>
 </div>
 
