@@ -787,6 +787,17 @@ function postScan(tn,status){
   setSyncQueue(q);
   sendQueueItem(item);
 }
+function dropFromQueue(id){
+  var q=getSyncQueue().filter(function(it){return it.id!==id;});
+  setSyncQueue(q);
+}
+// A duplicate alert deliberately does NOT change the package's status on the
+// server (re-scanning something already found must never un-confirm it). That
+// means it can never be verified by comparing the server status back, so it has
+// to be cleared here on the server's own success reply. Without this it stayed
+// in the queue forever and rewrote a history row every 15 seconds - one package
+// alone had accumulated 1,723 duplicate rows this way.
+function isNonMutatingStatus(s){return s==="DUPLICATE"||s==="HISTORICAL_DUPLICATE";}
 function sendQueueItem(item){
   item.attempts++;
   item.lastTry=Date.now();
@@ -795,6 +806,7 @@ function sendQueueItem(item){
   setSyncQueue(q);
   var d=item.data;
   sbRpc("confirm_scan",{p_tracking:d.tracking,p_status:d.status,p_scantime:d.scantime,p_date:d.date,p_order:d.order,p_customer:d.customer,p_team:d.team,p_carrier:d.carrier})
+    .then(function(){ if(isNonMutatingStatus(d.status))dropFromQueue(item.id); })
     .catch(function(err){console.error("confirm_scan failed, will retry via sync queue",err);});
 }
 // Called after every fresh packages load - the only thing that actually clears
@@ -808,7 +820,10 @@ function verifySyncQueue(){
     var d=item.data;
     var serverPkg=allPkgs[d.tracking];
     if(serverPkg&&serverPkg.status===d.status)return; // verified saved - drop from queue
+    if(isNonMutatingStatus(d.status))return;          // cleared on send; never verifiable by status
     if(!serverPkg&&d.status==="NOT_FOUND"&&item.attempts>=4)return; // audit-only log, can't verify against a package row - best effort
+    // Hard stop so no item can ever loop indefinitely, whatever its status.
+    if(item.attempts>=8)return;
     if(now-item.lastTry>15000)sendQueueItem(item);
     stillPending.push(item);
   });
