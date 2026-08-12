@@ -73,7 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .b-ok{background:var(--green);color:#fff;border-color:var(--green-dk)}
 .b-warn{background:var(--red-a);color:#fff;border-color:var(--red-dk)}
 
-/* COUNTERS — fully colored tiles so the three states read instantly from
+/* COUNTERS - fully colored tiles so the three states read instantly from
    across the warehouse floor, not just a thin accent line. */
 .ctr-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
 .ctr{border-radius:12px;padding:16px 10px;text-align:center;border:2px solid;box-shadow:var(--shadow-sm)}
@@ -203,7 +203,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .flash-overlay.show{display:flex}
 @keyframes fadeInBg{from{opacity:0}to{opacity:1}}
 /* Full-bleed color: at a glance from a distance, mid-scan, the COLOR is the
-   message — green good / red duplicate / amber not-found. White text on a
+   message - green good / red duplicate / amber not-found. White text on a
    saturated panel reads far faster than a white card with a colored edge. */
 .flash-box{
   width:85%;max-width:380px;border-radius:20px;
@@ -375,7 +375,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 </div>
 
 <script>
-// Backend is Supabase (Postgres) as of 2026-08-11 — replaced the Google
+// Backend is Supabase (Postgres) as of 2026-08-11 - replaced the Google
 // Sheet + Apps Script backend (row-limit concerns as volume grows: Sheets
 // caps out around 10M cells). SUPABASE_ANON_KEY is a publishable/public key
 // by design (same trust level GAS's URL had, embedded here same as before);
@@ -384,7 +384,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 var SUPABASE_URL="https://oohccefkywcfhlugucag.supabase.co";
 var SUPABASE_ANON_KEY="sb_publishable_bccIZypPxWNiBpW6oYifFw_LlEHvcME";
 var SB_HEADERS={"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY,"Content-Type":"application/json"};
-// PostgREST caps a single response at 1000 rows by default — with 5900+
+// PostgREST caps a single response at 1000 rows by default - with 5900+
 // packages and 8900+ history rows, a plain GET silently truncates. Page
 // through with Range headers until Content-Range says there's no more.
 function sbGet(table,query){
@@ -440,7 +440,7 @@ function hideFlash(){
   setTimeout(function(){document.getElementById("scan-input").focus();},50);
 }
 
-// SOUNDS + VOICE (max volume — warehouse floor noise)
+// SOUNDS + VOICE (max volume - warehouse floor noise)
 function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
 function beep(freq,dur,type,vol){
   try{
@@ -550,7 +550,7 @@ function showTab(id){
 // CLEAN SCANNER INPUT
 // Inateck GS1-128 scans prepend junk that is NOT part of the real tracking number:
 // NF2900 flag, USPS GS1 application identifiers (8988/2900), UPS Mail Innovations
-// 420+ZIP prefix, and assorted unknown 4-digit junk prefixes (9431/9474/etc — new
+// 420+ZIP prefix, and assorted unknown 4-digit junk prefixes (9431/9474/etc - new
 // prefix values keep showing up, so the fallback below is length-based, not a fixed
 // list: it trusts that a real USPS 94xxxxxxxxxxxxxxxxxxxx tracking number is always
 // exactly 22 digits and strips whatever extra digits sit before or after it).
@@ -574,7 +574,7 @@ function cleanTrackingNumber(raw){
   return cleaned;
 }
 
-// CARRIER TRACKING LINKS — every displayed tracking number becomes a clickable
+// CARRIER TRACKING LINKS - every displayed tracking number becomes a clickable
 // link straight to that carrier's own tracking page, so nobody has to copy/paste
 // into FedEx/UPS/USPS's site by hand to check on a package.
 function carrierTrackUrl(carrier,tn){
@@ -748,9 +748,9 @@ function processCode(raw){
   setTimeout(function(){document.getElementById("scan-input").focus();},100);
 }
 
-// POST TO SHEET — DURABLE SYNC QUEUE
+// POST TO SHEET - DURABLE SYNC QUEUE
 // Every scan is written to localStorage FIRST (survives a crash/reload/closed tab),
-// then sent. The screen showing "CONFIRMED" no longer means "saved" by itself —
+// then sent. The screen showing "CONFIRMED" no longer means "saved" by itself -
 // an item only leaves the queue once loadPkgs() re-fetches the sheet and the
 // server's own status actually matches what we tried to save. Anything not yet
 // verified gets retried automatically. This closes the gap where a scan looked
@@ -770,7 +770,7 @@ function updateSyncBadge(q){
   if(!el)return;
   if(!q.length){el.style.display="none";return;}
   el.style.display="block";
-  el.textContent="⏳ Syncing "+q.length+" scan"+(q.length>1?"s":"")+" to Supabase — do not close this page";
+  el.textContent="⏳ Syncing "+q.length+" scan"+(q.length>1?"s":"")+" to Supabase - do not close this page";
 }
 function postScan(tn,status){
   var e=getEST(),h=e.getHours(),m=e.getMinutes();
@@ -797,7 +797,7 @@ function sendQueueItem(item){
   sbRpc("confirm_scan",{p_tracking:d.tracking,p_status:d.status,p_scantime:d.scantime,p_date:d.date,p_order:d.order,p_customer:d.customer,p_team:d.team,p_carrier:d.carrier})
     .catch(function(err){console.error("confirm_scan failed, will retry via sync queue",err);});
 }
-// Called after every fresh packages load — the only thing that actually clears
+// Called after every fresh packages load - the only thing that actually clears
 // a queue item is the server's own data confirming it landed.
 function verifySyncQueue(){
   var q=getSyncQueue();
@@ -807,8 +807,8 @@ function verifySyncQueue(){
   q.forEach(function(item){
     var d=item.data;
     var serverPkg=allPkgs[d.tracking];
-    if(serverPkg&&serverPkg.status===d.status)return; // verified saved — drop from queue
-    if(!serverPkg&&d.status==="NOT_FOUND"&&item.attempts>=4)return; // audit-only log, can't verify against a package row — best effort
+    if(serverPkg&&serverPkg.status===d.status)return; // verified saved - drop from queue
+    if(!serverPkg&&d.status==="NOT_FOUND"&&item.attempts>=4)return; // audit-only log, can't verify against a package row - best effort
     if(now-item.lastTry>15000)sendQueueItem(item);
     stillPending.push(item);
   });
@@ -839,7 +839,7 @@ function onPkgsLoaded(data){
         allPkgs[p.tracking.trim()]=p;
         // DUPLICATE/HISTORICAL_DUPLICATE only ever get set on a package that was
         // ALREADY confirmed (that's what triggers the duplicate alert in the
-        // first place) — so they must still count as confirmed here. Otherwise
+        // first place) - so they must still count as confirmed here. Otherwise
         // an accidental re-scan of an already-found package makes it look
         // "never scanned" and it reappears in Missing, even though it was found.
         if(p.status==="CONFIRMED"||p.status==="CONFIRMED_AUTO"||p.status==="DUPLICATE"||p.status==="HISTORICAL_DUPLICATE") confirmed[p.tracking.trim()]=true;
@@ -875,7 +875,7 @@ function onPkgsLoaded(data){
     if(document.getElementById("tab-miss").classList.contains("active"))renderMissing();
 }
 
-// ACCOUNT DETECTION — normalizes known chains, auto-buckets any other business name.
+// ACCOUNT DETECTION - normalizes known chains, auto-buckets any other business name.
 // Add more entries here any time a chain should get its own clean label.
 var ACCOUNT_ALIASES={
   "WAL":"Walmart","WALMART":"Walmart","WALGREEN":"Walgreens","WALGREENS":"Walgreens",
@@ -910,7 +910,7 @@ function renderDash(){
   var todayStr=getTodayStr();
   var todayPkgs=Object.values(allPkgs).filter(function(p){return p.date===todayStr;});
   // Team breakdown scoped to TODAY, matching "Today by Carrier"/"Today by
-  // Account" right above it — this used to silently pull all-time data while
+  // Account" right above it - this used to silently pull all-time data while
   // sitting right next to two today-only sections, which is exactly what made
   // the numbers look wrong/inconsistent.
   var teams={"Online Set 1":{c:"#1565C0",p:[]},"Online Set 2":{c:"#2E7D32",p:[]},"Online Set 3":{c:"#E65100",p:[]},"LTL Priority":{c:"#6A1B9A",p:[]}};
@@ -920,7 +920,7 @@ function renderDash(){
   var html='<div class="overall"><div class="overall-title">Today (\''+todayStr+'\') Progress</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+todayConf+'</span></div><div class="ostat">Missing <span style="color:'+(todayPkgs.length-todayConf>0?"#DC2626":"#16A34A")+'">'+Math.max(0,todayPkgs.length-todayConf)+'</span></div><div class="ostat">Total <span>'+todayPkgs.length+'</span></div><div class="ostat">Rate <span>'+todayPct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+todayPct+'%;background:'+(todayPct===100?"#16A34A":todayPct>60?"#2563EB":"#D97706")+'"></div></div></div>';
   html+='<div class="overall" style="opacity:.85"><div class="overall-title">All Loaded Dates (Backlog + Today)</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+conf+'</span></div><div class="ostat">Missing <span style="color:'+(total-conf>0?"#DC2626":"#16A34A")+'">'+Math.max(0,total-conf)+'</span></div><div class="ostat">Total <span>'+total+'</span></div><div class="ostat">Rate <span>'+pct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+pct+'%;background:'+(pct===100?"#16A34A":pct>60?"#2563EB":"#D97706")+'"></div></div></div>';
 
-  // CARRIER BREAKDOWN — today only
+  // CARRIER BREAKDOWN - today only
   var carriers={};
   todayPkgs.forEach(function(p){
     var c=p.carrier||"Unknown";
@@ -938,7 +938,7 @@ function renderDash(){
     html+='</div>';
   }
 
-  // KEY ACCOUNT BREAKDOWN — today only. Auto-detects ANY business account from the
+  // KEY ACCOUNT BREAKDOWN - today only. Auto-detects ANY business account from the
   // customer name (not a fixed brand list) so new retailers show up on their own;
   // ACCOUNT_ALIASES just normalizes known chains to a clean display name.
   var accounts={};
@@ -1029,10 +1029,10 @@ function renderMissing(){
   }
 
   if(dateFilter){
-    // single date selected — flat list, already all the same date
+    // single date selected - flat list, already all the same date
     missing.forEach(function(p){html+=missCard(p);});
   }else{
-    // "All Dates" — group by each package's own date so it's unambiguous which
+    // "All Dates" - group by each package's own date so it's unambiguous which
     // day (today, yesterday, or older backlog) each missing package belongs to
     var byDate={};
     missing.forEach(function(p){var d=p.date||"No Date";if(!byDate[d])byDate[d]=[];byDate[d].push(p);});
@@ -1191,7 +1191,7 @@ function doSearch(q){
     if(trk){
       if(trk.delivered){trkLabel="Carrier: Delivered"+(trk.deliveredDate?" "+trk.deliveredDate:"");trkColor="#16A34A";}
       else if(trk.lastError){trkLabel="Carrier: check failed";trkColor="#D97706";}
-      else if(trk.hasMovement){trkLabel="Carrier: In Transit"+(trk.latestLocation?" — "+trk.latestLocation:"");trkColor="#2563EB";}
+      else if(trk.hasMovement){trkLabel="Carrier: In Transit"+(trk.latestLocation?" - "+trk.latestLocation:"");trkColor="#2563EB";}
       else{trkLabel="Carrier: No movement yet";trkColor="#DC2626";}
     }
     html+='<div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #E5E7EB;box-shadow:0 1px 2px rgba(16,24,40,.06)">';
@@ -1284,9 +1284,9 @@ function printReport(){
   },300);
 }
 
-// TRACKING DASHBOARD — per-carrier delivery/OTD stats, charts, and a "no
+// TRACKING DASHBOARD - per-carrier delivery/OTD stats, charts, and a "no
 // movement" discrepancy list (built from Tracking Details, populated daily by
-// carrier_reconcile.py — a local Python script, run via Task Scheduler).
+// carrier_reconcile.py - a local Python script, run via Task Scheduler).
 function buildTrackDateOpts(){
   var sel=document.getElementById("track-date");
   if(!sel)return;
@@ -1321,7 +1321,7 @@ function loadTracking(){
   });
 }
 
-// Small dependency-free inline-SVG bar chart — keeps the app self-contained
+// Small dependency-free inline-SVG bar chart - keeps the app self-contained
 // (no chart library) and works offline on the warehouse floor.
 function svgBarChart(items,opts){
   opts=opts||{};
@@ -1341,9 +1341,9 @@ function svgBarChart(items,opts){
   return svg;
 }
 
-// Four honest categories, not three — this matters:
+// Four honest categories, not three - this matters:
 //   Delivered   = t.delivered
-//   Error       = the carrier API call itself failed (bad key, 403, timeout...) —
+//   Error       = the carrier API call itself failed (bad key, 403, timeout...) -
 //                 we genuinely don't know this package's status, so it must NEVER
 //                 be counted as "stuck." Lumping these together was the bug that
 //                 made every USPS package with an API error show up as "stuck."
@@ -1352,7 +1352,7 @@ function svgBarChart(items,opts){
 // STALLED = the package really did get scanned, but nothing has happened since
 // and it's been sitting too long. This is the case that actually costs us money
 // (the USPS pileups at Milford / Springfield / Wallingford). "hasMovement" alone
-// called those healthy, because they moved once days ago — which is exactly why
+// called those healthy, because they moved once days ago - which is exactly why
 // they never showed up anywhere and nobody chased them.
 var STALL_DAYS=3;      // moving, then nothing for this long → chase the carrier
 var LABEL_STALE_DAYS=2; // label printed, carrier never took it → chase the dock
@@ -1362,7 +1362,7 @@ function daysSince(dateStr){
   if(isNaN(d))return null;
   return Math.floor((Date.now()-d.getTime())/86400000);
 }
-// Age falls back to the ship date when there's no scan at all — a label with
+// Age falls back to the ship date when there's no scan at all - a label with
 // zero events still has an age, and that's exactly the case worth flagging.
 function ageOf(t){
   var d=daysSince(t.lastEventDate);
@@ -1370,7 +1370,7 @@ function ageOf(t){
   var pkg=allPkgs[t.tracking];
   return pkg?daysSince(pkg.date):null;
 }
-// LABEL CREATED, NEVER PICKED UP — "Shipment information sent to FedEx",
+// LABEL CREATED, NEVER PICKED UP - "Shipment information sent to FedEx",
 // "Shipment Ready for UPS", "Shipping Label Created, USPS Awaiting Item".
 // The package never physically left us. This is the FedEx/UPS case the
 // warehouse actually cares about.
@@ -1380,7 +1380,7 @@ function isAwaitingPickup(t){
   var d=ageOf(t);
   return d!==null&&d>=LABEL_STALE_DAYS;
 }
-// STALLED IN TRANSIT — really was picked up and moving, then stopped. This is
+// STALLED IN TRANSIT - really was picked up and moving, then stopped. This is
 // the USPS case (Wallingford / Springfield / Milford pileups).
 function isStalled(t){
   if(t.delivered||t.lastError||!t.hasMovement||t.awaitingPickup)return false;
@@ -1388,17 +1388,9 @@ function isStalled(t){
   return d!==null&&d>=STALL_DAYS;
 }
 
-// A percentage is only worth printing if enough packages sit behind it.
-// "100% on-time" computed from 5 of 2,219 delivered packages is not a
-// performance figure, it's noise — and it is the kind of number that ends up
-// quoted to a customer. Below this sample size we say "not enough data"
-// instead of showing a headline number.
-var OTD_MIN_SAMPLE=30;
-var FAST_DAYS=5; // internal service benchmark for door-to-door transit
+var FAST_DAYS=5; // service standard: delivered within 5 days of ship date
 
-// Days from OUR ship date to actual delivery. Available for every delivered
-// package (ship date comes from the scan load, delivery date from the carrier),
-// so unlike promised-date OTD this has full coverage and can be trusted.
+// Days from our ship date to actual delivery.
 function transitDaysOf(t){
   if(!t.delivered||!t.deliveredDate)return null;
   var pkg=allPkgs[t.tracking];
@@ -1406,7 +1398,23 @@ function transitDaysOf(t){
   var s=new Date(pkg.date),d=new Date(t.deliveredDate);
   if(isNaN(s)||isNaN(d))return null;
   var days=Math.round((d-s)/86400000);
-  return (days>=0&&days<=120)?days:null; // ignore nonsense from bad date data
+  return (days>=0&&days<=120)?days:null; // ignore bad date data
+}
+// How long ago we shipped it, regardless of whether it ever arrived.
+// Anchored to Eastern calendar days, not the viewer's clock, so the rate does
+// not shift by a percent or two depending on whose machine loads the page or
+// how close to midnight it is.
+function estMidnightToday(){
+  var e=getEST();
+  return new Date(e.getFullYear(),e.getMonth(),e.getDate()).getTime();
+}
+function shipAgeOf(t){
+  var pkg=allPkgs[t.tracking];
+  if(!pkg||!pkg.date)return null;
+  var s=new Date(pkg.date);
+  if(isNaN(s))return null;
+  var shipMidnight=new Date(s.getFullYear(),s.getMonth(),s.getDate()).getTime();
+  return Math.round((estMidnightToday()-shipMidnight)/86400000);
 }
 
 function computeCarrierStats(list,carrierName){
@@ -1418,40 +1426,36 @@ function computeCarrierStats(list,carrierName){
   var inTransit=pkgs.filter(function(t){return !t.delivered&&t.hasMovement&&!t.lastError&&!isStalled(t)&&!isAwaitingPickup(t);});
   var stuck=awaiting;
 
-  // OTD vs the carrier's own promised date — the strict definition, but only
-  // computable for packages we saw in transit (carriers drop the promised date
-  // once delivered), hence the coverage tracking alongside it.
-  var otdEligible=delivered.filter(function(t){return t.promisedDate&&t.deliveredDate;});
-  var onTime=otdEligible.filter(function(t){
-    var pd=new Date(t.promisedDate),dd=new Date(t.deliveredDate);
-    return !isNaN(pd)&&!isNaN(dd)&&dd<=pd;
-  });
-  var otdPct=otdEligible.length?Math.round(onTime.length/otdEligible.length*100):null;
-  var otdReliable=otdEligible.length>=OTD_MIN_SAMPLE;
-  var otdCoverage=delivered.length?Math.round(otdEligible.length/delivered.length*100):0;
+  // ON-TIME DELIVERY RATE
+  // Every shipment that has had a full FAST_DAYS to arrive counts in the
+  // denominator, whether it arrived or not. A package shipped 10 days ago and
+  // still moving is a late package, not an excluded one. Scoring only the
+  // packages that already arrived is what made USPS look better than UPS while
+  // more than half of its shipments had never turned up at all.
+  var judgeable=pkgs.filter(function(t){var a=shipAgeOf(t);return a!==null&&a>=FAST_DAYS;});
+  var onTime=judgeable.filter(function(t){var d=transitDaysOf(t);return d!==null&&d<=FAST_DAYS;});
+  var neverArrived=judgeable.filter(function(t){return !t.delivered;});
+  var otdrPct=judgeable.length?Math.round(onTime.length/judgeable.length*1000)/10:null;
+  var neverPct=judgeable.length?Math.round(neverArrived.length/judgeable.length*1000)/10:null;
 
-  // Transit-time performance — full coverage, so this is the number to trust.
+  // Average transit time, measured on packages that did arrive.
   var transit=[];
   delivered.forEach(function(t){var d=transitDaysOf(t);if(d!==null)transit.push(d);});
   var avgTransit=transit.length?(transit.reduce(function(a,b){return a+b;},0)/transit.length):null;
-  var fastCount=transit.filter(function(d){return d<=FAST_DAYS;}).length;
-  var fastPct=transit.length?Math.round(fastCount/transit.length*100):null;
 
-  // How much of what we shipped has actually landed. Not a timeliness measure —
-  // an outstanding-work measure.
   var completionPct=pkgs.length?Math.round(delivered.length/pkgs.length*100):null;
 
   return {total:pkgs.length,delivered:delivered.length,inTransit:inTransit.length,stuck:stuck.length,
           stalled:stalled.length,errored:errored.length,
-          otdPct:otdPct,otdEligible:otdEligible.length,otdReliable:otdReliable,otdCoverage:otdCoverage,
-          avgTransit:avgTransit,fastPct:fastPct,fastCount:fastCount,transitRated:transit.length,
-          completionPct:completionPct};
+          otdrPct:otdrPct,judgeable:judgeable.length,onTime:onTime.length,
+          neverArrived:neverArrived.length,neverPct:neverPct,
+          avgTransit:avgTransit,transitRated:transit.length,completionPct:completionPct};
 }
 
 function trackingStuckList(scoped,carrierFilter){
   var list=scoped.filter(isAwaitingPickup);
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
-  // Oldest label first — those are the ones that never made it onto a truck.
+  // Oldest label first - those are the ones that never made it onto a truck.
   list.sort(function(a,b){return (ageOf(b)||0)-(ageOf(a)||0);});
   return list;
 }
@@ -1459,7 +1463,7 @@ function trackingStuckList(scoped,carrierFilter){
 function trackingStalledList(scoped,carrierFilter){
   var list=scoped.filter(isStalled);
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
-  // Longest-sitting first — those are the ones to chase.
+  // Longest-sitting first - those are the ones to chase.
   list.sort(function(a,b){return (daysSince(b.lastEventDate)||0)-(daysSince(a.lastEventDate)||0);});
   return list;
 }
@@ -1494,65 +1498,59 @@ function renderTracking(){
 
   var html='';
 
-  // Summary cards — always all 3 carriers side by side, per your "all carriers
+  // Summary cards - always all 3 carriers side by side, per your "all carriers
   // on one page" ask. The carrier filter above narrows the list/table below.
   html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px">';
   carriers.forEach(function(c){
     var s=stats[c];
-    // Headline is transit time, not promised-date OTD: transit time is measured
-    // on every delivered package, so it is a number that can actually be quoted.
-    var fastColor=s.fastPct===null?"#6B7280":s.fastPct>=90?"#16A34A":s.fastPct>=75?"#D97706":"#DC2626";
+    var otdColor=s.otdrPct===null?"#6B7280":s.otdrPct>=90?"#16A34A":s.otdrPct>=75?"#D97706":"#DC2626";
     html+='<div class="overall" style="margin-bottom:0"><div class="overall-title">'+c+'</div>';
-    html+='<div style="display:flex;align-items:baseline;gap:8px">'
-      +'<div style="font-size:28px;font-weight:800;color:'+fastColor+'">'+(s.avgTransit===null?"—":s.avgTransit.toFixed(1))+'</div>'
-      +'<div style="font-size:13px;color:#4B5563;font-weight:600">days avg</div></div>';
-    html+='<div style="font-size:11px;color:#6B7280;margin-bottom:6px">Ship &rarr; delivery, all '+s.delivered.toLocaleString()+' delivered</div>';
-    if(s.fastPct!==null){
-      html+='<div style="font-size:12px;color:#4B5563;margin-bottom:6px"><b style="color:'+fastColor+'">'+s.fastPct+'%</b> delivered in '+FAST_DAYS+' days or less <span style="color:#6B7280">('+s.fastCount.toLocaleString()+' of '+s.transitRated.toLocaleString()+')</span></div>';
+    html+='<div style="font-size:30px;font-weight:800;color:'+otdColor+'">'+(s.otdrPct===null?"n/a":s.otdrPct+"%")+'</div>';
+    html+='<div style="font-size:11px;color:#6B7280;margin-bottom:6px">On-Time Delivery Rate (within '+FAST_DAYS+' days of ship)</div>';
+    if(s.otdrPct!==null){
+      html+='<div style="font-size:12px;color:#4B5563;margin-bottom:4px">'+s.onTime.toLocaleString()+' of '+s.judgeable.toLocaleString()+' shipments delivered on time</div>';
+      if(s.neverArrived>0){
+        html+='<div style="font-size:12px;color:#DC2626;margin-bottom:6px"><b>'+s.neverArrived.toLocaleString()+'</b> ('+s.neverPct+'%) still not delivered after '+FAST_DAYS+'+ days</div>';
+      }
     }
-    // Promised-date OTD only gets a number when the sample can support one.
-    if(s.otdReliable){
-      var otdColor=s.otdPct>=90?"#16A34A":s.otdPct>=75?"#D97706":"#DC2626";
-      html+='<div style="font-size:12px;color:#4B5563;margin-bottom:8px">On-time vs carrier promise: <b style="color:'+otdColor+'">'+s.otdPct+'%</b> <span style="color:#6B7280">('+s.otdEligible+' of '+s.delivered.toLocaleString()+' rated, '+s.otdCoverage+'%)</span></div>';
-    }else{
-      html+='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">On-time vs carrier promise: <b>not enough data</b> — only '+s.otdEligible+' of '+s.delivered.toLocaleString()+' delivered have a promised date. Needs '+OTD_MIN_SAMPLE+'+ to report.</div>';
+    if(s.avgTransit!==null){
+      html+='<div style="font-size:12px;color:#4B5563;margin-bottom:8px">Average transit '+s.avgTransit.toFixed(1)+' days on '+s.transitRated.toLocaleString()+' arrivals</div>';
     }
     html+='<div style="font-size:12px;color:#4B5563">Delivered <span style="color:#16A34A;font-weight:700">'+s.delivered+'</span> &nbsp;In Transit <span style="color:#2563EB;font-weight:700">'+s.inTransit+'</span> &nbsp;Stuck <span style="color:#DC2626;font-weight:700">'+s.stalled+'</span> &nbsp;Label Only <span style="color:#B45309;font-weight:700">'+s.stuck+'</span></div>';
     html+='<div style="font-size:11px;color:#6B7280;margin-top:4px">'+s.completionPct+'% of '+s.total.toLocaleString()+' shipped have been delivered</div>';
-    if(s.errored>0)html+='<div style="font-size:11px;color:#D97706;margin-top:4px">⚠ '+s.errored+' package(s) — API check failed, not counted anywhere above</div>';
+    if(s.errored>0)html+='<div style="font-size:11px;color:#D97706;margin-top:4px">⚠ '+s.errored+' package(s) - API check failed, not counted anywhere above</div>';
     html+='</div>';
   });
   html+='</div>';
 
-  // Charts — plotted on transit time, which is measured for every delivered
+  // Charts - plotted on transit time, which is measured for every delivered
   // package. The old chart plotted promised-date OTD and drew a 0% bar whenever
   // a carrier had no rated packages, which read as "0% on-time performance"
-  // rather than "not measured" — and drew a full 100% bar off a 5-package
+  // rather than "not measured" - and drew a full 100% bar off a 5-package
   // sample. Both were misleading, so neither is charted that way now.
-  html+='<div class="overall"><div class="overall-title">Delivered Within '+FAST_DAYS+' Days — % by Carrier</div>';
-  var fastReady=carriers.filter(function(c){return stats[c].fastPct!==null;});
-  if(!fastReady.length){
-    html+='<div style="font-size:13px;color:#6B7280;padding:6px 0">No delivered packages yet to measure.</div>';
+  html+='<div class="overall"><div class="overall-title">On-Time Delivery Rate by Carrier</div>';
+  var otdReady=carriers.filter(function(c){return stats[c].otdrPct!==null;});
+  if(!otdReady.length){
+    html+='<div style="font-size:13px;color:#6B7280;padding:6px 0">No shipments old enough to rate yet.</div>';
   }else{
-    html+=svgBarChart(fastReady.map(function(c){
-      var pct=stats[c].fastPct;
+    html+=svgBarChart(otdReady.map(function(c){
+      var pct=stats[c].otdrPct;
       return {label:c,value:pct,color:pct>=90?"#16A34A":pct>=75?"#D97706":"#DC2626"};
     }),{max:100,suffix:"%"});
-    html+='<div style="font-size:11px;color:#6B7280;margin-top:6px">Measured from our ship date to actual delivery, across every delivered package — full coverage, no sampling.</div>';
+    html+='<div style="font-size:11px;color:#6B7280;margin-top:6px">Percentage of shipments delivered within '+FAST_DAYS+' days of leaving us. Every shipment that has had '+FAST_DAYS+' days to arrive is counted, including ones that still have not arrived.</div>';
   }
   html+='</div>';
 
-  html+='<div class="overall"><div class="overall-title">Average Transit Time (days)</div>';
-  var transitReady=carriers.filter(function(c){return stats[c].avgTransit!==null;});
-  if(!transitReady.length){
-    html+='<div style="font-size:13px;color:#6B7280;padding:6px 0">No delivered packages yet to measure.</div>';
+  html+='<div class="overall"><div class="overall-title">Shipments Not Delivered After '+FAST_DAYS+'+ Days</div>';
+  var lateReady=carriers.filter(function(c){return stats[c].neverPct!==null;});
+  if(!lateReady.length){
+    html+='<div style="font-size:13px;color:#6B7280;padding:6px 0">Nothing to measure yet.</div>';
   }else{
-    var maxT=Math.max.apply(null,transitReady.map(function(c){return stats[c].avgTransit;}));
-    html+=svgBarChart(transitReady.map(function(c){
-      var v=Math.round(stats[c].avgTransit*10)/10;
-      return {label:c,value:v,color:v<=3?"#16A34A":v<=5?"#D97706":"#DC2626"};
-    }),{max:Math.ceil(maxT)+1,suffix:"d"});
-    html+='<div style="font-size:11px;color:#6B7280;margin-top:6px">Lower is better. Includes weekends, so this is real door-to-door elapsed time, not business days.</div>';
+    html+=svgBarChart(lateReady.map(function(c){
+      var pct=stats[c].neverPct;
+      return {label:c,value:pct,color:pct<=5?"#16A34A":pct<=15?"#D97706":"#DC2626"};
+    }),{max:100,suffix:"%"});
+    html+='<div style="font-size:11px;color:#6B7280;margin-top:6px">Lower is better. These are shipments that left us more than '+FAST_DAYS+' days ago and the carrier still has not delivered.</div>';
   }
   html+='</div>';
 
@@ -1570,36 +1568,36 @@ function renderTracking(){
   });
   html+='</div></div>';
 
-  // API Check Failed — genuinely different from Stuck. These are packages we
+  // API Check Failed - genuinely different from Stuck. These are packages we
   // could not get real data for at all (bad key, 403, timeout, etc). Never
   // treat this list as "confirmed no movement."
   var errorList=trackingErrorList(scoped,carrierFilter);
   if(errorList.length){
-    html+='<div class="overall" style="border-color:#D97706"><div class="overall-title" style="color:#D97706">⚠ API Check Failed — Not Real Status ('+errorList.length+')</div>';
-    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">These packages were never actually checked — the carrier API call itself failed. Fix the underlying API issue (see carrier_reconcile.py output), then re-run to get real data. Do not treat these as stuck.</div>';
+    html+='<div class="overall" style="border-color:#D97706"><div class="overall-title" style="color:#D97706">⚠ API Check Failed - Not Real Status ('+errorList.length+')</div>';
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">These packages were never actually checked - the carrier API call itself failed. Fix the underlying API issue (see carrier_reconcile.py output), then re-run to get real data. Do not treat these as stuck.</div>';
     var errByReason={};
     errorList.forEach(function(t){var reason=(t.lastError||"Unknown error").slice(0,40);if(!errByReason[reason])errByReason[reason]=0;errByReason[reason]++;});
     Object.keys(errByReason).sort(function(a,b){return errByReason[b]-errByReason[a];}).forEach(function(reason){
-      html+='<div style="font-size:11px;color:#D97706;margin-bottom:3px">'+errByReason[reason]+'x — '+reason+'</div>';
+      html+='<div style="font-size:11px;color:#D97706;margin-bottom:3px">'+errByReason[reason]+'x - '+reason+'</div>';
     });
     html+='</div>';
   }
 
-  // STALLED — scanned at some point, then nothing for STALL_DAYS+. Grouped by
+  // STALLED - scanned at some point, then nothing for STALL_DAYS+. Grouped by
   // the facility they're sitting in, because that's how you actually chase them
   // (one email per facility, not one per package).
   var stalledList=trackingStalledList(scoped,carrierFilter);
   html+='<div class="overall" style="border-color:#DC2626;border-left:4px solid #DC2626">'
     +'<div class="overall-title" style="color:#DC2626;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
-    +'<span>🚨 Stuck With Carrier — No Movement in '+STALL_DAYS+'+ Days ('+stalledList.length+')</span>'
+    +'<span>🚨 Stuck With Carrier - No Movement in '+STALL_DAYS+'+ Days ('+stalledList.length+')</span>'
     +'<span style="display:flex;gap:6px;flex-wrap:wrap">'
     +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStalledList()">Copy list</button>'
     +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px;background:#FEF2F2;border-color:#FECACA;color:#B91C1C" onclick="emailStalledList()">✉ Email carrier</button>'
     +'</span></div>';
   if(!stalledList.length){
-    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing stalled — every in-transit package has moved within the last '+STALL_DAYS+' days.</div>';
+    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing stalled - every in-transit package has moved within the last '+STALL_DAYS+' days.</div>';
   }else{
-    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The carrier <b>has these in their possession</b> (accepted, received, or in transit) but nothing has scanned for '+STALL_DAYS+'+ days. Grouped by the facility holding them, worst first — <b>this is what to escalate to the carrier.</b></div>';
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The carrier <b>has these in their possession</b> (accepted, received, or in transit) but nothing has scanned for '+STALL_DAYS+'+ days. Grouped by the facility holding them, worst first - <b>this is what to escalate to the carrier.</b></div>';
     var stByLoc={};
     stalledList.forEach(function(t){
       var loc=t.latestLocation||"Unknown location";
@@ -1622,23 +1620,23 @@ function renderTracking(){
         html+='<span style="color:#6B7280;min-width:70px;text-align:right">'+(t.carrier||"")+'</span>';
         html+='</div>';
       });
-      if(group.length>25)html+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(group.length-25)+' more at this location — use Copy list / Email carrier for the full set</div>';
+      if(group.length>25)html+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(group.length-25)+' more at this location - use Copy list / Email carrier for the full set</div>';
     });
   }
   html+='</div>';
 
-  // LABEL CREATED, NEVER PICKED UP — grouped by carrier, because the fix is
+  // LABEL CREATED, NEVER PICKED UP - grouped by carrier, because the fix is
   // internal (find it on the dock / re-hand it to the driver), not a carrier
   // trace. Per the warehouse this is the only FedEx/UPS case worth chasing.
   var stuckList=trackingStuckList(scoped,carrierFilter);
   html+='<div class="overall" style="border-color:#B45309;border-left:4px solid #B45309">'
     +'<div class="overall-title" style="color:#B45309;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
-    +'<span>📦 Never Handed to Carrier — Label Only ('+stuckList.length+')</span>'
+    +'<span>📦 Never Handed to Carrier - Label Only ('+stuckList.length+')</span>'
     +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStuckList()">Copy list</button></div>';
   if(!stuckList.length){
-    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing sitting on a label — every package has been handed over.</div>';
+    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing sitting on a label - every package has been handed over.</div>';
   }else{
-    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The newest tracking event on these is still <b>"Shipping Label Created / Shipment information sent"</b> — the carrier has never taken possession, so the package is almost certainly still with us. <b>This is ours to fix, not the carrier\'s.</b> Check the dock/staging area, then verify on the carrier site (or paste the number into the Search tab).</div>';
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The newest tracking event on these is still <b>"Shipping Label Created / Shipment information sent"</b> - the carrier has never taken possession, so the package is almost certainly still with us. <b>This is ours to fix, not the carrier\'s.</b> Check the dock/staging area, then verify on the carrier site (or paste the number into the Search tab).</div>';
     var byCar={};
     stuckList.forEach(function(t){var c=t.carrier||"Unknown";if(!byCar[c])byCar[c]=[];byCar[c].push(t);});
     Object.keys(byCar).sort(function(a,b){return byCar[b].length-byCar[a].length;}).forEach(function(c){
@@ -1657,7 +1655,7 @@ function renderTracking(){
         html+='<span style="color:#6B7280;min-width:110px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(t.customer||"")+'</span>';
         html+='</div>';
       });
-      if(g.length>25)html+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(g.length-25)+' more — use Copy list for the full set</div>';
+      if(g.length>25)html+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(g.length-25)+' more - use Copy list for the full set</div>';
     });
   }
   html+='</div>';
@@ -1681,7 +1679,7 @@ function renderTracking(){
     html+='<div style="font-size:11px;color:#6B7280;margin-top:3px">'+(t.latestLocation||"")+(t.promisedDate?" | Promised: "+t.promisedDate:"")+'</div>';
     html+='</div>';
   });
-  if(tableList.length>300)html+='<div style="text-align:center;color:#6B7280;font-size:12px;padding:10px">+'+(tableList.length-300)+' more — narrow with the filters above</div>';
+  if(tableList.length>300)html+='<div style="text-align:center;color:#6B7280;font-size:12px;padding:10px">+'+(tableList.length-300)+' more - narrow with the filters above</div>';
 
   el.innerHTML=html;
 }
@@ -1699,20 +1697,20 @@ function copyStuckList(){
     return pd&&pd.date===dateFilter;
   });
   var stuckList=trackingStuckList(scoped,carrierFilter);
-  if(!stuckList.length){alert("Nothing sitting on a label — nothing to copy.");return;}
+  if(!stuckList.length){alert("Nothing sitting on a label - nothing to copy.");return;}
 
   var byCarrier={};
   stuckList.forEach(function(t){if(!byCarrier[t.carrier])byCarrier[t.carrier]=[];byCarrier[t.carrier].push(t);});
 
   var todayFull=nowFullStr();
   var htmlParts=['<div style="font-family:Arial,sans-serif;font-size:13px;color:#000">'];
-  htmlParts.push('<h3 style="margin:0 0 10px">Boost Oxygen — Label Created, No Movement in Tracking — '+todayFull+'</h3>');
+  htmlParts.push('<h3 style="margin:0 0 10px">Boost Oxygen - Label Created, No Movement in Tracking - '+todayFull+'</h3>');
   htmlParts.push('<p style="margin:0 0 10px">A shipping label was created for each of these '+LABEL_STALE_DAYS+'+ days ago, but there is still no pickup scan in tracking.</p>');
-  var textLines=["Boost Oxygen — Label Created, No Movement in Tracking — "+todayFull,""];
+  var textLines=["Boost Oxygen - Label Created, No Movement in Tracking - "+todayFull,""];
 
   Object.keys(byCarrier).sort().forEach(function(carrier){
     var list=byCarrier[carrier];
-    htmlParts.push('<div style="background:#1F4E79;color:#fff;padding:8px 12px;font-weight:bold;margin-top:14px">'+carrier+' | '+list.length+' shipment(s) — '+todayFull+'</div>');
+    htmlParts.push('<div style="background:#1F4E79;color:#fff;padding:8px 12px;font-weight:bold;margin-top:14px">'+carrier+' | '+list.length+' shipment(s) - '+todayFull+'</div>');
     htmlParts.push('<table style="border-collapse:collapse;width:100%;margin-bottom:6px" cellpadding="6">');
     htmlParts.push('<tr style="background:#eee;font-weight:bold;text-align:left">'
       +'<td>Days Since Label</td><td>Tracking #</td><td>Order #</td><td>Customer</td><td>Ship Date</td><td>Last Status</td></tr>');
@@ -1744,7 +1742,7 @@ function copyStuckList(){
       "text/plain":new Blob([textStr],{type:"text/plain"})
     });
     navigator.clipboard.write([item]).then(function(){
-      alert("Copied "+stuckList.length+" package(s), formatted with clickable tracking links — paste directly into your email.");
+      alert("Copied "+stuckList.length+" package(s), formatted with clickable tracking links - paste directly into your email.");
     }).catch(function(){
       if(navigator.clipboard.writeText)navigator.clipboard.writeText(textStr).then(function(){
         alert("Copied "+stuckList.length+" package(s) as plain text (your browser blocked the formatted copy).");
@@ -1753,7 +1751,7 @@ function copyStuckList(){
     });
   }else if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(textStr).then(function(){
-      alert("Copied "+stuckList.length+" package(s) to clipboard — paste into your email.");
+      alert("Copied "+stuckList.length+" package(s) to clipboard - paste into your email.");
     }).catch(fallbackPromptCopy);
   }else{
     fallbackPromptCopy();
@@ -1785,15 +1783,15 @@ function buildStalledReport(list){
   var h=['<div style="font-family:Arial,sans-serif;font-size:13px;color:#000">'];
   h.push('<p>Hello,</p><p>We are following up on <b>'+list.length+' shipment(s)</b> that are in your possession but have shown <b>no tracking scan for '+STALL_DAYS+'+ days</b>. Each one below was accepted/received at your facility and has not moved since the date shown.</p>'
     +'<p>They are grouped by the facility holding them, oldest first. Could you please locate these and advise on status?</p>');
-  var t=["Boost Oxygen — Shipments held with no scan for "+STALL_DAYS+"+ days — "+todayFull,""];
+  var t=["Boost Oxygen - Shipments held with no scan for "+STALL_DAYS+"+ days - "+todayFull,""];
 
   Object.keys(byLoc).sort(function(a,b){return byLoc[b].length-byLoc[a].length;}).forEach(function(loc){
     var g=byLoc[loc];
-    h.push('<div style="background:#1F4E79;color:#fff;padding:8px 12px;font-weight:bold;margin-top:14px">'+loc+' — '+g.length+' shipment(s)</div>');
+    h.push('<div style="background:#1F4E79;color:#fff;padding:8px 12px;font-weight:bold;margin-top:14px">'+loc+' - '+g.length+' shipment(s)</div>');
     h.push('<table style="border-collapse:collapse;width:100%;margin-bottom:6px" cellpadding="6">');
     h.push('<tr style="background:#eee;font-weight:bold;text-align:left">'
       +'<td>Days Stalled</td><td>Tracking #</td><td>Order #</td><td>Customer</td><td>Ship Date</td><td>Last Scan</td><td>Last Status</td></tr>');
-    t.push(loc+" — "+g.length+" shipment(s)");
+    t.push(loc+" - "+g.length+" shipment(s)");
     g.forEach(function(p){
       var url=carrierTrackUrl(p.carrier,p.tracking);
       var shipDate=(allPkgs[p.tracking]&&allPkgs[p.tracking].date)||"";
@@ -1834,24 +1832,24 @@ function copyStalledList(){
   var list=stalledScoped();
   if(!list.length){alert("Nothing stalled to copy.");return;}
   var r=buildStalledReport(list);
-  writeToClipboard(r.html,r.text,"Copied "+r.count+" stalled package(s), grouped by facility with clickable tracking links — paste straight into your email.");
+  writeToClipboard(r.html,r.text,"Copied "+r.count+" stalled package(s), grouped by facility with clickable tracking links - paste straight into your email.");
 }
 
 function emailStalledList(){
   var list=stalledScoped();
-  if(!list.length){alert("Nothing stalled — no email needed.");return;}
+  if(!list.length){alert("Nothing stalled - no email needed.");return;}
   var r=buildStalledReport(list);
   // The formatted table goes on the clipboard rather than into the mailto body:
   // mailto: URLs get truncated by most mail clients well before a list this size,
   // and they can't carry the clickable-link formatting at all.
   writeToClipboard(r.html,r.text,
-    "Copied "+r.count+" stalled package(s) to your clipboard.\n\nYour email draft is opening now — just press Ctrl+V in the message body to paste the full formatted table.");
+    "Copied "+r.count+" stalled package(s) to your clipboard.\n\nYour email draft is opening now - just press Ctrl+V in the message body to paste the full formatted table.");
   var locs=Object.keys(list.reduce(function(a,t){a[t.latestLocation||"Unknown"]=1;return a;},{}));
-  var subject="Boost Oxygen — "+r.count+" shipment(s) held with no scan for "+STALL_DAYS+"+ days — "+nowFullStr();
+  var subject="Boost Oxygen - "+r.count+" shipment(s) held with no scan for "+STALL_DAYS+"+ days - "+nowFullStr();
   var body="Hello,\n\n"
     +"We are following up on "+r.count+" shipment(s) that are in your possession but have shown no tracking scan for "+STALL_DAYS+"+ days.\n"
     +"Affected facilities: "+locs.slice(0,6).join("; ")+(locs.length>6?" (and "+(locs.length-6)+" more)":"")+"\n\n"
-    +"[ PASTE HERE — press Ctrl+V to insert the full list with tracking links ]\n\n"
+    +"[ PASTE HERE - press Ctrl+V to insert the full list with tracking links ]\n\n"
     +"Could you please check on these and advise?\n\nThank you,\nBoost Oxygen Shipping Team";
   window.location.href="mailto:?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
 }
@@ -1876,7 +1874,7 @@ window.addEventListener("load",function(){
   document.getElementById("ct-miss").textContent="0";
   document.getElementById("ct-dup").textContent="0";
   updateSyncBadge(); // show sync status immediately if anything was left pending from a previous session
-  // PIN only guards the Scan tab (see showTab) — opening the app itself never prompts for it.
+  // PIN only guards the Scan tab (see showTab) - opening the app itself never prompts for it.
   loadPkgs();
   loadTracking(); // so Search shows carrier status even if you never open the Tracking tab
   setInterval(loadPkgs,120000);
@@ -1919,7 +1917,7 @@ window.addEventListener("load",function(){
       <button onclick="psub()" style="height:58px;background:#1B5E20;border:1px solid #16A34A;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">OK</button>
     </div>
     <div id="perr" style="color:#DC2626;font-size:13px;min-height:18px;margin-bottom:10px"></div>
-    <button onclick="pinExit()" style="background:transparent;border:1px solid #2E75B6;color:#2563EB;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;width:100%">Exit — go to other tabs</button>
+    <button onclick="pinExit()" style="background:transparent;border:1px solid #2E75B6;color:#2563EB;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;width:100%">Exit - go to other tabs</button>
   </div>
 </div>
 
