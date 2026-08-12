@@ -416,6 +416,47 @@ function sbRpc(fn,body){
   });
 }
 var allPkgs={},confirmed={},dupCount=0,pkgsLoaded=false;
+// Full scan history kept in memory. Needed in three places that used to be
+// blind without it: telling a scanner WHEN a package was previously scanned,
+// counting duplicates honestly (package status no longer records them), and
+// letting Search find tracking numbers that were scanned but never existed in
+// RF Smart / NetSuite.
+var allHistory=[],histByTn={};
+function indexHistory(){
+  histByTn={};
+  allHistory.forEach(function(h){
+    var tn=(h.tracking||"").trim();
+    if(!tn)return;
+    if(!histByTn[tn])histByTn[tn]=[];
+    histByTn[tn].push(h);
+  });
+}
+// Most recent successful scan of this tracking number, excluding duplicate
+// alerts (a duplicate is not itself a shipment event).
+function lastRealScan(tn,beforeStatuses){
+  var rows=histByTn[tn]||[];
+  var keep=rows.filter(function(h){
+    return h.status==="CONFIRMED"||h.status==="CONFIRMED_AUTO";
+  });
+  if(!keep.length)return null;
+  return keep[keep.length-1];
+}
+function dayName(dateStr){
+  var d=new Date(dateStr);
+  if(isNaN(d))return "";
+  return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()];
+}
+// One consistent "when" stamp used everywhere a tracking number is shown.
+function fmtWhen(dateStr,timeStr){
+  if(!dateStr&&!timeStr)return "";
+  var dn=dateStr?dayName(dateStr):"";
+  return [dn,dateStr||"",timeStr||""].filter(Boolean).join(" ");
+}
+function whenCell(dateStr,timeStr){
+  var s=fmtWhen(dateStr,timeStr);
+  if(!s)return "";
+  return '<span style="color:#6B7280;font-size:11px;white-space:nowrap">'+s+'</span>';
+}
 var trackingData=[];
 var pinUnlocked=false; // declared here so showTab can reference it safely
 var audioCtx=null;
@@ -679,15 +720,24 @@ function processCode(raw){
   var stamp=nowFullStr();
 
   if((confirmed[tn])&&allPkgs[tn]){
-    // Duplicate today
+    // Duplicate today. Show WHEN it was scanned before: without that the
+    // scanner cannot tell a real double-shipment from an accidental re-scan a
+    // minute ago, which is the whole point of the alert.
     dupCount++;
     document.getElementById("ct-dup").textContent=dupCount;
+    var pkgD=allPkgs[tn]||{};
+    var prevRow=lastRealScan(tn);
+    var prevWhen=prevRow?fmtWhen(prevRow.date,prevRow.time)
+                        :fmtWhen(pkgD.date,pkgD.scantime);
+    var prevBy=(pkgD.status==="CONFIRMED_AUTO"||(prevRow&&prevRow.status==="CONFIRMED_AUTO"))
+                 ?"auto-confirmed by carrier tracking":"scanned";
+    var prevTxt=prevWhen?("Previously "+prevBy+": "+prevWhen):"Previously "+prevBy;
     res.className="result r-dup";res.style.display="block";
     document.getElementById("r-icon").textContent="DUPLICATE";
-    document.getElementById("r-det").textContent="Already scanned today | possible double shipment! | "+stamp;
-    document.getElementById("r-tn").innerHTML=trackLink(tn,allPkgs[tn]&&allPkgs[tn].carrier,tn.slice(-20));
-    lb.innerHTML='<span style="color:#DC2626;font-weight:700">DUPLICATE TODAY</span> | '+trackLink(tn,allPkgs[tn]&&allPkgs[tn].carrier,tn.slice(-16))+'<br><span style="font-size:10px;color:#6B7280">'+stamp+'</span>';
-    showFlash("dup","🚨","DUPLICATE","Already scanned | check for double shipment!",tn.slice(-18)+" | "+stamp);
+    document.getElementById("r-det").textContent=prevTxt+" | now: "+stamp;
+    document.getElementById("r-tn").innerHTML=trackLink(tn,pkgD.carrier,tn.slice(-20));
+    lb.innerHTML='<span style="color:#DC2626;font-weight:700">DUPLICATE</span> | '+trackLink(tn,pkgD.carrier,tn.slice(-16))+'<br><span style="font-size:10px;color:#6B7280">'+prevTxt+' &nbsp;|&nbsp; now '+stamp+'</span>';
+    showFlash("dup","🚨","DUPLICATE",prevTxt,tn.slice(-18)+" | now "+stamp);
     soundDuplicate();
     speak("Duplicate! Check for double shipment");
     postScan(tn,"DUPLICATE");
@@ -786,6 +836,12 @@ function postScan(tn,status){
   q.push(item);
   setSyncQueue(q);
   sendQueueItem(item);
+  // Mirror it locally straight away so this scan is immediately visible to the
+  // duplicate lookup and to Search, without waiting for the next history fetch.
+  allHistory.push({date:ds,time:t,tracking:tn,order:d.order,customer:d.customer,
+                   team:d.team,carrier:d.carrier,status:status,createdAt:new Date().toISOString()});
+  if(!histByTn[tn])histByTn[tn]=[];
+  histByTn[tn].push(allHistory[allHistory.length-1]);
 }
 function dropFromQueue(id){
   var q=getSyncQueue().filter(function(it){return it.id!==id;});
@@ -845,7 +901,7 @@ function loadPkgs(){
 function onPkgsLoaded(data){
     pkgsLoaded=true;
     var pkgs=data.packages||[];
-    allPkgs={};confirmed={};dupCount=0;
+    allPkgs={};confirmed={};
     var loadedDates=[];
     var todayStr=getTodayStr();
 
@@ -858,7 +914,6 @@ function onPkgsLoaded(data){
         // an accidental re-scan of an already-found package makes it look
         // "never scanned" and it reappears in Missing, even though it was found.
         if(p.status==="CONFIRMED"||p.status==="CONFIRMED_AUTO"||p.status==="DUPLICATE"||p.status==="HISTORICAL_DUPLICATE") confirmed[p.tracking.trim()]=true;
-        if((p.status==="DUPLICATE"||p.status==="HISTORICAL_DUPLICATE")&&p.date===todayStr) dupCount++;
         if(p.date) loadedDates.push(p.date);
       }
     });
@@ -869,6 +924,7 @@ function onPkgsLoaded(data){
     var todayMiss=Math.max(0,todayPkgs.length-todayConf);
     var total=Object.keys(allPkgs).length;
 
+    refreshDupCount();
     document.getElementById("ct-ok").textContent=todayConf;
     document.getElementById("ct-miss").textContent=todayMiss;
     document.getElementById("ct-dup").textContent=dupCount;
@@ -1038,9 +1094,11 @@ function renderMissing(){
   html+='</div>';
 
   function missCard(p){
-    return '<div class="miss-card"><div class="miss-tn">'+trackLink(p.tracking,p.carrier)+'</div>'
+    return '<div class="miss-card"><div class="miss-tn" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">'
+      +'<span>'+trackLink(p.tracking,p.carrier)+'</span>'
+      +'<span style="color:#6B7280;font-size:11px;font-weight:400;white-space:nowrap">Shipped '+(fmtWhen(p.date,"")||"no date")+'</span></div>'
       +'<div class="miss-info">'+(p.order||"?")+" | "+(p.customer||"Unknown")+'</div>'
-      +'<div class="miss-info">'+(p.team||"")+" | "+(p.carrier||"")+" | "+(p.date||"no date")+'</div></div>';
+      +'<div class="miss-info">'+(p.team||"")+" | "+(p.carrier||"")+'</div></div>';
   }
 
   if(dateFilter){
@@ -1065,12 +1123,36 @@ function renderMissing(){
 }
 
 // HISTORY
+// Loaded once into allHistory (oldest first) and reused by Search, the
+// duplicate counter and the previous-scan lookup, so those all agree.
+function loadHistory(){
+  return sbGet("scan_history","select=*&order=created_at.asc").then(function(rows0){
+    allHistory=(rows0||[]).map(function(r){
+      return{date:r.date,time:r.time,tracking:(r.tracking||"").trim(),order:r.order_number,
+             customer:r.customer,team:r.team,carrier:r.carrier,status:r.status,createdAt:r.created_at};
+    });
+    indexHistory();
+    refreshDupCount();
+    return allHistory;
+  });
+}
+// Duplicates can no longer be counted from package status (a duplicate alert
+// deliberately leaves the status alone), so count them from history instead.
+function refreshDupCount(){
+  var today=getTodayStr();
+  dupCount=allHistory.filter(function(h){
+    return h.date===today&&(h.status==="DUPLICATE"||h.status==="HISTORICAL_DUPLICATE");
+  }).length;
+  var el=document.getElementById("ct-dup");
+  if(el)el.textContent=dupCount;
+}
 function renderHist(){
-  sbGet("scan_history","select=*&order=created_at.desc").then(function(rows0){
-    var rows=(rows0||[]).map(function(r){return{date:r.date,time:r.time,tracking:r.tracking,order:r.order_number,customer:r.customer,team:r.team,carrier:r.carrier,status:r.status};});
-    onHistLoaded({history:rows});
+  var el=document.getElementById("hist-content");
+  if(el&&!allHistory.length)el.innerHTML='<div class="empty">Loading history...</div>';
+  loadHistory().then(function(){
+    onHistLoaded({history:allHistory.slice().reverse()});
   }).catch(function(err){
-    document.getElementById("hist-content").innerHTML='<div class="empty">Could not load history.</div>';
+    if(el)el.innerHTML='<div class="empty">Could not load history.</div>';
     console.error(err);
   });
 }
@@ -1107,7 +1189,7 @@ function onHistLoaded(data){
           html+='<span style="color:#fff;background:'+(isAuto?"#2563EB":"#16A34A")+';padding:1px 5px;border-radius:4px;font-weight:700;font-size:10px;min-width:34px;text-align:center">'+(isAuto?"AUTO":"OK")+'</span>';
           html+='<span style="font-family:monospace;color:#2563EB;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
           html+='<span style="color:#6B7280;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
-          html+='<span style="color:#6B7280;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
+          html+='<span style="color:#6B7280;font-size:10px;min-width:130px;text-align:right;white-space:nowrap">'+fmtWhen(r.date,r.time)+'</span>';
           html+='</div>';
         });
       }
@@ -1119,7 +1201,7 @@ function onHistLoaded(data){
           html+='<span style="color:#fff;background:#DC2626;padding:1px 5px;border-radius:4px;font-weight:700;font-size:10px;min-width:34px;text-align:center">DUP</span>';
           html+='<span style="font-family:monospace;color:#2563EB;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
           html+='<span style="color:#6B7280;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
-          html+='<span style="color:#6B7280;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
+          html+='<span style="color:#6B7280;font-size:10px;min-width:130px;text-align:right;white-space:nowrap">'+fmtWhen(r.date,r.time)+'</span>';
           html+='</div>';
         });
       }
@@ -1131,7 +1213,7 @@ function onHistLoaded(data){
           html+='<span style="color:#fff;background:#D97706;padding:1px 5px;border-radius:4px;font-weight:700;font-size:10px;min-width:34px;text-align:center">NF</span>';
           html+='<span style="font-family:monospace;color:#2563EB;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(r.tn,r.carrier)+'</span>';
           html+='<span style="color:#6B7280;font-size:10px;min-width:70px">'+( r.order||"")+'</span>';
-          html+='<span style="color:#6B7280;font-size:10px;min-width:50px;text-align:right">'+( r.time||"")+'</span>';
+          html+='<span style="color:#6B7280;font-size:10px;min-width:130px;text-align:right;white-space:nowrap">'+fmtWhen(r.date,r.time)+'</span>';
           html+='</div>';
         });
       }
@@ -1195,28 +1277,69 @@ function doSearch(q){
       results.push(p);
     }
   });
-  if(!results.length){el.innerHTML='<div class="empty">No results for "'+q+'"</div>';return;}
+  // Packages scanned at the bench that never existed in RF Smart / NetSuite
+  // still physically went out to the carrier, so they must be findable. They
+  // only live in scan history, not in the package list, and searching used to
+  // report "no results" for them as though they had never been handled.
+  var seen={};results.forEach(function(p){seen[p.tracking]=true;});
+  var scanOnly=[];
+  allHistory.forEach(function(h){
+    var tn=(h.tracking||"");
+    if(seen[tn]||allPkgs[tn])return;
+    if(tn.toLowerCase().indexOf(q)>-1||(h.order||"").toLowerCase().indexOf(q)>-1||(h.customer||"").toLowerCase().indexOf(q)>-1){
+      seen[tn]=true;
+      scanOnly.push(tn);
+    }
+  });
+
+  if(!results.length&&!scanOnly.length){el.innerHTML='<div class="empty">No results for "'+q+'". This tracking number has never been scanned and is not in RF Smart or NetSuite.</div>';return;}
   var trackIdx={};
   trackingData.forEach(function(t){trackIdx[t.tracking]=t;});
-  var html='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">'+results.length+' result'+(results.length>1?'s':'')+' found</div>';
+  var totalFound=results.length+scanOnly.length;
+  var html='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">'+totalFound+' result'+(totalFound>1?'s':'')+' found</div>';
   results.slice(0,60).forEach(function(p){
     var ok=confirmed[p.tracking];
     var trk=trackIdx[p.tracking];
+    var scanRow=lastRealScan(p.tracking);
+    var scanWhen=scanRow?fmtWhen(scanRow.date,scanRow.time):fmtWhen(p.date,p.scantime);
     var trkLabel="",trkColor="#6B7280";
     if(trk){
       if(trk.delivered){trkLabel="Carrier: Delivered"+(trk.deliveredDate?" "+trk.deliveredDate:"");trkColor="#16A34A";}
       else if(trk.lastError){trkLabel="Carrier: check failed";trkColor="#D97706";}
+      else if(trk.awaitingPickup){trkLabel="Carrier: label only, no pickup scan";trkColor="#B45309";}
       else if(trk.hasMovement){trkLabel="Carrier: In Transit"+(trk.latestLocation?" - "+trk.latestLocation:"");trkColor="#2563EB";}
       else{trkLabel="Carrier: No movement yet";trkColor="#DC2626";}
+      if(trk.lastEventDate)trkLabel+=" (last scan "+fmtWhen(trk.lastEventDate,"")+")";
     }
     html+='<div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #E5E7EB;box-shadow:0 1px 2px rgba(16,24,40,.06)">';
-    html+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">';
+    html+='<div style="display:flex;justify-content:space-between;margin-bottom:4px;gap:8px;flex-wrap:wrap">';
     html+='<span style="font-family:monospace;color:#2563EB;font-size:12px">'+trackLink(p.tracking,p.carrier)+'</span>';
     html+='<span style="color:'+(ok?'#16A34A':'#D97706')+';font-weight:700;font-size:11px">'+(ok?'CONFIRMED':'PENDING')+'</span>';
     html+='</div>';
     html+='<div style="font-size:11px;color:#6B7280">'+(p.order||'')+(p.customer?' | '+p.customer:'')+'</div>';
-    html+='<div style="font-size:10px;color:#6B7280;margin-top:3px">'+(p.team||'')+(p.carrier?' | '+p.carrier:'')+(p.date?' | '+p.date:'')+'</div>';
+    html+='<div style="font-size:10px;color:#6B7280;margin-top:3px">'+(p.team||'')+(p.carrier?' | '+p.carrier:'')+'</div>';
+    html+='<div style="font-size:11px;color:#111827;margin-top:4px">Shipped: <b>'+fmtWhen(p.date,"")+'</b>'+(ok&&scanWhen?' &nbsp;|&nbsp; Scanned: <b>'+scanWhen+'</b>':'')+'</div>';
     if(trkLabel)html+='<div style="font-size:10px;color:'+trkColor+';margin-top:3px;font-weight:700">'+trkLabel+'</div>';
+    html+='</div>';
+  });
+
+  // Scanned but never in RF Smart / NetSuite.
+  scanOnly.slice(0,40).forEach(function(tn){
+    var rows=histByTn[tn]||[];
+    var first=rows[0],last=rows[rows.length-1];
+    var trk=trackIdx[tn];
+    html+='<div style="background:#FFFBEB;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #FDE68A;border-left:4px solid #D97706">';
+    html+='<div style="display:flex;justify-content:space-between;margin-bottom:4px;gap:8px;flex-wrap:wrap">';
+    html+='<span style="font-family:monospace;color:#2563EB;font-size:12px">'+trackLink(tn,(trk&&trk.carrier)||null)+'</span>';
+    html+='<span style="color:#92400E;font-weight:700;font-size:11px">SCANNED, NOT IN SYSTEM</span>';
+    html+='</div>';
+    html+='<div style="font-size:11px;color:#4B5563">This tracking number was scanned at the bench and handed to the carrier, but it was never in RF Smart or NetSuite, so there is no order record for it.</div>';
+    html+='<div style="font-size:11px;color:#111827;margin-top:4px">Scanned: <b>'+fmtWhen(first.date,first.time)+'</b>'
+      +(rows.length>1?' &nbsp;|&nbsp; last of '+rows.length+' scans: <b>'+fmtWhen(last.date,last.time)+'</b>':'')+'</div>';
+    if(trk){
+      var lbl=trk.delivered?"Carrier: Delivered":(trk.hasMovement?"Carrier: In Transit":"Carrier: no movement");
+      html+='<div style="font-size:10px;color:#4B5563;margin-top:3px;font-weight:700">'+lbl+'</div>';
+    }
     html+='</div>';
   });
   el.innerHTML=html;
@@ -1630,9 +1753,10 @@ function renderTracking(){
         var sev=d>=7?"#B91C1C":d>=5?"#DC2626":"#EA580C";
         html+='<div style="display:flex;gap:8px;padding:7px 10px;background:#FEF2F2;border-radius:6px;margin-bottom:3px;font-size:12px;align-items:center;border-left:3px solid '+sev+'">';
         html+='<span style="font-weight:800;color:'+sev+';min-width:52px">'+(d===null?"?":d+"d")+'</span>';
-        html+='<span style="font-family:Consolas,monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(t.tracking,t.carrier)+'</span>';
+        html+='<span style="font-family:Consolas,monospace;flex:1;min-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(t.tracking,t.carrier)+'</span>';
         html+='<span style="color:#4B5563;min-width:80px">'+(t.order||"")+'</span>';
-        html+='<span style="color:#6B7280;min-width:70px;text-align:right">'+(t.carrier||"")+'</span>';
+        html+='<span style="color:#6B7280;min-width:60px">'+(t.carrier||"")+'</span>';
+        html+='<span style="color:#6B7280;min-width:190px;text-align:right;font-size:11px;white-space:nowrap">last scan '+(fmtWhen(t.lastEventDate,"")||"?")+'</span>';
         html+='</div>';
       });
       if(group.length>25)html+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(group.length-25)+' more at this location - use Copy list / Email carrier for the full set</div>';
@@ -1640,38 +1764,62 @@ function renderTracking(){
   }
   html+='</div>';
 
-  // LABEL CREATED, NEVER PICKED UP - grouped by carrier, because the fix is
-  // internal (find it on the dock / re-hand it to the driver), not a carrier
-  // trace. Per the warehouse this is the only FedEx/UPS case worth chasing.
+  // NO MOVEMENT IN TRACKING (label is the newest event). Split by whether WE
+  // scanned it out, because that decides who is responsible:
+  //   scanned/confirmed  -> it left our building, the carrier has it and either
+  //                         missed the pickup scan or lost it. Carrier's issue.
+  //   never scanned      -> we have no proof it left. Ours to find first.
+  // Same rule for all three carriers.
   var stuckList=trackingStuckList(scoped,carrierFilter);
+  var sentByUs=stuckList.filter(function(t){return confirmed[t.tracking];});
+  var notScanned=stuckList.filter(function(t){return !confirmed[t.tracking];});
   html+='<div class="overall" style="border-color:#B45309;border-left:4px solid #B45309">'
     +'<div class="overall-title" style="color:#B45309;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
-    +'<span>📦 Never Handed to Carrier - Label Only ('+stuckList.length+')</span>'
-    +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStuckList()">Copy list</button></div>';
+    +'<span>📦 No Movement in Tracking - Label Created Only ('+stuckList.length+')</span>'
+    +'<span style="display:flex;gap:6px;flex-wrap:wrap">'
+    +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px" onclick="copyStuckList()">Copy list</button>'
+    +'<button class="rbtn" style="margin:0;font-size:11px;padding:6px 10px;background:#FEF2F2;border-color:#FECACA;color:#B91C1C" onclick="emailNoMovementList()">✉ Email carrier</button>'
+    +'</span></div>';
   if(!stuckList.length){
-    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing sitting on a label - every package has been handed over.</div>';
+    html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing sitting on a label.</div>';
   }else{
-    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The newest tracking event on these is still <b>"Shipping Label Created / Shipment information sent"</b> - the carrier has never taken possession, so the package is almost certainly still with us. <b>This is ours to fix, not the carrier\'s.</b> Check the dock/staging area, then verify on the carrier site (or paste the number into the Search tab).</div>';
-    var byCar={};
-    stuckList.forEach(function(t){var c=t.carrier||"Unknown";if(!byCar[c])byCar[c]=[];byCar[c].push(t);});
-    Object.keys(byCar).sort(function(a,b){return byCar[b].length-byCar[a].length;}).forEach(function(c){
-      var g=byCar[c];
-      var worst=Math.max.apply(null,g.map(function(t){return ageOf(t)||0;}));
-      html+='<div class="sec-hdr" style="color:#B45309;display:flex;justify-content:space-between;align-items:center;gap:8px">'
-        +'<span>'+c+' ('+g.length+')</span>'
-        +'<span style="font-weight:400;text-transform:none;letter-spacing:0">oldest: '+worst+' days</span></div>';
-      g.slice(0,25).forEach(function(t){
-        var d=ageOf(t);
-        var sev=d>=7?"#92400E":d>=4?"#B45309":"#D97706";
-        html+='<div style="display:flex;gap:8px;padding:7px 10px;background:#FFFBEB;border-radius:6px;margin-bottom:3px;font-size:12px;align-items:center;border-left:3px solid '+sev+'">';
-        html+='<span style="font-weight:800;color:'+sev+';min-width:52px">'+(d===null?"?":d+"d")+'</span>';
-        html+='<span style="font-family:Consolas,monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(t.tracking,t.carrier)+'</span>';
-        html+='<span style="color:#4B5563;min-width:80px">'+(t.order||"")+'</span>';
-        html+='<span style="color:#6B7280;min-width:110px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(t.customer||"")+'</span>';
-        html+='</div>';
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The newest tracking event on these is still <b>"Shipping Label Created / Shipment information sent"</b>. That only means the carrier has not recorded a pickup scan. It does not by itself say where the package is, so they are split below by whether our scanning system confirmed the package leaving.</div>';
+
+    function renderNoMoveGroup(title,list,tone,note){
+      if(!list.length)return "";
+      var h='<div class="sec-hdr" style="color:'+tone+';display:flex;justify-content:space-between;align-items:center;gap:8px">'
+        +'<span>'+title+' ('+list.length+')</span></div>';
+      h+='<div style="font-size:12px;color:#4B5563;margin:0 0 8px">'+note+'</div>';
+      var byCar={};
+      list.forEach(function(t){var c=t.carrier||"Unknown";if(!byCar[c])byCar[c]=[];byCar[c].push(t);});
+      Object.keys(byCar).sort(function(a,b){return byCar[b].length-byCar[a].length;}).forEach(function(c){
+        var g=byCar[c];
+        var worst=Math.max.apply(null,g.map(function(t){return ageOf(t)||0;}));
+        h+='<div style="font-size:12px;font-weight:700;color:'+tone+';margin:8px 0 4px;display:flex;justify-content:space-between">'
+          +'<span>'+c+' ('+g.length+')</span><span style="font-weight:400;color:#6B7280">oldest '+worst+' days</span></div>';
+        g.slice(0,25).forEach(function(t){
+          var d=ageOf(t);
+          var pkg=allPkgs[t.tracking]||{};
+          var scanRow=lastRealScan(t.tracking);
+          var scanWhen=scanRow?fmtWhen(scanRow.date,scanRow.time):fmtWhen(pkg.date,pkg.scantime);
+          var sev=d>=7?"#92400E":d>=4?"#B45309":"#D97706";
+          h+='<div style="display:flex;gap:8px;padding:7px 10px;background:'+(tone==="#B91C1C"?"#FEF2F2":"#FFFBEB")+';border-radius:6px;margin-bottom:3px;font-size:12px;align-items:center;border-left:3px solid '+sev+'">';
+          h+='<span style="font-weight:800;color:'+sev+';min-width:46px">'+(d===null?"?":d+"d")+'</span>';
+          h+='<span style="font-family:Consolas,monospace;flex:1;min-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+trackLink(t.tracking,t.carrier)+'</span>';
+          h+='<span style="color:#4B5563;min-width:78px">'+(t.order||"")+'</span>';
+          h+='<span style="color:#6B7280;min-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(t.customer||"")+'</span>';
+          h+='<span style="min-width:150px;text-align:right">'+(scanWhen?whenCell(null,"scanned "+scanWhen):'<span style="color:#B91C1C;font-size:11px">never scanned</span>')+'</span>';
+          h+='</div>';
+        });
+        if(g.length>25)h+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(g.length-25)+' more, use Copy list for the full set</div>';
       });
-      if(g.length>25)html+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(g.length-25)+' more - use Copy list for the full set</div>';
-    });
+      return h;
+    }
+
+    html+=renderNoMoveGroup("✅ Confirmed shipped by us - carrier has not scanned it",sentByUs,"#B91C1C",
+      "Our scanning system confirmed these leaving the building, so they were physically handed to the carrier. The carrier has no pickup scan, which means they either missed scanning it or lost it in their facility. <b>This is the carrier's to answer for.</b> Use Email carrier to send them the list.");
+    html+=renderNoMoveGroup("⚠ Not scanned by us either",notScanned,"#B45309",
+      "These were never confirmed at our bench, so we have no proof they left. <b>Check the dock and staging area first</b> before raising it with the carrier.");
   }
   html+='</div>';
 
@@ -1691,7 +1839,16 @@ function renderTracking(){
     html+='<span style="color:'+statusColor+';font-weight:700;font-size:12px">'+statusLabel+'</span>';
     html+='</div>';
     html+='<div style="font-size:12px;color:#6B7280;margin-top:3px">'+t.carrier+" | "+(t.order||"")+(t.customer?" | "+t.customer:"")+'</div>';
-    html+='<div style="font-size:11px;color:#6B7280;margin-top:3px">'+(t.latestLocation||"")+(t.promisedDate?" | Promised: "+t.promisedDate:"")+'</div>';
+    html+='<div style="font-size:11px;color:#6B7280;margin-top:3px">'+(t.latestLocation||"")+(t.promisedDate?" | Promised: "+fmtWhen(t.promisedDate,""):"")+'</div>';
+    var pkgT=allPkgs[t.tracking]||{};
+    var scanRowT=lastRealScan(t.tracking);
+    var scanWhenT=scanRowT?fmtWhen(scanRowT.date,scanRowT.time):(confirmed[t.tracking]?fmtWhen(pkgT.date,pkgT.scantime):"");
+    html+='<div style="font-size:11px;color:#111827;margin-top:4px">'
+      +'Shipped <b>'+(fmtWhen(pkgT.date,"")||"?")+'</b>'
+      +(scanWhenT?' &nbsp;|&nbsp; Scanned <b>'+scanWhenT+'</b>':' &nbsp;|&nbsp; <span style="color:#B91C1C">not scanned by us</span>')
+      +(t.lastEventDate?' &nbsp;|&nbsp; Last carrier scan <b>'+fmtWhen(t.lastEventDate,"")+'</b>':'')
+      +(t.deliveredDate?' &nbsp;|&nbsp; Delivered <b>'+fmtWhen(t.deliveredDate,"")+'</b>':'')
+      +'</div>';
     html+='</div>';
   });
   if(tableList.length>300)html+='<div style="text-align:center;color:#6B7280;font-size:12px;padding:10px">+'+(tableList.length-300)+' more - narrow with the filters above</div>';
@@ -1843,6 +2000,64 @@ function writeToClipboard(htmlStr,textStr,okMsg){
   }else{fallback();}
 }
 
+// Only the packages we can prove left the building. Anything we never scanned
+// is deliberately excluded: claiming the carrier lost a package we cannot show
+// we handed over would be an argument we lose.
+function emailNoMovementList(){
+  var carrierFilter=document.getElementById("track-carrier")?document.getElementById("track-carrier").value:"";
+  var dateFilter=document.getElementById("track-date")?document.getElementById("track-date").value:"";
+  var scoped=trackingData.filter(function(t){
+    if(!dateFilter)return true;
+    var pd=allPkgs[t.tracking];
+    return pd&&pd.date===dateFilter;
+  });
+  var list=trackingStuckList(scoped,carrierFilter).filter(function(t){return confirmed[t.tracking];});
+  if(!list.length){alert("Nothing to escalate: none of the label-only packages were confirmed shipped by our scanning system.");return;}
+
+  var todayFull=nowFullStr();
+  var byCar={};
+  list.forEach(function(t){var c=t.carrier||"Unknown";if(!byCar[c])byCar[c]=[];byCar[c].push(t);});
+
+  var h=['<div style="font-family:Arial,sans-serif;font-size:13px;color:#000">'];
+  h.push('<p>Hello,</p><p>The '+list.length+' shipment(s) below were scanned and confirmed leaving our facility and were handed to your driver, but your tracking still shows only <b>"Label Created / Shipment information sent"</b> with no pickup scan.</p>'
+    +'<p>Since we have a scan record confirming each package was released to you, please locate these or confirm they were received so we can determine whether they need to be reshipped.</p>');
+  var t=["Boost Oxygen - Confirmed shipped by us, no carrier pickup scan - "+todayFull,""];
+
+  Object.keys(byCar).sort().forEach(function(c){
+    var g=byCar[c];
+    h.push('<div style="background:#1F4E79;color:#fff;padding:8px 12px;font-weight:bold;margin-top:14px">'+c+' - '+g.length+' shipment(s)</div>');
+    h.push('<table style="border-collapse:collapse;width:100%;margin-bottom:6px" cellpadding="6">');
+    h.push('<tr style="background:#eee;font-weight:bold;text-align:left">'
+      +'<td>Days</td><td>Tracking #</td><td>Order #</td><td>Customer</td><td>Our Scan Confirmation</td><td>Carrier Status</td></tr>');
+    t.push(c+" - "+g.length+" shipment(s)");
+    g.forEach(function(p){
+      var url=carrierTrackUrl(p.carrier,p.tracking);
+      var pkg=allPkgs[p.tracking]||{};
+      var scanRow=lastRealScan(p.tracking);
+      var scanWhen=scanRow?fmtWhen(scanRow.date,scanRow.time):fmtWhen(pkg.date,pkg.scantime);
+      var d=ageOf(p);
+      h.push('<tr style="border-bottom:1px solid #ddd">'
+        +'<td style="color:#B91C1C;font-weight:bold">'+(d===null?"?":d)+'</td>'
+        +'<td><a href="'+url+'" target="_blank">'+p.tracking+'</a></td>'
+        +'<td>'+(p.order||"")+'</td><td>'+(p.customer||"")+'</td>'
+        +'<td>'+scanWhen+'</td><td>'+(p.latestStatus||"")+'</td></tr>');
+      t.push("  "+(d===null?"?":d+"d")+" | "+p.tracking+" | "+(p.order||"")+" | "+(p.customer||"")+" | scanned "+scanWhen+" | "+(p.latestStatus||"")+" | "+url);
+    });
+    h.push('</table>');
+    t.push("");
+  });
+  h.push('<p>Thank you,<br>Boost Oxygen Shipping Team</p></div>');
+
+  writeToClipboard(h.join(""),t.join("\n"),
+    "Copied "+list.length+" shipment(s) that our system confirmed shipped but the carrier never scanned.\n\nYour email draft is opening now, press Ctrl+V in the message body to paste the full table.");
+  var subject="Boost Oxygen - "+list.length+" shipment(s) confirmed released to you with no pickup scan - "+nowFullStr();
+  var body="Hello,\n\n"
+    +"The "+list.length+" shipment(s) listed below were scanned and confirmed leaving our facility and handed to your driver, but tracking still shows only \"Label Created / Shipment information sent\" with no pickup scan.\n\n"
+    +"[ PASTE HERE - press Ctrl+V to insert the full list with tracking links ]\n\n"
+    +"We have a scan record confirming each of these was released to you. Please locate them or confirm receipt so we can decide whether to reship.\n\nThank you,\nBoost Oxygen Shipping Team";
+  window.location.href="mailto:?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+}
+
 function copyStalledList(){
   var list=stalledScoped();
   if(!list.length){alert("Nothing stalled to copy.");return;}
@@ -1892,6 +2107,9 @@ window.addEventListener("load",function(){
   // PIN only guards the Scan tab (see showTab) - opening the app itself never prompts for it.
   loadPkgs();
   loadTracking(); // so Search shows carrier status even if you never open the Tracking tab
+  // History drives Search (scanned-but-not-in-system lookups), the duplicate
+  // counter and previous-scan timestamps, so it cannot wait for the History tab.
+  loadHistory().catch(function(err){console.error("history load failed",err);});
   setInterval(loadPkgs,120000);
   // While any scan is still unverified, refresh much faster (every 20s instead of
   // 2min) so a dropped save gets caught and retried quickly instead of sitting
