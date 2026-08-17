@@ -422,6 +422,33 @@ var allPkgs={},confirmed={},dupCount=0,pkgsLoaded=false;
 // letting Search find tracking numbers that were scanned but never existed in
 // RF Smart / NetSuite.
 var allHistory=[],histByTn={};
+// Reship / claim actions taken on problem shipments. Held server side so the
+// list stays consistent for everyone, not just the browser that clicked.
+var allActions=[],actionsByTn={};
+function indexActions(){
+  actionsByTn={};
+  allActions.forEach(function(a){
+    var tn=(a.tracking||"").trim();
+    if(!tn)return;
+    if(!actionsByTn[tn])actionsByTn[tn]={};
+    actionsByTn[tn][a.action]=a;
+  });
+}
+function loadActions(){
+  return sbGet("package_actions","select=*&order=created_at.asc").then(function(rows){
+    allActions=(rows||[]).map(function(r){
+      return{tracking:(r.tracking||"").trim(),action:r.action,newTracking:r.new_tracking,
+             note:r.note,date:r.acted_date,time:r.acted_time,createdAt:r.created_at};
+    });
+    indexActions();
+    return allActions;
+  });
+}
+function actionOf(tn,kind){return (actionsByTn[tn]||{})[kind]||null;}
+// A reship is the resolution: a replacement is on its way, so the original is
+// no longer an open action item. A claim alone does not clear it - the customer
+// still has nothing.
+function isResolved(tn){return !!actionOf(tn,"RESHIPPED");}
 function indexHistory(){
   histByTn={};
   allHistory.forEach(function(h){
@@ -1334,6 +1361,16 @@ function doSearch(q){
     html+='<div style="font-size:10px;color:#6B7280;margin-top:3px">'+(p.team||'')+(p.carrier?' | '+p.carrier:'')+'</div>';
     html+='<div style="font-size:11px;color:#111827;margin-top:4px">Shipped: <b>'+fmtWhen(p.date,"")+'</b>'+(ok&&scanWhen?' &nbsp;|&nbsp; Scanned: <b>'+scanWhen+'</b>':'')+'</div>';
     if(trkLabel)html+='<div style="font-size:10px;color:'+trkColor+';margin-top:3px;font-weight:700">'+trkLabel+'</div>';
+    var reAct=actionOf(p.tracking,"RESHIPPED"),clAct=actionOf(p.tracking,"CLAIM");
+    if(reAct){
+      html+='<div style="font-size:11px;color:#166534;background:#ECFDF3;border:1px solid #A7F3D0;border-radius:6px;padding:5px 8px;margin-top:5px">'
+        +'<b>Reshipped</b> '+fmtWhen(reAct.date,reAct.time)
+        +(reAct.newTracking?' on new label <b>'+reAct.newTracking+'</b>':'')+'</div>';
+    }
+    if(clAct){
+      html+='<div style="font-size:11px;color:#1D4ED8;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;padding:5px 8px;margin-top:4px">'
+        +'<b>Carrier claim opened</b> '+fmtWhen(clAct.date,clAct.time)+'</div>';
+    }
     html+='</div>';
   });
 
@@ -1605,7 +1642,7 @@ function computeCarrierStats(list,carrierName){
 }
 
 function trackingStuckList(scoped,carrierFilter){
-  var list=scoped.filter(isAwaitingPickup);
+  var list=scoped.filter(function(t){return isAwaitingPickup(t)&&!isResolved(t.tracking);});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   // Oldest label first - those are the ones that never made it onto a truck.
   list.sort(function(a,b){return (ageOf(b)||0)-(ageOf(a)||0);});
@@ -1613,7 +1650,7 @@ function trackingStuckList(scoped,carrierFilter){
 }
 
 function trackingStalledList(scoped,carrierFilter){
-  var list=scoped.filter(isStalled);
+  var list=scoped.filter(function(t){return isStalled(t)&&!isResolved(t.tracking);});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   // Longest-sitting first - those are the ones to chase.
   list.sort(function(a,b){return (daysSince(b.lastEventDate)||0)-(daysSince(a.lastEventDate)||0);});
@@ -1798,8 +1835,19 @@ function renderTracking(){
     html+='<div style="color:#16A34A;font-size:13px;padding:10px 0">Nothing sitting on a label.</div>';
   }else{
     html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The newest tracking event on these is still <b>"Shipping Label Created / Shipment information sent"</b>. That only means the carrier has not recorded a pickup scan. It does not by itself say where the package is, so they are split below by whether our scanning system confirmed the package leaving.</div>';
+    // Resolved items leave the list, but silently disappearing would make the
+    // count look wrong. Say how many were handled and when.
+    var reshipped=allActions.filter(function(a){return a.action==="RESHIPPED";});
+    var claims=allActions.filter(function(a){return a.action==="CLAIM";});
+    if(reshipped.length||claims.length){
+      var todayR=reshipped.filter(function(a){return a.date===getTodayStr();}).length;
+      html+='<div style="font-size:12px;color:#166534;background:#ECFDF3;border:1px solid #A7F3D0;border-radius:8px;padding:8px 10px;margin-bottom:10px">'
+        +'<b>'+reshipped.length+'</b> reshipped and cleared from this list'+(todayR?' ('+todayR+' today)':'')
+        +(claims.length?', <b>'+claims.length+'</b> carrier claim'+(claims.length>1?'s':'')+' opened':'')
+        +'. Search any tracking number to see its reship record.</div>';
+    }
 
-    function renderNoMoveGroup(title,list,tone,note){
+    function renderNoMoveGroup(title,list,tone,note,withClaim){
       if(!list.length)return "";
       var h='<div class="sec-hdr" style="color:'+tone+';display:flex;justify-content:space-between;align-items:center;gap:8px">'
         +'<span>'+title+' ('+list.length+')</span></div>';
@@ -1824,6 +1872,17 @@ function renderTracking(){
           h+='<span style="color:#4B5563;min-width:78px">'+(t.order||"")+'</span>';
           h+='<span style="color:#6B7280;min-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(t.customer||"")+'</span>';
           h+='<span style="min-width:150px;text-align:right">'+(scanWhen?whenCell(null,"scanned "+scanWhen):'<span style="color:#B91C1C;font-size:11px">never scanned</span>')+'</span>';
+          var claimed=actionOf(t.tracking,"CLAIM");
+          h+='<span style="display:flex;gap:4px;align-items:center;white-space:nowrap">';
+          if(withClaim){
+            if(claimed){
+              h+='<span title="Claim opened '+fmtWhen(claimed.date,claimed.time)+'" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;border-radius:5px;padding:3px 7px;font-size:10px;font-weight:700">CLAIM '+(claimed.date||"")+'</span>';
+            }else{
+              h+='<button onclick="openAction(\''+t.tracking+'\',\'CLAIM\')" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer">Start claim</button>';
+            }
+          }
+          h+='<button onclick="openAction(\''+t.tracking+'\',\'RESHIPPED\')" style="background:#16A34A;color:#fff;border:none;border-radius:5px;padding:4px 9px;font-size:10px;font-weight:700;cursor:pointer">Reshipped</button>';
+          h+='</span>';
           h+='</div>';
         });
         if(g.length>25)h+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(g.length-25)+' more, use Copy list for the full set</div>';
@@ -1832,9 +1891,9 @@ function renderTracking(){
     }
 
     html+=renderNoMoveGroup("✅ Confirmed shipped by us - carrier has not scanned it",sentByUs,"#B91C1C",
-      "Our scanning system confirmed these leaving the building, so they were physically handed to the carrier. The carrier has no pickup scan, which means they either missed scanning it or lost it in their facility. <b>This is the carrier's to answer for.</b> Use Email carrier to send them the list.");
+      "Our scanning system confirmed these leaving the building, so they were physically handed to the carrier. The carrier has no pickup scan, which means they either missed scanning it or lost it in their facility. <b>This is the carrier's to answer for.</b> Reship on a new label and open a claim against the carrier, then mark both here.",true);
     html+=renderNoMoveGroup("⚠ Not scanned by us either",notScanned,"#B45309",
-      "These were never confirmed at our bench, so we have no proof they left. <b>Check the dock and staging area first</b> before raising it with the carrier.");
+      "These were never confirmed at our bench, so we have no proof they left. <b>Check the dock and staging area first.</b> If it cannot be found, void the old label so we are not billed for it, reship on a new tracking number, and mark it Reshipped here.",false);
   }
   html+='</div>';
 
@@ -2099,6 +2158,72 @@ function emailStalledList(){
   window.location.href="mailto:?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
 }
 
+// ── RESHIP / CLAIM ACTIONS ───────────────────────────────────────────────
+// Marking something reshipped removes it from the open-problem list, so it is
+// PIN protected: a stray tap on a warehouse tablet must not quietly clear a
+// package that never actually went back out.
+var PENDING_ACTION=null;
+function openAction(tracking,kind){
+  var t=null;
+  for(var i=0;i<trackingData.length;i++){if(trackingData[i].tracking===tracking){t=trackingData[i];break;}}
+  var pkg=allPkgs[tracking]||{};
+  PENDING_ACTION={tracking:tracking,kind:kind};
+  document.getElementById("act-title").textContent=(kind==="RESHIPPED")?"Mark as Reshipped":"Mark Claim Started";
+  document.getElementById("act-sub").innerHTML=
+    '<div style="font-family:Consolas,monospace;font-size:13px;color:#111827">'+tracking+'</div>'
+    +'<div style="font-size:12px;color:#6B7280;margin-top:2px">'+((t&&t.order)||pkg.order||"")+
+      (((t&&t.customer)||pkg.customer)?" | "+((t&&t.customer)||pkg.customer):"")+'</div>';
+  var newWrap=document.getElementById("act-new-wrap");
+  newWrap.style.display=(kind==="RESHIPPED")?"block":"none";
+  document.getElementById("act-new").value="";
+  document.getElementById("act-pin").value="";
+  document.getElementById("act-err").textContent="";
+  document.getElementById("act-overlay").style.display="flex";
+  setTimeout(function(){
+    var f=(kind==="RESHIPPED")?document.getElementById("act-new"):document.getElementById("act-pin");
+    if(f)f.focus();
+  },80);
+}
+function closeAction(){
+  document.getElementById("act-overlay").style.display="none";
+  PENDING_ACTION=null;
+}
+function submitAction(){
+  if(!PENDING_ACTION)return;
+  var pin=document.getElementById("act-pin").value.trim();
+  if(pin!==PIN_CODE){
+    document.getElementById("act-err").textContent="Incorrect passcode.";
+    document.getElementById("act-pin").value="";
+    return;
+  }
+  var kind=PENDING_ACTION.kind,tn=PENDING_ACTION.tracking;
+  var newTn=(kind==="RESHIPPED")?document.getElementById("act-new").value.trim():"";
+  var e=getEST(),h=e.getHours(),m=e.getMinutes();
+  var ap=h>=12?"PM":"AM";h=h%12||12;
+  var tstr=h+":"+(m<10?"0"+m:m)+" "+ap;
+  var ds=(e.getMonth()+1)+"/"+e.getDate()+"/"+e.getFullYear();
+  var btn=document.getElementById("act-go");
+  btn.disabled=true;btn.textContent="Saving...";
+  sbRpc("record_package_action",{p_tracking:tn,p_action:kind,p_new_tracking:newTn,
+                                 p_note:"",p_date:ds,p_time:tstr})
+    .then(function(){
+      // Update in memory so the row disappears immediately rather than waiting
+      // for the next refresh.
+      var rec={tracking:tn,action:kind,newTracking:newTn,note:"",date:ds,time:tstr};
+      allActions.push(rec);
+      if(!actionsByTn[tn])actionsByTn[tn]={};
+      actionsByTn[tn][kind]=rec;
+      btn.disabled=false;btn.textContent="Confirm";
+      closeAction();
+      renderTracking();
+    })
+    .catch(function(err){
+      btn.disabled=false;btn.textContent="Confirm";
+      document.getElementById("act-err").textContent="Could not save. Check connection and try again.";
+      console.error(err);
+    });
+}
+
 // COLLAPSIBLE SECTIONS
 function toggleSec(id){
   var el=document.getElementById(id);
@@ -2125,6 +2250,7 @@ window.addEventListener("load",function(){
   // History drives Search (scanned-but-not-in-system lookups), the duplicate
   // counter and previous-scan timestamps, so it cannot wait for the History tab.
   loadHistory().catch(function(err){console.error("history load failed",err);});
+  loadActions().then(function(){renderTracking();}).catch(function(err){console.error("actions load failed",err);});
   setInterval(loadPkgs,120000);
   // While any scan is still unverified, refresh much faster (every 20s instead of
   // 2min) so a dropped save gets caught and retried quickly instead of sitting
@@ -2136,6 +2262,30 @@ window.addEventListener("load",function(){
 <div class="scroll-btns">
   <button class="scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8679;</button>
   <button class="scroll-btn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">&#8681;</button>
+</div>
+
+<!-- RESHIP / CLAIM CONFIRMATION - passcode protected -->
+<div id="act-overlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(17,24,39,.55);align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:14px;max-width:420px;width:100%;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.3)">
+    <div id="act-title" style="font-size:18px;font-weight:800;color:#111827;margin-bottom:8px">Mark as Reshipped</div>
+    <div id="act-sub" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:10px 12px;margin-bottom:14px"></div>
+    <div id="act-new-wrap" style="margin-bottom:12px">
+      <label style="display:block;font-size:12px;font-weight:700;color:#4B5563;margin-bottom:4px">New tracking number <span style="font-weight:400;color:#6B7280">(optional, links the replacement to this order)</span></label>
+      <input id="act-new" type="text" placeholder="Scan or type the new label" autocomplete="off"
+        style="width:100%;padding:10px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;font-family:Consolas,monospace">
+    </div>
+    <div style="margin-bottom:6px">
+      <label style="display:block;font-size:12px;font-weight:700;color:#4B5563;margin-bottom:4px">Supervisor passcode</label>
+      <input id="act-pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off"
+        style="width:100%;padding:10px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:18px;letter-spacing:.4em;text-align:center"
+        onkeydown="if(event.key==='Enter')submitAction()">
+    </div>
+    <div id="act-err" style="color:#DC2626;font-size:12px;min-height:16px;margin-bottom:10px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="closeAction()" style="background:#fff;border:1px solid #D1D5DB;color:#4B5563;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer">Cancel</button>
+      <button id="act-go" onclick="submitAction()" style="background:#16A34A;border:none;color:#fff;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer">Confirm</button>
+    </div>
+  </div>
 </div>
 
 <!-- PIN OVERLAY - Scan tab only -->
