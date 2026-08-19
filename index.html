@@ -2177,9 +2177,9 @@ function buildStalledReport(list){
     if(!byLoc[loc])byLoc[loc]=[];
     byLoc[loc].push(t);
   });
+  // Table only. The greeting and sign-off live in the email itself, so pasting
+  // this in no longer duplicates "Hello ... Thank you" inside the message.
   var h=['<div style="font-family:Arial,sans-serif;font-size:13px;color:#000">'];
-  h.push('<p>Hello,</p><p>We are following up on <b>'+list.length+' shipment(s)</b> that are in your possession but have shown <b>no tracking scan for '+STALL_DAYS+'+ days</b>. Each one below was accepted/received at your facility and has not moved since the date shown.</p>'
-    +'<p>They are grouped by the facility holding them, oldest first. Could you please locate these and advise on status?</p>');
   var t=["Boost Oxygen - Shipments held with no scan for "+STALL_DAYS+"+ days - "+todayFull,""];
 
   Object.keys(byLoc).sort(function(a,b){return byLoc[b].length-byLoc[a].length;}).forEach(function(loc){
@@ -2203,7 +2203,7 @@ function buildStalledReport(list){
     h.push('</table>');
     t.push("");
   });
-  h.push('<p>Thank you,<br>Boost Oxygen Shipping Team</p></div>');
+  h.push('</div>');
   return {html:h.join(""),text:t.join("\n"),count:list.length};
 }
 
