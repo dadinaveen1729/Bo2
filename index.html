@@ -306,9 +306,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 <!-- MISSING -->
 <div class="panel" id="tab-miss">
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-    <select id="miss-date" style="flex:1;padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:12px" onchange="renderMissing()">
-      <option value="">All Dates</option>
-    </select>
+    <input type="date" id="miss-date" style="flex:1;min-width:150px;padding:9px 10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px" onchange="renderMissing()">
+    <button class="rbtn" style="margin:0" onclick="clearDateFilter('miss-date',renderMissing)">All dates</button>
     <button class="rbtn" style="margin:0" onclick="renderMissing()">Refresh</button>
   </div>
   <div id="miss-content"><div class="empty">Loading...</div></div>
@@ -332,9 +331,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 <div class="panel" id="tab-rpt">
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-    <select id="rpt-date" style="flex:1;padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:12px">
-      <option value="">All Dates</option>
-    </select>
+    <input type="date" id="rpt-date" style="flex:1;min-width:150px;padding:9px 10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px">
+    <button class="rbtn" style="margin:0" onclick="clearDateFilter('rpt-date')">All dates</button>
     <button class="rbtn" style="margin:0" onclick="renderReport()">Generate</button>
     <button class="rbtn" style="margin:0;background:#ECFDF3;border-color:#A7F3D0;color:#166534" onclick="printReport()">Print / PDF</button>
   </div>
@@ -350,9 +348,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
       <option value="UPS">UPS</option>
       <option value="USPS">USPS</option>
     </select>
-    <select id="track-date" style="flex:1;padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px" onchange="renderTracking()">
-      <option value="">All Dates</option>
-    </select>
+    <input type="date" id="track-date" style="flex:1;min-width:150px;padding:9px 10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px" onchange="renderTracking()">
+    <button class="rbtn" style="margin:0" onclick="clearDateFilter('track-date',renderTracking)">All dates</button>
     <button class="rbtn" style="margin:0" onclick="loadTracking()">Refresh</button>
   </div>
   <div id="track-content"><div class="empty">Loading tracking data...</div></div>
@@ -477,10 +474,74 @@ function lastHumanScan(tn){
   var rows=(histByTn[tn]||[]).filter(function(h){return h.status==="CONFIRMED";});
   return rows.length?rows[rows.length-1]:null;
 }
+// How long a second scan has to be after the first before it stops being a
+// verification re-check and starts being a possible double shipment. 20 minutes
+// comfortably covers packing-bench double-checks and a supervisor spot-check,
+// while a genuine second package going out hours or days later still alarms.
+var RECHECK_WINDOW_MIN=20;
+function parseScanMoment(dateStr,timeStr){
+  if(!dateStr)return null;
+  var d=new Date(dateStr+" "+(timeStr||"12:00 AM"));
+  return isNaN(d)?null:d;
+}
+function minutesSinceScan(tn,prevRow,pkg){
+  var when=null;
+  if(prevRow)when=parseScanMoment(prevRow.date,prevRow.time);
+  if(!when&&pkg)when=parseScanMoment(pkg.date,pkg.scantime);
+  if(!when)return null;
+  var mins=(getEST().getTime()-when.getTime())/60000;
+  return mins<0?null:mins;
+}
+function describeGap(mins){
+  if(mins===null)return "";
+  if(mins<1)return "seconds";
+  if(mins<60)return Math.round(mins)+" min";
+  if(mins<1440)return Math.round(mins/60)+" hr";
+  return Math.round(mins/1440)+" days";
+}
 function scannedByUs(tn){
   var pkg=allPkgs[tn];
   if(pkg&&pkg.status==="CONFIRMED")return true;
   return !!lastHumanScan(tn);
+}
+// Date filters are now calendar inputs rather than dropdowns, because the
+// dropdown grew by one entry every shipping day and would have become unusable.
+// The inputs speak ISO (YYYY-MM-DD); package dates are stored as M/D/YYYY text.
+function isoToUS(iso){
+  if(!iso)return "";
+  var p=String(iso).split("-");
+  if(p.length!==3)return "";
+  return parseInt(p[1],10)+"/"+parseInt(p[2],10)+"/"+p[0];
+}
+function usToIso(us){
+  if(!us)return "";
+  var p=String(us).split("/");
+  if(p.length!==3)return "";
+  return p[2]+"-"+("0"+p[0]).slice(-2)+"-"+("0"+p[1]).slice(-2);
+}
+function dateFilterValue(id){
+  var el=document.getElementById(id);
+  return el?isoToUS(el.value):"";
+}
+function clearDateFilter(id,cb){
+  var el=document.getElementById(id);
+  if(el)el.value="";
+  if(typeof cb==="function")cb();
+}
+// Constrain the picker to days we actually hold data for, and land on today.
+function setupDateInput(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  var dates=[];
+  Object.values(allPkgs).forEach(function(p){if(p.date&&dates.indexOf(p.date)===-1)dates.push(p.date);});
+  if(!dates.length)return;
+  var isos=dates.map(usToIso).filter(Boolean).sort();
+  el.min=isos[0];el.max=isos[isos.length-1];
+  if(!el.value&&!el.dataset.touched){
+    var todayIso=usToIso(getTodayStr());
+    el.value=(isos.indexOf(todayIso)>-1)?todayIso:isos[isos.length-1];
+    el.dataset.touched="1";
+  }
 }
 function dayName(dateStr){
   var d=new Date(dateStr);
@@ -761,11 +822,6 @@ function processCode(raw){
   var stamp=nowFullStr();
 
   if((confirmed[tn])&&allPkgs[tn]){
-    // Duplicate today. Show WHEN it was scanned before: without that the
-    // scanner cannot tell a real double-shipment from an accidental re-scan a
-    // minute ago, which is the whole point of the alert.
-    dupCount++;
-    document.getElementById("ct-dup").textContent=dupCount;
     var pkgD=allPkgs[tn]||{};
     var prevRow=lastRealScan(tn);
     var prevWhen=prevRow?fmtWhen(prevRow.date,prevRow.time)
@@ -773,6 +829,33 @@ function processCode(raw){
     var prevBy=(pkgD.status==="CONFIRMED_AUTO"||(prevRow&&prevRow.status==="CONFIRMED_AUTO"))
                  ?"auto-confirmed by carrier tracking":"scanned";
     var prevTxt=prevWhen?("Previously "+prevBy+": "+prevWhen):"Previously "+prevBy;
+
+    // RE-CHECK vs REAL DUPLICATE.
+    // Packers routinely scan the same box twice within moments to verify it, and
+    // treating that as a double-shipment alarm trained everyone to ignore the
+    // alert (18 "duplicates" in one day were all deliberate re-checks). A second
+    // scan only means something if enough time has passed that it could plausibly
+    // be a second physical package going out.
+    var minutesSince=minutesSinceScan(tn,prevRow,pkgD);
+    var isRecheck=(minutesSince!==null&&minutesSince<RECHECK_WINDOW_MIN);
+
+    if(isRecheck){
+      res.className="result r-ok";res.style.display="block";
+      document.getElementById("r-icon").textContent="ALREADY SCANNED";
+      document.getElementById("r-det").textContent="Verified again, "+describeGap(minutesSince)+" after the first scan | "+stamp;
+      document.getElementById("r-tn").innerHTML=trackLink(tn,pkgD.carrier,tn.slice(-20));
+      lb.innerHTML='<span style="color:#16A34A;font-weight:700">ALREADY SCANNED</span> | '+trackLink(tn,pkgD.carrier,tn.slice(-16))+'<br><span style="font-size:10px;color:#6B7280">re-check '+describeGap(minutesSince)+' after first scan &nbsp;|&nbsp; '+stamp+'</span>';
+      showFlash("ok","✔","ALREADY SCANNED","Re-check "+describeGap(minutesSince)+" after the first scan. Not a double shipment.",tn.slice(-18));
+      soundOk();
+      speak("Already scanned");
+      postScan(tn,"RECHECK");
+      setTimeout(function(){res.style.display="none";},3000);
+      setTimeout(function(){document.getElementById("scan-input").focus();},100);
+      return;
+    }
+
+    dupCount++;
+    document.getElementById("ct-dup").textContent=dupCount;
     res.className="result r-dup";res.style.display="block";
     document.getElementById("r-icon").textContent="DUPLICATE";
     document.getElementById("r-det").textContent=prevTxt+" | now: "+stamp;
@@ -894,7 +977,7 @@ function dropFromQueue(id){
 // to be cleared here on the server's own success reply. Without this it stayed
 // in the queue forever and rewrote a history row every 15 seconds - one package
 // alone had accumulated 1,723 duplicate rows this way.
-function isNonMutatingStatus(s){return s==="DUPLICATE"||s==="HISTORICAL_DUPLICATE";}
+function isNonMutatingStatus(s){return s==="DUPLICATE"||s==="HISTORICAL_DUPLICATE"||s==="RECHECK";}
 function sendQueueItem(item){
   item.attempts++;
   item.lastTry=Date.now();
@@ -928,10 +1011,28 @@ function verifySyncQueue(){
 }
 
 // LOAD PACKAGES
+// The first load pulls everything; after that only rows whose updated_at has
+// moved are fetched. The original code re-downloaded all ~9,000 packages every
+// two minutes per open tab, which is what pushed the database egress to 12 GB
+// in a month. An incremental poll is a few kB instead of ~2 MB.
+var PKG_COLS="tracking,date,order_number,customer,team,carrier,status,scantime,updated_at";
+var lastPkgSync=null;
+function mapPkgRow(r){
+  return{tracking:r.tracking,date:r.date,order:r.order_number,customer:r.customer,
+         team:r.team,carrier:r.carrier,status:r.status,scantime:r.scantime,updatedAt:r.updated_at};
+}
 function loadPkgs(){
-  sbGet("packages").then(function(rows){
-    var pkgs=(rows||[]).map(function(r){return{tracking:r.tracking,date:r.date,order:r.order_number,customer:r.customer,team:r.team,carrier:r.carrier,status:r.status,scantime:r.scantime};});
-    onPkgsLoaded({packages:pkgs});
+  var q="select="+PKG_COLS;
+  if(lastPkgSync)q+="&updated_at=gt."+encodeURIComponent(lastPkgSync);
+  sbGet("packages",q).then(function(rows){
+    rows=rows||[];
+    // Remember the newest timestamp we have actually seen, so the next poll
+    // asks only for what changed after it.
+    rows.forEach(function(r){ if(r.updated_at&&(!lastPkgSync||r.updated_at>lastPkgSync))lastPkgSync=r.updated_at; });
+    if(lastPkgSync===null&&rows.length===0)lastPkgSync=new Date().toISOString();
+    var incremental=Object.keys(allPkgs).length>0;
+    if(incremental&&!rows.length){ verifySyncQueue(); return; } // nothing changed
+    onPkgsLoaded({packages:rows.map(mapPkgRow),incremental:incremental});
   }).catch(function(err){
     pkgsLoaded=true;
     var cb2=document.getElementById("conn-bar");
@@ -942,13 +1043,21 @@ function loadPkgs(){
 function onPkgsLoaded(data){
     pkgsLoaded=true;
     var pkgs=data.packages||[];
-    allPkgs={};confirmed={};
+    // An incremental refresh carries only changed rows, so merge them in rather
+    // than rebuilding from a partial set.
+    if(!data.incremental){allPkgs={};}
+    confirmed={};
     var loadedDates=[];
     var todayStr=getTodayStr();
 
     pkgs.forEach(function(p){
       if(p.tracking&&p.tracking.length>=10){
         allPkgs[p.tracking.trim()]=p;
+      }
+    });
+
+    Object.values(allPkgs).forEach(function(p){
+      {
         // DUPLICATE/HISTORICAL_DUPLICATE only ever get set on a package that was
         // ALREADY confirmed (that's what triggers the duplicate alert in the
         // first place) - so they must still count as confirmed here. Otherwise
@@ -985,6 +1094,24 @@ function onPkgsLoaded(data){
     verifySyncQueue();
     if(document.getElementById("tab-dash").classList.contains("active"))renderDash();
     if(document.getElementById("tab-miss").classList.contains("active"))renderMissing();
+}
+
+// LTL FREIGHT
+// Pallet shipments move on a freight truck (XPO, TForce, ABF, Estes, plain
+// Load#/PRO numbers). Nobody scans them at the parcel bench and FedEx/UPS/USPS
+// cannot track them, so listing them as "not yet scanned" is noise that hides
+// the parcels that genuinely need chasing.
+var FREIGHT_PAT=/(^|[^A-Z0-9])(XPO|ABF|ODFL|ESTES|SAIA|TFORCE|T-FORCE|RLC|LOAD\s*#|PRO\s*#)/i;
+function isFreight(p){
+  var tn=String((p&&p.tracking)||"").toUpperCase();
+  if(!tn)return false;
+  if(FREIGHT_PAT.test(tn))return true;
+  // A parcel tracking number is never this short. Anything under 12 characters
+  // with no carrier identified is a freight PRO/BOL number, not a parcel.
+  var carrier=String((p&&p.carrier)||"").toLowerCase();
+  var known=carrier.indexOf("fedex")>-1||carrier.indexOf("ups")>-1||carrier.indexOf("usps")>-1;
+  if(!known&&tn.replace(/[^A-Z0-9]/g,"").length<12)return true;
+  return false;
 }
 
 // ACCOUNT DETECTION - normalizes known chains, auto-buckets any other business name.
@@ -1087,26 +1214,11 @@ function renderDash(){
 }
 
 // MISSING
-function buildMissDateOpts(){
-  var sel=document.getElementById("miss-date");
-  if(!sel)return;
-  var dates=[];
-  Object.values(allPkgs).forEach(function(p){if(p.date&&dates.indexOf(p.date)===-1)dates.push(p.date);});
-  dates.sort(function(a,b){return new Date(b)-new Date(a);});
-  var prevVal=sel.value;
-  sel.innerHTML='<option value="">All Dates</option>';
-  dates.forEach(function(d){
-    var opt=document.createElement("option");
-    opt.value=d;opt.textContent=d;
-    sel.appendChild(opt);
-  });
-  if(prevVal&&dates.indexOf(prevVal)>-1){sel.value=prevVal;}
-  else if(dates.indexOf(getTodayStr())>-1){sel.value=getTodayStr();}
-}
+function buildMissDateOpts(){setupDateInput("miss-date");}
 function renderMissing(){
   buildMissDateOpts();
   var todayStr=getTodayStr();
-  var dateFilter=document.getElementById("miss-date")?document.getElementById("miss-date").value:"";
+  var dateFilter=dateFilterValue("miss-date");
   var scopeStr=dateFilter||"All Dates";
   var scopePkgs=dateFilter?Object.values(allPkgs).filter(function(p){return p.date===dateFilter;}):Object.values(allPkgs);
   if(Object.keys(allPkgs).length===0){
@@ -1115,7 +1227,9 @@ function renderMissing(){
   if(!scopePkgs.length){
     document.getElementById("miss-content").innerHTML='<div class="empty">No packages for '+scopeStr+'.</div>';return;
   }
-  var missing=scopePkgs.filter(function(p){return !confirmed[p.tracking];});
+  var allMissing=scopePkgs.filter(function(p){return !confirmed[p.tracking];});
+  var freightMissing=allMissing.filter(isFreight);
+  var missing=allMissing.filter(function(p){return !isFreight(p);});
   if(!missing.length){
     document.getElementById("miss-content").innerHTML='<div class="all-clear"><div style="font-size:48px">All Clear</div><div class="msg">All '+scopePkgs.length+' package(s) for '+scopeStr+' confirmed.</div><div class="sub">Ready for carrier pickup.</div></div>';return;
   }
@@ -1123,6 +1237,11 @@ function renderMissing(){
   var html='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">Showing: '+scopeStr+'</div>';
   if(dateFilter===todayStr&&h>=13&&h<14)html+='<div style="background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;border-radius:10px;padding:12px;margin-bottom:10px;font-size:13px;font-weight:600">Less than 1 hour to pickup | Find these now</div>';
   html+='<div style="font-size:14px;color:#DC2626;font-weight:700;margin-bottom:12px">'+missing.length+' package(s) not yet scanned for '+scopeStr+'</div>';
+  if(freightMissing.length){
+    html+='<div style="font-size:12px;color:#4B5563;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:8px 10px;margin-bottom:10px">'
+      +'<b>'+freightMissing.length+'</b> LTL freight shipment(s) excluded (XPO, TForce, ABF, Load#/PRO). '
+      +'These go out on a freight truck, are not scanned at the parcel bench, and cannot be tracked by FedEx/UPS/USPS.</div>';
+  }
 
   // Carrier breakdown for whatever's currently missing in this scope
   var byCarrier={};
@@ -1166,8 +1285,17 @@ function renderMissing(){
 // HISTORY
 // Loaded once into allHistory (oldest first) and reused by Search, the
 // duplicate counter and the previous-scan lookup, so those all agree.
+// Only the recent window is pulled. All 12,000+ rows were being downloaded on
+// every page load for features that only ever look at the last few weeks.
+var HISTORY_DAYS=45;
+function historyCutoffIso(){
+  return new Date(Date.now()-HISTORY_DAYS*86400000).toISOString();
+}
 function loadHistory(){
-  return sbGet("scan_history","select=*&order=created_at.asc").then(function(rows0){
+  var q="select=date,time,tracking,order_number,customer,team,carrier,status,created_at"
+       +"&created_at=gte."+encodeURIComponent(historyCutoffIso())
+       +"&order=created_at.asc";
+  return sbGet("scan_history",q).then(function(rows0){
     allHistory=(rows0||[]).map(function(r){
       return{date:r.date,time:r.time,tracking:(r.tracking||"").trim(),order:r.order_number,
              customer:r.customer,team:r.team,carrier:r.carrier,status:r.status,createdAt:r.created_at};
@@ -1181,6 +1309,8 @@ function loadHistory(){
 // deliberately leaves the status alone), so count them from history instead.
 function refreshDupCount(){
   var today=getTodayStr();
+  // RECHECK rows are deliberately excluded: they are verification scans, not
+  // duplicates, and counting them made the tile meaningless.
   dupCount=allHistory.filter(function(h){
     return h.date===today&&(h.status==="DUPLICATE"||h.status==="HISTORICAL_DUPLICATE");
   }).length;
@@ -1206,12 +1336,21 @@ function onHistLoaded(data){
       var d=r.date||"Unknown";
       if(!byDate[d])byDate[d]={confirmed:[],duplicate:[],notfound:[]};
       var row={tn:r.tracking,order:r.order,customer:r.customer,team:r.team,time:r.time,status:r.status,carrier:r.carrier};
-      if(r.status==="CONFIRMED"||r.status==="CONFIRMED_AUTO") byDate[d].confirmed.push(row);
+      if(r.status==="CONFIRMED"||r.status==="CONFIRMED_AUTO"||r.status==="RECHECK") byDate[d].confirmed.push(row);
       else if(r.status==="DUPLICATE"||r.status==="HISTORICAL_DUPLICATE") byDate[d].duplicate.push(row);
       else byDate[d].notfound.push(row);
     });
     var html="";
-    Object.entries(byDate).sort(function(a,b){return b[0].localeCompare(a[0]);}).forEach(function(entry){
+    // Dates are stored as text ("8/7/2026"), so a string sort puts 8/7 ABOVE
+    // 8/19 because "7" > "1" as characters. That made the newest days look
+    // missing from History. Sort on the parsed date instead.
+    Object.entries(byDate).sort(function(a,b){
+      var da=new Date(a[0]),db=new Date(b[0]);
+      if(isNaN(da)&&isNaN(db))return b[0].localeCompare(a[0]);
+      if(isNaN(da))return 1;
+      if(isNaN(db))return -1;
+      return db-da;
+    }).forEach(function(entry){
       var d=entry[0],s=entry[1];
       var total=s.confirmed.length+s.duplicate.length+s.notfound.length;
       html+='<div class="hist-row">';
@@ -1397,23 +1536,10 @@ function doSearch(q){
 }
 
 // REPORT
-function buildReportDateOpts(){
-  var sel=document.getElementById("rpt-date");
-  if(!sel)return;
-  var dates=[];
-  Object.values(allPkgs).forEach(function(p){if(p.date&&dates.indexOf(p.date)===-1)dates.push(p.date);});
-  dates.sort().reverse();
-  sel.innerHTML='<option value="">All Dates</option>';
-  dates.forEach(function(d){
-    var opt=document.createElement("option");
-    opt.value=d;opt.textContent=d;
-    if(d===getTodayStr())opt.selected=true;
-    sel.appendChild(opt);
-  });
-}
+function buildReportDateOpts(){setupDateInput("rpt-date");}
 
 function renderReport(){
-  var dateFilter=document.getElementById("rpt-date").value;
+  var dateFilter=dateFilterValue("rpt-date");
   var pkgs=Object.values(allPkgs).filter(function(p){return !dateFilter||p.date===dateFilter;});
   if(!pkgs.length){document.getElementById("rpt-content").innerHTML='<div class="empty">No data for selected date</div>';return;}
   var conf=pkgs.filter(function(p){return confirmed[p.tracking];});
@@ -1476,26 +1602,18 @@ function printReport(){
 // TRACKING DASHBOARD - per-carrier delivery/OTD stats, charts, and a "no
 // movement" discrepancy list (built from Tracking Details, populated daily by
 // carrier_reconcile.py - a local Python script, run via Task Scheduler).
-function buildTrackDateOpts(){
-  var sel=document.getElementById("track-date");
-  if(!sel)return;
-  var dates=[];
-  Object.values(allPkgs).forEach(function(p){if(p.date&&dates.indexOf(p.date)===-1)dates.push(p.date);});
-  dates.sort(function(a,b){return new Date(b)-new Date(a);});
-  var prevVal=sel.value;
-  sel.innerHTML='<option value="">All Dates</option>';
-  dates.forEach(function(d){
-    var opt=document.createElement("option");
-    opt.value=d;opt.textContent=d;
-    sel.appendChild(opt);
-  });
-  if(prevVal&&dates.indexOf(prevVal)>-1)sel.value=prevVal;
-}
+function buildTrackDateOpts(){setupDateInput("track-date");}
 
 function loadTracking(){
   var el=document.getElementById("track-content");
   if(el)el.innerHTML='<div class="empty">Loading tracking data...</div>';
-  sbGet("tracking_details").then(function(rows){
+  // Delivered packages older than the reporting window are dead weight on every
+  // load. Keep everything still open plus recent deliveries for the OTDR stats.
+  var trkQuery="select=tracking,carrier,order_number,customer,team,our_status,latest_status,"
+    +"latest_location,promised_date,delivered_date,delivered,has_movement,last_event_date,"
+    +"awaiting_pickup,last_error,last_checked"
+    +"&or=(delivered.eq.false,last_checked.gte."+encodeURIComponent(historyCutoffIso())+")";
+  sbGet("tracking_details",trkQuery).then(function(rows){
     trackingData=(rows||[]).map(function(r){return{
       tracking:r.tracking,carrier:r.carrier,order:r.order_number,customer:r.customer,team:r.team,
       ourStatus:r.our_status,latestStatus:r.latest_status,latestLocation:r.latest_location,
@@ -1673,7 +1791,7 @@ function renderTracking(){
     return;
   }
   var carrierFilter=document.getElementById("track-carrier")?document.getElementById("track-carrier").value:"";
-  var dateFilter=document.getElementById("track-date")?document.getElementById("track-date").value:"";
+  var dateFilter=dateFilterValue("track-date");
 
   var scoped=trackingData.filter(function(t){
     if(!dateFilter)return true;
@@ -1841,10 +1959,11 @@ function renderTracking(){
     var claims=allActions.filter(function(a){return a.action==="CLAIM";});
     if(reshipped.length||claims.length){
       var todayR=reshipped.filter(function(a){return a.date===getTodayStr();}).length;
-      html+='<div style="font-size:12px;color:#166534;background:#ECFDF3;border:1px solid #A7F3D0;border-radius:8px;padding:8px 10px;margin-bottom:10px">'
-        +'<b>'+reshipped.length+'</b> reshipped and cleared from this list'+(todayR?' ('+todayR+' today)':'')
-        +(claims.length?', <b>'+claims.length+'</b> carrier claim'+(claims.length>1?'s':'')+' opened':'')
-        +'. Search any tracking number to see its reship record.</div>';
+      html+='<div style="font-size:12px;color:#166534;background:#ECFDF3;border:1px solid #A7F3D0;border-radius:8px;padding:8px 10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">'
+        +'<span><b>'+reshipped.length+'</b> reshipped and cleared from this list'+(todayR?' ('+todayR+' today)':'')
+        +(claims.length?', <b>'+claims.length+'</b> carrier claim'+(claims.length>1?'s':'')+' opened':'')+'</span>'
+        +'<button class="rbtn" style="margin:0;font-size:11px;padding:5px 10px" onclick="toggleReshipLog()">View reship log</button></div>';
+      html+='<div id="reship-log" style="display:none;margin-bottom:12px">'+buildReshipLog()+'</div>';
     }
 
     function renderNoMoveGroup(title,list,tone,note,withClaim){
@@ -1936,7 +2055,7 @@ function renderTracking(){
 // so this is ready to paste straight into a carrier email.
 function copyStuckList(){
   var carrierFilter=document.getElementById("track-carrier")?document.getElementById("track-carrier").value:"";
-  var dateFilter=document.getElementById("track-date")?document.getElementById("track-date").value:"";
+  var dateFilter=dateFilterValue("track-date");
   var scoped=trackingData.filter(function(t){
     if(!dateFilter)return true;
     var pd=allPkgs[t.tracking];
@@ -2009,7 +2128,7 @@ function copyStuckList(){
 // which packages they're talking about.
 function stalledScoped(){
   var carrierFilter=document.getElementById("track-carrier")?document.getElementById("track-carrier").value:"";
-  var dateFilter=document.getElementById("track-date")?document.getElementById("track-date").value:"";
+  var dateFilter=dateFilterValue("track-date");
   var scoped=trackingData.filter(function(t){
     if(!dateFilter)return true;
     var pd=allPkgs[t.tracking];
@@ -2079,7 +2198,7 @@ function writeToClipboard(htmlStr,textStr,okMsg){
 // we handed over would be an argument we lose.
 function emailNoMovementList(){
   var carrierFilter=document.getElementById("track-carrier")?document.getElementById("track-carrier").value:"";
-  var dateFilter=document.getElementById("track-date")?document.getElementById("track-date").value:"";
+  var dateFilter=dateFilterValue("track-date");
   var scoped=trackingData.filter(function(t){
     if(!dateFilter)return true;
     var pd=allPkgs[t.tracking];
@@ -2156,6 +2275,54 @@ function emailStalledList(){
     +"[ PASTE HERE - press Ctrl+V to insert the full list with tracking links ]\n\n"
     +"Could you please check on these and advise?\n\nThank you,\nBoost Oxygen Shipping Team";
   window.location.href="mailto:?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+}
+
+// ── RESHIP LOG ───────────────────────────────────────────────────────────
+// Everything ever reshipped, in one place. Once an item is cleared from the
+// action list it would otherwise be invisible, and "how many did we ship twice
+// and what did they go out on" is the question this whole workflow exists to
+// answer.
+function toggleReshipLog(){
+  var el=document.getElementById("reship-log");
+  if(!el)return;
+  el.style.display=(el.style.display==="none")?"block":"none";
+}
+function buildReshipLog(){
+  var rows=allActions.filter(function(a){return a.action==="RESHIPPED";});
+  if(!rows.length)return '<div style="font-size:12px;color:#6B7280;padding:8px">Nothing reshipped yet.</div>';
+  rows=rows.slice().sort(function(a,b){
+    var da=new Date((a.date||"")+" "+(a.time||"")),db=new Date((b.date||"")+" "+(b.time||""));
+    if(isNaN(da)||isNaN(db))return 0;
+    return db-da;
+  });
+  var byDate={};
+  rows.forEach(function(a){var d=a.date||"Unknown";if(!byDate[d])byDate[d]=[];byDate[d].push(a);});
+  var h='<div style="background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:12px">';
+  h+='<div style="font-size:13px;font-weight:800;color:#166534;margin-bottom:2px">Reship Log ('+rows.length+')</div>';
+  h+='<div style="font-size:11px;color:#6B7280;margin-bottom:10px">Every package we had to send a second time, with the replacement tracking number where one was recorded.</div>';
+  Object.keys(byDate).sort(function(a,b){
+    var da=new Date(a),db=new Date(b);
+    return (isNaN(da)||isNaN(db))?b.localeCompare(a):db-da;
+  }).forEach(function(d){
+    var g=byDate[d];
+    h+='<div style="font-size:12px;font-weight:700;color:#166534;margin:8px 0 4px">'+fmtWhen(d,"")+' ('+g.length+')</div>';
+    g.forEach(function(a){
+      var pkg=allPkgs[a.tracking]||{};
+      var claim=actionOf(a.tracking,"CLAIM");
+      h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:7px 10px;background:#ECFDF3;border-radius:6px;margin-bottom:3px;font-size:12px;border-left:3px solid #16A34A">';
+      h+='<span style="font-family:Consolas,monospace;min-width:170px">'+trackLink(a.tracking,pkg.carrier)+'</span>';
+      h+='<span style="color:#4B5563;min-width:78px">'+(pkg.order||"")+'</span>';
+      h+='<span style="color:#6B7280;flex:1;min-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(pkg.customer||"")+'</span>';
+      h+='<span style="min-width:200px">'+(a.newTracking
+            ?'<span style="color:#166534">new label <b style="font-family:Consolas,monospace">'+a.newTracking+'</b></span>'
+            :'<span style="color:#B45309">no new tracking recorded</span>')+'</span>';
+      if(claim)h+='<span style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;border-radius:5px;padding:2px 6px;font-size:10px;font-weight:700">CLAIMED</span>';
+      h+='<span style="color:#6B7280;font-size:11px;white-space:nowrap">'+(a.time||"")+'</span>';
+      h+='</div>';
+    });
+  });
+  h+='</div>';
+  return h;
 }
 
 // ── RESHIP / CLAIM ACTIONS ───────────────────────────────────────────────
@@ -2251,11 +2418,13 @@ window.addEventListener("load",function(){
   // counter and previous-scan timestamps, so it cannot wait for the History tab.
   loadHistory().catch(function(err){console.error("history load failed",err);});
   loadActions().then(function(){renderTracking();}).catch(function(err){console.error("actions load failed",err);});
-  setInterval(loadPkgs,120000);
+  // Only poll while someone is actually looking. A tablet left open on the
+  // bench overnight was polling until morning for nobody.
+  setInterval(function(){if(!document.hidden)loadPkgs();},120000);
   // While any scan is still unverified, refresh much faster (every 20s instead of
   // 2min) so a dropped save gets caught and retried quickly instead of sitting
   // unconfirmed for up to 2 minutes. No-ops (skips the reload) once fully synced.
-  setInterval(function(){if(getSyncQueue().length>0)loadPkgs();},20000);
+  setInterval(function(){if(!document.hidden&&getSyncQueue().length>0)loadPkgs();},20000);
 });
 </script>
 <!-- SCROLL BUTTONS -->
