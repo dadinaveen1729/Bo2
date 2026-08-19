@@ -315,7 +315,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 <!-- HISTORY -->
 <div class="panel" id="tab-hist">
-  <button class="rbtn" onclick="renderHist()">Refresh</button>
+  <button class="rbtn" onclick="historyFullLoaded=false;renderHist()">Refresh</button>
   <div class="sec-hdr">All-time scan history | stored permanently in Supabase</div>
   <div id="hist-content"><div class="empty">Loading history...</div></div>
 </div>
@@ -350,7 +350,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </select>
     <input type="date" id="track-date" style="flex:1;min-width:150px;padding:9px 10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px" onchange="renderTracking()">
     <button class="rbtn" style="margin:0" onclick="clearDateFilter('track-date',renderTracking)">All dates</button>
-    <button class="rbtn" style="margin:0" onclick="loadTracking()">Refresh</button>
+    <button class="rbtn" style="margin:0" onclick="loadTracking(true)">Refresh</button>
   </div>
   <div id="track-content"><div class="empty">Loading tracking data...</div></div>
 </div>
@@ -685,7 +685,7 @@ function showTab(id){
   if(id==="hist")renderHist();
   if(id==="srch"){buildReportDateOpts();setTimeout(function(){document.getElementById("srch-input").focus();},100);}
   if(id==="rpt"){buildReportDateOpts();renderReport();}
-  if(id==="track")loadTracking();
+  if(id==="track")loadTracking(true);
   if(id==="scan"&&!pinUnlocked){showPin();return;}
   if(id==="scan")setTimeout(function(){document.getElementById("scan-input").focus();},100);
 }
@@ -1017,13 +1017,26 @@ function verifySyncQueue(){
 // in a month. An incremental poll is a few kB instead of ~2 MB.
 var PKG_COLS="tracking,date,order_number,customer,team,carrier,status,scantime,updated_at";
 var lastPkgSync=null;
+// Rolling operational window. Everything the bench, dashboard and missing list
+// care about happened recently; without this the app would download the entire
+// packages table forever and egress would climb every single day as the archive
+// grows. ship_date is a real date column added for exactly this purpose.
+var PKG_WINDOW_DAYS=21;
+function pkgWindowStartIso(){
+  var d=new Date(Date.now()-PKG_WINDOW_DAYS*86400000);
+  return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);
+}
 function mapPkgRow(r){
   return{tracking:r.tracking,date:r.date,order:r.order_number,customer:r.customer,
          team:r.team,carrier:r.carrier,status:r.status,scantime:r.scantime,updatedAt:r.updated_at};
 }
 function loadPkgs(){
   var q="select="+PKG_COLS;
-  if(lastPkgSync)q+="&updated_at=gt."+encodeURIComponent(lastPkgSync);
+  if(lastPkgSync){
+    q+="&updated_at=gt."+encodeURIComponent(lastPkgSync);
+  }else{
+    q+="&ship_date=gte."+pkgWindowStartIso();
+  }
   sbGet("packages",q).then(function(rows){
     rows=rows||[];
     // Remember the newest timestamp we have actually seen, so the next poll
@@ -1291,11 +1304,18 @@ var HISTORY_DAYS=45;
 function historyCutoffIso(){
   return new Date(Date.now()-HISTORY_DAYS*86400000).toISOString();
 }
-function loadHistory(){
+// Startup only needs today's scans (duplicate lookup and the duplicate counter).
+// The full window is fetched the first time someone actually opens History or
+// searches, which most scanning sessions never do. That is ~180 kB instead of
+// ~2.9 MB on every single page load.
+var historyFullLoaded=false;
+function loadHistory(full){
+  var since=full?historyCutoffIso():new Date(Date.now()-36*3600000).toISOString();
   var q="select=date,time,tracking,order_number,customer,team,carrier,status,created_at"
-       +"&created_at=gte."+encodeURIComponent(historyCutoffIso())
+       +"&created_at=gte."+encodeURIComponent(since)
        +"&order=created_at.asc";
   return sbGet("scan_history",q).then(function(rows0){
+    if(full)historyFullLoaded=true;
     allHistory=(rows0||[]).map(function(r){
       return{date:r.date,time:r.time,tracking:(r.tracking||"").trim(),order:r.order_number,
              customer:r.customer,team:r.team,carrier:r.carrier,status:r.status,createdAt:r.created_at};
@@ -1319,8 +1339,9 @@ function refreshDupCount(){
 }
 function renderHist(){
   var el=document.getElementById("hist-content");
-  if(el&&!allHistory.length)el.innerHTML='<div class="empty">Loading history...</div>';
-  loadHistory().then(function(){
+  if(el&&!historyFullLoaded)el.innerHTML='<div class="empty">Loading history...</div>';
+  // Opening History is the moment the full window is genuinely needed.
+  (historyFullLoaded?Promise.resolve(allHistory):loadHistory(true)).then(function(){
     onHistLoaded({history:allHistory.slice().reverse()});
   }).catch(function(err){
     if(el)el.innerHTML='<div class="empty">Could not load history.</div>';
@@ -1447,6 +1468,10 @@ function pinExit(){
 // SEARCH
 function doSearch(q){
   q=q.trim().toLowerCase();
+  // Searching is the other moment the full history window is needed, so
+  // pull it once on first use rather than on every page load.
+  if(q&&!historyFullLoaded){loadHistory(true).then(function(){doSearch(q);});}
+
   var el=document.getElementById("srch-results");
   if(!q){el.innerHTML='<div class="empty">Type to search packages and history</div>';return;}
   var results=[];
@@ -1604,16 +1629,21 @@ function printReport(){
 // carrier_reconcile.py - a local Python script, run via Task Scheduler).
 function buildTrackDateOpts(){setupDateInput("track-date");}
 
-function loadTracking(){
+// Startup pulls only packages still in flight (~1 MB), which is all Search needs
+// to flag a problem shipment. Delivered history is fetched the first time the
+// Tracking tab is opened, since that is the only place OTDR is shown.
+var trackingFullLoaded=false;
+function loadTracking(full){
+  if(trackingFullLoaded&&!full)return Promise.resolve(trackingData);
   var el=document.getElementById("track-content");
-  if(el)el.innerHTML='<div class="empty">Loading tracking data...</div>';
-  // Delivered packages older than the reporting window are dead weight on every
-  // load. Keep everything still open plus recent deliveries for the OTDR stats.
+  if(el&&full)el.innerHTML='<div class="empty">Loading tracking data...</div>';
   var trkQuery="select=tracking,carrier,order_number,customer,team,our_status,latest_status,"
     +"latest_location,promised_date,delivered_date,delivered,has_movement,last_event_date,"
-    +"awaiting_pickup,last_error,last_checked"
-    +"&or=(delivered.eq.false,last_checked.gte."+encodeURIComponent(historyCutoffIso())+")";
-  sbGet("tracking_details",trkQuery).then(function(rows){
+    +"awaiting_pickup,last_error,last_checked";
+  trkQuery+=full
+    ? "&or=(delivered.eq.false,last_checked.gte."+encodeURIComponent(historyCutoffIso())+")"
+    : "&delivered=eq.false";
+  return sbGet("tracking_details",trkQuery).then(function(rows){
     trackingData=(rows||[]).map(function(r){return{
       tracking:r.tracking,carrier:r.carrier,order:r.order_number,customer:r.customer,team:r.team,
       ourStatus:r.our_status,latestStatus:r.latest_status,latestLocation:r.latest_location,
@@ -1621,7 +1651,9 @@ function loadTracking(){
       delivered:!!r.delivered,hasMovement:!!r.has_movement,awaitingPickup:!!r.awaiting_pickup,
       lastError:r.last_error,lastChecked:r.last_checked
     };});
+    if(full)trackingFullLoaded=true;
     renderTracking();
+    return trackingData;
   }).catch(function(err){
     if(el)el.innerHTML='<div class="empty">Could not load tracking data.</div>';
     console.error(err);
@@ -2413,10 +2445,10 @@ window.addEventListener("load",function(){
   updateSyncBadge(); // show sync status immediately if anything was left pending from a previous session
   // PIN only guards the Scan tab (see showTab) - opening the app itself never prompts for it.
   loadPkgs();
-  loadTracking(); // so Search shows carrier status even if you never open the Tracking tab
+  loadTracking(false); // in-flight only; Search just needs to flag problem shipments
   // History drives Search (scanned-but-not-in-system lookups), the duplicate
   // counter and previous-scan timestamps, so it cannot wait for the History tab.
-  loadHistory().catch(function(err){console.error("history load failed",err);});
+  loadHistory(false).catch(function(err){console.error("history load failed",err);});
   loadActions().then(function(){renderTracking();}).catch(function(err){console.error("actions load failed",err);});
   // Only poll while someone is actually looking. A tablet left open on the
   // bench overnight was polling until morning for nobody.
