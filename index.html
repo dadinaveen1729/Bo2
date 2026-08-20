@@ -446,6 +446,19 @@ function actionOf(tn,kind){return (actionsByTn[tn]||{})[kind]||null;}
 // no longer an open action item. A claim alone does not clear it - the customer
 // still has nothing.
 function isResolved(tn){return !!actionOf(tn,"RESHIPPED");}
+
+// CANCELLED / VOIDED LABELS
+// Once a label is voided it is not a shipment any more, so it must not show up
+// in any list, count or carrier email. Two ways we learn about it:
+//   1. the carrier says so in the tracking status
+//   2. we voided it ourselves when reshipping (already covered by isResolved)
+var VOID_PAT=/(cancel|void|deleted|shipment\s*not\s*found|no\s*longer\s*valid)/i;
+function isVoided(t){
+  if(!t)return false;
+  if(VOID_PAT.test(String(t.latestStatus||"")))return true;
+  if(String(t.ourStatus||"").toUpperCase()==="VOIDED")return true;
+  return false;
+}
 function indexHistory(){
   histByTn={};
   allHistory.forEach(function(h){
@@ -1115,10 +1128,28 @@ function onPkgsLoaded(data){
 // cannot track them, so listing them as "not yet scanned" is noise that hides
 // the parcels that genuinely need chasing.
 var FREIGHT_PAT=/(^|[^A-Z0-9])(XPO|ABF|ODFL|ESTES|SAIA|TFORCE|T-FORCE|RLC|LOAD\s*#|PRO\s*#)/i;
+// A tracking number must match the format of the carrier it claims. NetSuite
+// sends freight PRO/BOL numbers tagged with a parcel carrier - the 10-digit
+// Wal-Mart DC numbers come through tagged FedEx - and FedEx has never returned
+// a single event for any of them, because FedEx does not own those numbers.
+// Without this they sat in "Not scanned by us either" looking like lost
+// parcels, when they are pallets that no one scans at the parcel bench.
+function matchesCarrierFormat(tn,carrier){
+  var t=String(tn||"").replace(/[^A-Za-z0-9]/g,"");
+  var c=String(carrier||"").toLowerCase();
+  if(c.indexOf("ups")>-1)  return t.toUpperCase().indexOf("1Z")===0&&t.length===18;
+  if(c.indexOf("fedex")>-1)return /^\d+$/.test(t)&&(t.length===12||t.length===15||t.length===20||t.length===22);
+  if(c.indexOf("usps")>-1||c.indexOf("stamps")>-1||c.indexOf("endicia")>-1)
+                           return /^\d+$/.test(t)&&(t.length===20||t.length===22||t.length===26);
+  return true;   // carrier not identified - fall through to the length rule
+}
+
 function isFreight(p){
   var tn=String((p&&p.tracking)||"").toUpperCase();
   if(!tn)return false;
   if(FREIGHT_PAT.test(tn))return true;
+  // Claims a parcel carrier but is not shaped like one of its numbers.
+  if(!matchesCarrierFormat(tn,(p&&p.carrier)))return true;
   // A parcel tracking number is never this short. Anything under 12 characters
   // with no carrier identified is a freight PRO/BOL number, not a parcel.
   var carrier=String((p&&p.carrier)||"").toLowerCase();
@@ -1792,7 +1823,7 @@ function computeCarrierStats(list,carrierName){
 }
 
 function trackingStuckList(scoped,carrierFilter){
-  var list=scoped.filter(function(t){return isAwaitingPickup(t)&&!isResolved(t.tracking);});
+  var list=scoped.filter(function(t){return isAwaitingPickup(t)&&!isResolved(t.tracking)&&!isVoided(t)&&!isFreight({tracking:t.tracking,carrier:t.carrier});});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   // Oldest label first - those are the ones that never made it onto a truck.
   list.sort(function(a,b){return (ageOf(b)||0)-(ageOf(a)||0);});
@@ -1800,7 +1831,7 @@ function trackingStuckList(scoped,carrierFilter){
 }
 
 function trackingStalledList(scoped,carrierFilter){
-  var list=scoped.filter(function(t){return isStalled(t)&&!isResolved(t.tracking);});
+  var list=scoped.filter(function(t){return isStalled(t)&&!isResolved(t.tracking)&&!isVoided(t)&&!isFreight({tracking:t.tracking,carrier:t.carrier});});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   // Longest-sitting first - those are the ones to chase.
   list.sort(function(a,b){return (daysSince(b.lastEventDate)||0)-(daysSince(a.lastEventDate)||0);});
