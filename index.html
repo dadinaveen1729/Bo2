@@ -918,6 +918,18 @@ function processCode(raw){
     try{localStorage.setItem(histKey,JSON.stringify({tn:tn,date:ds,order:pkg.order||""}));}catch(ex){}
     if(document.getElementById("tab-miss").classList.contains("active"))renderMissing();
 
+  }else if(captureLateLabel(raw,stamp)){
+    // A real carrier number that NetSuite never reported. Confirm it rather
+    // than making the bench re-scan something that will never be in the list.
+    confirmed[raw]=true;
+    res.className="result r-ok";res.style.display="block";
+    document.getElementById("r-icon").textContent="CONFIRMED";
+    document.getElementById("r-det").textContent="Late label - not in the NetSuite report, added now | "+stamp;
+    document.getElementById("r-tn").innerHTML=trackLink(raw,carrierFromTracking(raw),raw.slice(-20));
+    lb.innerHTML='<span style="color:#16A34A;font-weight:700">CONFIRMED</span> | '+trackLink(raw,carrierFromTracking(raw),raw.slice(-16))+'<br><span style="font-size:10px;color:#6B7280">late label, added at scan &nbsp;|&nbsp; '+stamp+'</span>';
+    showFlash("ok","✔","CONFIRMED","Label was not in the NetSuite report. Added and confirmed.",raw.slice(-18));
+    soundOk();
+    speak("Confirmed");
   }else{
     // Not found
     res.className="result r-nf";res.style.display="block";
@@ -959,6 +971,42 @@ function updateSyncBadge(q){
   el.style.display="block";
   el.textContent="⏳ Syncing "+q.length+" scan"+(q.length>1?"s":"")+" to Supabase - do not close this page";
 }
+// LATE LABELS ADDED TO AN OLD FULFILLMENT
+// NetSuite's report window filters on Actual Ship Date, so a label added later
+// to an older fulfillment can never appear in any report we receive. Verified
+// case: SO777899 shipped 8/11 with 383119699442; label 383282589086 was added
+// afterwards and is absent from every report from 8/4 to 8/20. Scanning it read
+// NOT FOUND forever, which makes the bench look wrong when it is not.
+// If the number is a valid carrier format, the package is real - accept the
+// scan, create the row, and tag it so it can be reconciled against NetSuite.
+function carrierFromTracking(tn){
+  var t=String(tn||"").replace(/[^A-Za-z0-9]/g,"");
+  if(/^1Z/i.test(t)&&t.length===18)return "UPS";
+  if(/^\d+$/.test(t)){
+    if(t.length===20||t.length===22||t.length===26)return "USPS";
+    if(t.length===12||t.length===15)return "FedEx";
+  }
+  return "";
+}
+
+function captureLateLabel(tn,stamp){
+  var carrier=carrierFromTracking(tn);
+  if(!carrier)return false;                 // not a real parcel number
+  var e=getEST(),h=e.getHours(),m=e.getMinutes(),ap=h>=12?"PM":"AM";h=h%12||12;
+  var t=h+":"+(m<10?"0"+m:m)+" "+ap;
+  var ds=(e.getMonth()+1)+"/"+e.getDate()+"/"+e.getFullYear();
+  var rec={tracking:tn,order:"",customer:"(added at scan - not in NetSuite report)",
+           team:"Online Set 1",carrier:carrier,status:"PENDING",scantime:"",
+           date:ds,source:"SCANNED_ONLY"};
+  allPkgs[tn]=rec;
+  sbRpc("load_packages",{payload:[rec]}).then(function(){
+    postScan(tn,"CONFIRMED");
+  }).catch(function(){
+    postScan(tn,"CONFIRMED");               // queue still retries the scan
+  });
+  return true;
+}
+
 function postScan(tn,status){
   var e=getEST(),h=e.getHours(),m=e.getMinutes();
   var ap=h>=12?"PM":"AM";h=h%12||12;
