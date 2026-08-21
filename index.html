@@ -918,6 +918,17 @@ function processCode(raw){
     try{localStorage.setItem(histKey,JSON.stringify({tn:tn,date:ds,order:pkg.order||""}));}catch(ex){}
     if(document.getElementById("tab-miss").classList.contains("active"))renderMissing();
 
+  }else if(isSmartPostSecondBarcode(raw)){
+    // Recorded, but deliberately NOT turned into a package - see above.
+    res.className="result r-nf";res.style.display="block";
+    document.getElementById("r-icon").textContent="OTHER BARCODE";
+    document.getElementById("r-det").textContent="USPS barcode on a SmartPost label - scan the FedEx barcode on the same box | "+stamp;
+    document.getElementById("r-tn").innerHTML=trackLink(raw,"USPS",raw.slice(-20));
+    lb.innerHTML='<span style="color:#D97706;font-weight:700">OTHER BARCODE</span> | '+trackLink(raw,"USPS",raw.slice(-16))+'<br><span style="font-size:10px;color:#6B7280">SmartPost USPS barcode - scan the FedEx one &nbsp;|&nbsp; '+stamp+'</span>';
+    showFlash("nf","↻","SCAN THE FEDEX BARCODE","This is the USPS barcode on a SmartPost label. The FedEx barcode on the same box is the one we track.",raw.slice(-18));
+    soundNotFound();
+    speak("Scan the FedEx barcode");
+    postScan(raw,"SECOND_BARCODE");
   }else if(captureLateLabel(raw,stamp)){
     // A real carrier number that NetSuite never reported. Confirm it rather
     // than making the bench re-scan something that will never be in the list.
@@ -979,6 +990,20 @@ function updateSyncBadge(q){
 // NOT FOUND forever, which makes the bench look wrong when it is not.
 // If the number is a valid carrier format, the package is real - accept the
 // scan, create the row, and tag it so it can be reconciled against NetSuite.
+// SMARTPOST / SUREPOST SECOND BARCODE
+// A SmartPost label carries TWO barcodes: the FedEx number, and the USPS number
+// USPS uses for the last leg. NetSuite records only the FedEx one - measured
+// across a full report, it issues 917 FedEx numbers for SmartPost and zero
+// 9261 USPS numbers, while 758 of our NOT FOUND scans were 9261. So a 9261 is
+// never a missing label; it is the other barcode on a box we already know.
+// Confirming it would invent a second package that does not exist and double
+// the count. The FedEx barcode is the one that matches the paperwork.
+var SMARTPOST_USPS_PREFIX=/^9261/;
+function isSmartPostSecondBarcode(tn){
+  var t=String(tn||"").replace(/[^0-9]/g,"");
+  return t.length===22&&SMARTPOST_USPS_PREFIX.test(t);
+}
+
 function carrierFromTracking(tn){
   var t=String(tn||"").replace(/[^A-Za-z0-9]/g,"");
   if(/^1Z/i.test(t)&&t.length===18)return "UPS";
@@ -1319,14 +1344,37 @@ function renderMissing(){
   if(!scopePkgs.length){
     document.getElementById("miss-content").innerHTML='<div class="empty">No packages for '+scopeStr+'.</div>';return;
   }
+  // How the day actually went: scanned at the bench, auto-confirmed from
+  // carrier movement, or still not accounted for. Without the split, an
+  // auto-confirmed package looks identical to one the team actually scanned,
+  // so there is no way to see how much scanning was really missed.
+  var nScanned=0,nAuto=0;
+  scopePkgs.forEach(function(p){
+    if(!confirmed[p.tracking])return;
+    if(String(p.status||"")==="CONFIRMED_AUTO")nAuto++; else nScanned++;
+  });
+  var nOpen=scopePkgs.length-nScanned-nAuto;
+  function tile(label,val,colour,note){
+    return '<div style="flex:1;min-width:118px;background:#fff;border:1px solid #E5E7EB;border-left:4px solid '+colour+';border-radius:8px;padding:9px 12px">'
+      +'<div style="font-size:22px;font-weight:800;color:'+colour+';line-height:1.1">'+val+'</div>'
+      +'<div style="font-size:11px;color:#374151;font-weight:600;margin-top:2px">'+label+'</div>'
+      +'<div style="font-size:10px;color:#6B7280">'+note+'</div></div>';
+  }
+  var summaryHtml='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
+    +tile("Scanned by team",nScanned,"#16A34A","confirmed at the bench")
+    +tile("Auto-confirmed",nAuto,"#2563EB","never scanned, carrier moved it")
+    +tile("Not accounted for",nOpen,"#DC2626","no scan, no carrier movement")
+    +tile("Total shipped",scopePkgs.length,"#374151",scopeStr)
+    +'</div>';
+
   var allMissing=scopePkgs.filter(function(p){return !confirmed[p.tracking];});
   var freightMissing=allMissing.filter(isFreight);
   var missing=allMissing.filter(function(p){return !isFreight(p);});
   if(!missing.length){
-    document.getElementById("miss-content").innerHTML='<div class="all-clear"><div style="font-size:48px">All Clear</div><div class="msg">All '+scopePkgs.length+' package(s) for '+scopeStr+' confirmed.</div><div class="sub">Ready for carrier pickup.</div></div>';return;
+    document.getElementById("miss-content").innerHTML=summaryHtml+'<div class="all-clear"><div style="font-size:48px">All Clear</div><div class="msg">All '+scopePkgs.length+' package(s) for '+scopeStr+' confirmed.</div><div class="sub">'+nScanned+' scanned by the team, '+nAuto+' auto-confirmed from carrier movement.</div></div>';return;
   }
   var e=getEST(),h=e.getHours();
-  var html='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">Showing: '+scopeStr+'</div>';
+  var html='<div style="font-size:11px;color:#6B7280;margin-bottom:8px">Showing: '+scopeStr+'</div>'+summaryHtml;
   if(dateFilter===todayStr&&h>=13&&h<14)html+='<div style="background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;border-radius:10px;padding:12px;margin-bottom:10px;font-size:13px;font-weight:600">Less than 1 hour to pickup | Find these now</div>';
   html+='<div style="font-size:14px;color:#DC2626;font-weight:700;margin-bottom:12px">'+missing.length+' package(s) not yet scanned for '+scopeStr+'</div>';
   if(freightMissing.length){
