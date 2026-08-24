@@ -413,6 +413,7 @@ function sbRpc(fn,body){
   });
 }
 var allPkgs={},confirmed={},dupCount=0,pkgsLoaded=false;
+function invalidateLaterLabelIndex(){laterLabelIdx=null;}
 // Full scan history kept in memory. Needed in three places that used to be
 // blind without it: telling a scanner WHEN a package was previously scanned,
 // counting duplicates honestly (package status no longer records them), and
@@ -512,10 +513,63 @@ function describeGap(mins){
   if(mins<1440)return Math.round(mins/60)+" hr";
   return Math.round(mins/1440)+" days";
 }
+// A NOT_FOUND or SECOND_BARCODE scan still means a person pointed a scanner at
+// that box. Only counting CONFIRMED put barcodes we had definitely scanned into
+// "Not scanned by us either" - the list whose whole instruction is "we have no
+// proof it left, reship it". Acting on that would ship a second copy.
+var HUMAN_SCAN_STATUSES=["CONFIRMED","RECHECK","NOT_FOUND","SECOND_BARCODE","DUPLICATE","HISTORICAL_DUPLICATE"];
+function anyHumanScan(tn){
+  var rows=(histByTn[tn]||[]).filter(function(h){return HUMAN_SCAN_STATUSES.indexOf(h.status)>-1;});
+  return rows.length?rows[rows.length-1]:null;
+}
+
 function scannedByUs(tn){
   var pkg=allPkgs[tn];
-  if(pkg&&pkg.status==="CONFIRMED")return true;
-  return !!lastHumanScan(tn);
+  if(pkg&&(pkg.status==="CONFIRMED"||pkg.status==="DUPLICATE"||pkg.status==="HISTORICAL_DUPLICATE"))return true;
+  return !!anyHumanScan(tn);
+}
+
+// LABEL REPLACED BEFORE IT EVER SHIPPED
+// Fulfilment sometimes creates a label, it does not go out, and the next day
+// they void it and make a new one - often on a different carrier. NetSuite
+// reports both, so the dead label sits here forever reading "never scanned"
+// while the replacement is already on a truck. Measured across live data: 10
+// such labels, and every single one had the carrier changed - no same-carrier
+// case, so this does not catch ordinary multi-box orders, which all ship the
+// same day.
+// SO779808 is the worked example: USPS labels dated 8/20 never scanned, FedEx
+// labels dated 8/21 scanned at 1:17 and 1:18 PM. Same two boxes. Reshipping the
+// USPS pair would have sent the customer a duplicate.
+var laterLabelIdx=null;
+function buildLaterLabelIndex(){
+  laterLabelIdx={};
+  var byOrder={};
+  Object.keys(allPkgs).forEach(function(tn){
+    var p=allPkgs[tn],ord=String(p.order||"").trim();
+    if(!ord||!p.date)return;
+    (byOrder[ord]=byOrder[ord]||[]).push(p);
+  });
+  Object.keys(byOrder).forEach(function(ord){
+    var list=byOrder[ord];
+    if(list.length<2)return;
+    list.forEach(function(p){
+      var pd=usToIso(p.date);
+      if(!pd)return;
+      for(var i=0;i<list.length;i++){
+        var q=list[i];
+        if(q.tracking===p.tracking)continue;
+        var qd=usToIso(q.date);
+        if(qd&&qd>pd&&String(q.carrier||"")!==String(p.carrier||"")){
+          laterLabelIdx[p.tracking]={tracking:q.tracking,carrier:q.carrier,date:q.date};
+          return;
+        }
+      }
+    });
+  });
+}
+function supersededBy(tn){
+  if(laterLabelIdx===null)buildLaterLabelIndex();
+  return laterLabelIdx[tn]||null;
 }
 // Date filters are now calendar inputs rather than dropdowns, because the
 // dropdown grew by one entry every shipping day and would have become unusable.
@@ -1180,6 +1234,10 @@ function loadPkgs(){
 }
 function onPkgsLoaded(data){
     pkgsLoaded=true;
+    // The replaced-label index is derived from allPkgs, so it has to be thrown
+    // away whenever packages change. Without this it was built once during the
+    // first render - while allPkgs was still empty - and cached empty forever.
+    invalidateLaterLabelIndex();
     var pkgs=data.packages||[];
     // An incremental refresh carries only changed rows, so merge them in rather
     // than rebuilding from a partial set.
@@ -1452,6 +1510,14 @@ function renderMissing(){
     if(cl){
       extra+='<div style="margin-top:4px;padding:5px 8px;background:#EFF6FF;border-left:3px solid #2563EB;border-radius:5px;font-size:11px;color:#1D4ED8">'
         +'<b>Claim opened '+(fmtWhen(cl.date,cl.time)||"")+'</b></div>';
+    }
+    // Do not let anyone reship a label that was already replaced.
+    var sup=supersededBy(p.tracking);
+    if(sup){
+      extra+='<div style="margin-top:4px;padding:6px 8px;background:#FFF7ED;border-left:3px solid #EA580C;border-radius:5px;font-size:11px;color:#9A3412">'
+        +'<b>Label replaced - do not reship.</b> This order shipped on '+(fmtWhen(sup.date,"")||"a later date")
+        +' as '+sup.carrier+' <span style="font-family:Consolas,monospace">'+trackLink(sup.tracking,sup.carrier)+'</span>.'
+        +'</div>';
     }
     return '<div class="miss-card"'+(re?' style="border-left:4px solid #16A34A"':'')+'><div class="miss-tn" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">'
       +'<span>'+trackLink(p.tracking,p.carrier)+'</span>'
@@ -1968,7 +2034,9 @@ function computeCarrierStats(list,carrierName){
   // still moving is a late package, not an excluded one. Scoring only the
   // packages that already arrived is what made USPS look better than UPS while
   // more than half of its shipments had never turned up at all.
-  var judgeable=pkgs.filter(function(t){var a=shipAgeOf(t);return a!==null&&a>=FAST_DAYS;});
+  // A label that was voided and re-created never had a chance to arrive, so
+  // counting it as a failed delivery blames the carrier for our own relabelling.
+  var judgeable=pkgs.filter(function(t){var a=shipAgeOf(t);return a!==null&&a>=FAST_DAYS&&!supersededBy(t.tracking);});
   var onTime=judgeable.filter(function(t){var d=transitDaysOf(t);return d!==null&&d<=FAST_DAYS;});
   var neverArrived=judgeable.filter(function(t){return !t.delivered;});
   var otdrPct=judgeable.length?Math.round(onTime.length/judgeable.length*1000)/10:null;
@@ -1989,7 +2057,7 @@ function computeCarrierStats(list,carrierName){
 }
 
 function trackingStuckList(scoped,carrierFilter){
-  var list=scoped.filter(function(t){return isAwaitingPickup(t)&&!isResolved(t.tracking)&&!isVoided(t)&&!isFreight({tracking:t.tracking,carrier:t.carrier});});
+  var list=scoped.filter(function(t){return isAwaitingPickup(t)&&!isResolved(t.tracking)&&!isVoided(t)&&!supersededBy(t.tracking)&&!isFreight({tracking:t.tracking,carrier:t.carrier});});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   // Oldest label first - those are the ones that never made it onto a truck.
   list.sort(function(a,b){return (ageOf(b)||0)-(ageOf(a)||0);});
@@ -1997,7 +2065,7 @@ function trackingStuckList(scoped,carrierFilter){
 }
 
 function trackingStalledList(scoped,carrierFilter){
-  var list=scoped.filter(function(t){return isStalled(t)&&!isResolved(t.tracking)&&!isVoided(t)&&!isFreight({tracking:t.tracking,carrier:t.carrier});});
+  var list=scoped.filter(function(t){return isStalled(t)&&!isResolved(t.tracking)&&!isVoided(t)&&!supersededBy(t.tracking)&&!isFreight({tracking:t.tracking,carrier:t.carrier});});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   // Longest-sitting first - those are the ones to chase.
   list.sort(function(a,b){return (daysSince(b.lastEventDate)||0)-(daysSince(a.lastEventDate)||0);});
