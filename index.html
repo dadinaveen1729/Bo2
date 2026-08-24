@@ -715,6 +715,30 @@ function cleanTrackingNumber(raw){
   cleaned=cleaned.replace(/^NF/i,'');
   cleaned=cleaned.replace(/^2900/,'');
   cleaned=cleaned.replace(/^420\d{5}/,'');
+
+  // BARCODE READ ARTEFACTS
+  // Every remaining carrier API failure traced back to a misread barcode
+  // rather than a real shipment. Two shapes kept appearing, so strip both
+  // before the number is used for anything.
+  //   1Z1Z29706W03929171  - the 1Z prefix read twice
+  //   1Z20161Z201627YW09  - a partial read followed by the real number
+  // Taking everything from the LAST 1Z recovers the real number in both.
+  var lastZ=cleaned.toUpperCase().lastIndexOf("1Z");
+  if(lastZ>0&&/^1Z[A-Z0-9]{16}$/i.test(cleaned.slice(lastZ))){
+    cleaned=cleaned.slice(lastZ);
+  }
+
+  //   93319418450105497000495014 - a 4 digit routing prefix on a 22 digit IMpb
+  //   9494184301093550014483     - the 94 prefix read twice
+  // A USPS IMpb is 20 or 22 digits, so anything longer has a prefix on it;
+  // keep the valid number at the tail.
+  if(/^\d+$/.test(cleaned)&&cleaned.length>22){
+    var t22=cleaned.slice(-22),t20=cleaned.slice(-20);
+    if(/^9\d{21}$/.test(t22))cleaned=t22;
+    else if(/^9\d{19}$/.test(t20))cleaned=t20;
+  }
+  if(/^9494\d{18}$/.test(cleaned))cleaned=cleaned.slice(2);
+
   if(/^\d+$/.test(cleaned)&&cleaned.length>22){
     var tail=cleaned.slice(-22);
     if(/^94\d{20}$/.test(tail)){
@@ -729,6 +753,7 @@ function cleanTrackingNumber(raw){
   }
   return cleaned;
 }
+
 
 // CARRIER TRACKING LINKS - every displayed tracking number becomes a clickable
 // link straight to that carrier's own tracking page, so nobody has to copy/paste
@@ -1010,10 +1035,12 @@ function updateSyncBadge(q){
 // never a missing label; it is the other barcode on a box we already know.
 // Confirming it would invent a second package that does not exist and double
 // the count. The FedEx barcode is the one that matches the paperwork.
-var SMARTPOST_USPS_PREFIX=/^9261/;
+var SMARTPOST_USPS_PREFIX=/^(9261|9274)/;
 function isSmartPostSecondBarcode(tn){
   var t=String(tn||"").replace(/[^0-9]/g,"");
-  return t.length===22&&SMARTPOST_USPS_PREFIX.test(t);
+  // 22 digits normally; 79 came through as 26 with extra digits appended by the
+  // scanner. Either way the SmartPost marker sits at the front.
+  return (t.length===22||t.length===26)&&SMARTPOST_USPS_PREFIX.test(t);
 }
 
 function carrierFromTracking(tn){
