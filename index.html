@@ -413,7 +413,7 @@ function sbRpc(fn,body){
   });
 }
 var allPkgs={},confirmed={},dupCount=0,pkgsLoaded=false;
-function invalidateLaterLabelIndex(){laterLabelIdx=null;}
+function invalidateLaterLabelIndex(){laterLabelIdx=null;unmatchedScanSet=null;}
 // Full scan history kept in memory. Needed in three places that used to be
 // blind without it: telling a scanner WHEN a package was previously scanned,
 // counting duplicates honestly (package status no longer records them), and
@@ -523,9 +523,32 @@ function anyHumanScan(tn){
   return rows.length?rows[rows.length-1]:null;
 }
 
+// A tracking row that exists WITHOUT a NetSuite package behind it can only be
+// here because somebody physically scanned that barcode at the bench - that is
+// the sole way it enters the system. So it is proof the box left, which makes a
+// missing carrier scan the carrier's problem, not ours.
+// This cannot rely on scan history: history loads in a short window at startup
+// and is only pulled in full when the History or Search tab is opened, so on the
+// Tracking tab a scan from five days ago was invisible and these read as
+// "never scanned by us".
+var unmatchedScanSet=null;
+function buildUnmatchedScanSet(){
+  unmatchedScanSet={};
+  (trackingData||[]).forEach(function(t){
+    if(!t||!t.tracking)return;
+    if(allPkgs[t.tracking])return;                       // has a NetSuite record
+    unmatchedScanSet[t.tracking]=true;
+  });
+}
+function isUnmatchedScan(tn){
+  if(unmatchedScanSet===null)buildUnmatchedScanSet();
+  return !!unmatchedScanSet[tn];
+}
+
 function scannedByUs(tn){
   var pkg=allPkgs[tn];
   if(pkg&&(pkg.status==="CONFIRMED"||pkg.status==="DUPLICATE"||pkg.status==="HISTORICAL_DUPLICATE"))return true;
+  if(isUnmatchedScan(tn))return true;
   return !!anyHumanScan(tn);
 }
 
@@ -2080,6 +2103,8 @@ function trackingErrorList(scoped,carrierFilter){
 }
 
 function renderTracking(){
+  unmatchedScanSet=null;   // trackingData may have just changed
+
   buildTrackDateOpts();
   var el=document.getElementById("track-content");
   if(!el)return;
@@ -2306,8 +2331,18 @@ function renderTracking(){
       return h;
     }
 
-    html+=renderNoMoveGroup("✅ Confirmed shipped by us - carrier has not scanned it",sentByUs,"#B91C1C",
+    // Split out the barcodes we scanned that NetSuite never recorded. They are
+    // still our-scan-proven, so they belong on the carrier's side of the line,
+    // but they need different handling: there is no NetSuite record to reconcile
+    // against, so the order has to be found by tracking number.
+    var scannedNoRecord=sentByUs.filter(function(t){return isUnmatchedScan(t.tracking);});
+    var scannedWithRecord=sentByUs.filter(function(t){return !isUnmatchedScan(t.tracking);});
+    html+=renderNoMoveGroup("✅ Confirmed shipped by us - carrier has not scanned it",scannedWithRecord,"#B91C1C",
       "Our scanning system confirmed these leaving the building, so they were physically handed to the carrier. The carrier has no pickup scan, which means they either missed scanning it or lost it in their facility. <b>This is the carrier's to answer for.</b> Reship on a new label and open a claim against the carrier, then mark both here.",true);
+    if(scannedNoRecord.length){
+      html+=renderNoMoveGroup("✅ Scanned by us, no NetSuite record - carrier has not scanned it",scannedNoRecord,"#7C3AED",
+        "We scanned these barcodes at the bench, so they left the building, but NetSuite never reported them - either a replacement label made after the fulfilment, or the second barcode on a label. <b>The missing pickup scan is still the carrier's to answer for.</b> There is no order number to look up, so chase them by tracking number.",true);
+    }
     html+=renderNoMoveGroup("⚠ Not scanned by us either",notScanned,"#B45309",
       "These were never confirmed at our bench, so we have no proof they left. <b>Check the dock and staging area first.</b> If it cannot be found, void the old label so we are not billed for it, reship on a new tracking number, and mark it Reshipped here.",false);
   }
