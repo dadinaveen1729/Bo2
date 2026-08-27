@@ -787,9 +787,35 @@ function showTab(id){
 // prefix values keep showing up, so the fallback below is length-based, not a fixed
 // list: it trusts that a real USPS 94xxxxxxxxxxxxxxxxxxxx tracking number is always
 // exactly 22 digits and strips whatever extra digits sit before or after it).
+// Does this look like a number a carrier actually issues?
+function isValidCarrierNumber(t){
+  t=String(t||"");
+  if(/^1Z[A-Z0-9]{16}$/i.test(t))return true;
+  if(!/^\d+$/.test(t))return false;
+  return t.length===12||t.length===15||t.length===20||t.length===22||t.length===26;
+}
+
 function cleanTrackingNumber(raw){
   let cleaned=raw.replace(/\s+/g,'').trim();
   cleaned=cleaned.replace(/^NF/i,'');
+
+  // ORDER BARCODE AND TRACKING BARCODE READ AS ONE
+  // The packing slip carries the SO number right next to the carrier barcode,
+  // and a single sweep can pick up both: "so781478383400747860" is SO781478
+  // followed by FedEx 383400747860. Strip the order prefix, but only when what
+  // is left is a valid carrier number, so a genuine number starting with those
+  // characters is never damaged.
+  if(/^SO\d/i.test(cleaned)){
+    // Try each plausible order-number length rather than letting the regex
+    // choose. Greedy matching split "so781478383400747860" after 8 digits and
+    // left a 10 digit remainder that matched nothing; the correct split is
+    // after 6, leaving FedEx 383400747860.
+    for(var soLen=6;soLen<=8;soLen++){
+      var rest=cleaned.slice(2+soLen);
+      if(!/^\d{6,8}$/.test(cleaned.slice(2,2+soLen)))continue;
+      if(isValidCarrierNumber(rest)){cleaned=rest;break;}
+    }
+  }
   cleaned=cleaned.replace(/^2900/,'');
   cleaned=cleaned.replace(/^420\d{5}/,'');
 
