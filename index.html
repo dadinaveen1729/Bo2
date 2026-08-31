@@ -2223,17 +2223,42 @@ function renderTracking(){
   });
   html+='</div></div>';
 
-  // API Check Failed - genuinely different from Stuck. These are packages we
-  // could not get real data for at all (bad key, 403, timeout, etc). Never
-  // treat this list as "confirmed no movement."
+  // TWO VERY DIFFERENT THINGS WERE BEING SHOWN AS ONE
+  // "API check failed" lumped together a real outage (bad key, timeout, 503),
+  // which means we have no data and should retry, with a carrier replying
+  // "that is not a number I issued", which is a final answer about a bad
+  // barcode. Twenty five of these were on screen and twenty three were bad
+  // barcodes, not an outage, so the panel read like a system fault when the
+  // system was working. They are separated now, and the raw JSON is gone in
+  // favour of what a person can act on.
   var errorList=trackingErrorList(scoped,carrierFilter);
-  if(errorList.length){
-    html+='<div class="overall" style="border-color:#D97706"><div class="overall-title" style="color:#D97706">⚠ API Check Failed - Not Real Status ('+errorList.length+')</div>';
-    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">These packages were never actually checked - the carrier API call itself failed. Fix the underlying API issue (see carrier_reconcile.py output), then re-run to get real data. Do not treat these as stuck.</div>';
+  var INVALID_PAT=/(TV1002|4522466|invalid inquiry number|tracking number you provided)/i;
+  var badBarcode=errorList.filter(function(t){return INVALID_PAT.test(String(t.lastError||""));});
+  var realOutage=errorList.filter(function(t){return !INVALID_PAT.test(String(t.lastError||""));});
+
+  if(badBarcode.length){
+    html+='<div class="overall" style="border-color:#7C3AED"><div class="overall-title" style="color:#7C3AED">Not recognised by the carrier ('+badBarcode.length+')</div>';
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The carrier replied that these are not tracking numbers it issued. That is a final answer, not an outage, so they are not re-checked. Usually a label that was voided before it shipped, or a barcode that did not scan cleanly. <b>Check the label on the box.</b></div>';
+    badBarcode.slice(0,25).forEach(function(t){
+      var pk=allPkgs[t.tracking]||{};
+      html+='<div style="display:flex;gap:8px;padding:6px 10px;background:#F5F3FF;border-radius:6px;margin-bottom:3px;font-size:12px;align-items:center;flex-wrap:wrap">'
+        +'<span style="font-family:Consolas,monospace;min-width:190px">'+trackLink(t.tracking,t.carrier)+'</span>'
+        +'<span style="color:#4B5563;min-width:80px">'+(pk.order||"")+'</span>'
+        +'<span style="color:#6B7280;flex:1;min-width:120px">'+(pk.customer||"")+'</span>'
+        +'<span style="color:#6B7280;font-size:11px">'+(t.carrier||"")+' says no such number</span>'
+        +'</div>';
+    });
+    if(badBarcode.length>25)html+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(badBarcode.length-25)+' more</div>';
+    html+='</div>';
+  }
+
+  if(realOutage.length){
+    html+='<div class="overall" style="border-color:#D97706"><div class="overall-title" style="color:#D97706">Carrier API did not answer ('+realOutage.length+')</div>';
+    html+='<div style="font-size:12px;color:#4B5563;margin-bottom:10px">The call itself failed, so we have no status for these at all. They are retried on the next run. <b>Do not treat them as stuck.</b></div>';
     var errByReason={};
-    errorList.forEach(function(t){var reason=(t.lastError||"Unknown error").slice(0,40);if(!errByReason[reason])errByReason[reason]=0;errByReason[reason]++;});
-    Object.keys(errByReason).sort(function(a,b){return errByReason[b]-errByReason[a];}).forEach(function(reason){
-      html+='<div style="font-size:11px;color:#D97706;margin-bottom:3px">'+errByReason[reason]+'x - '+reason+'</div>';
+    realOutage.forEach(function(t){var r=(t.lastError||"Unknown error").slice(0,60);errByReason[r]=(errByReason[r]||0)+1;});
+    Object.keys(errByReason).sort(function(a,b){return errByReason[b]-errByReason[a];}).forEach(function(r){
+      html+='<div style="font-size:11px;color:#D97706;margin-bottom:3px">'+errByReason[r]+'x - '+r+'</div>';
     });
     html+='</div>';
   }
