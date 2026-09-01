@@ -1419,7 +1419,26 @@ function renderDash(){
   todayPkgs.forEach(function(p){var t=p.team||"Online Set 1";if(!teams[t])teams[t]={c:"#6B7280",p:[]};teams[t].p.push(p);});
   var todayConf=todayPkgs.filter(function(p){return confirmed[p.tracking];}).length;
   var todayPct=todayPkgs.length>0?Math.round(todayConf/todayPkgs.length*100):0;
-  var html='<div class="overall"><div class="overall-title">Today (\''+todayStr+'\') Progress</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+todayConf+'</span></div><div class="ostat">Missing <span style="color:'+(todayPkgs.length-todayConf>0?"#DC2626":"#16A34A")+'">'+Math.max(0,todayPkgs.length-todayConf)+'</span></div><div class="ostat">Total <span>'+todayPkgs.length+'</span></div><div class="ostat">Rate <span>'+todayPct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+todayPct+'%;background:'+(todayPct===100?"#16A34A":todayPct>60?"#2563EB":"#D97706")+'"></div></div></div>';
+
+  // WORK DONE TODAY vs PACKAGES DATED TODAY. Not the same thing, and showing
+  // only the second badly understates the team. On 9/1 they had scanned 72
+  // boxes by mid morning, 61 of them shipped the day before, and this panel
+  // said "Confirmed 11, Rate 6%" because it counted only packages whose ship
+  // date was today. The team had done six times that.
+  var scansToday=0,rescansToday=0;
+  (allHistory||[]).forEach(function(h){
+    if(h.date!==todayStr)return;
+    if(h.status==="CONFIRMED")scansToday++;
+    else if(h.status==="RECHECK")rescansToday++;
+  });
+
+  var html='<div class="overall" style="border-left:4px solid #16A34A"><div class="overall-title">Scanned by the team today</div>'
+    +'<div class="overall-stats">'
+    +'<div class="ostat">Boxes scanned <span style="color:#16A34A">'+scansToday+'</span></div>'
+    +(rescansToday?'<div class="ostat">Re-checks <span>'+rescansToday+'</span></div>':'')
+    +'<div class="ostat" style="font-size:11px;color:#6B7280;align-self:center">every box scanned today, whichever day it shipped</div>'
+    +'</div></div>';
+  html+='<div class="overall"><div class="overall-title">Today (\''+todayStr+'\') shipments</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+todayConf+'</span></div><div class="ostat">Missing <span style="color:'+(todayPkgs.length-todayConf>0?"#DC2626":"#16A34A")+'">'+Math.max(0,todayPkgs.length-todayConf)+'</span></div><div class="ostat">Total <span>'+todayPkgs.length+'</span></div><div class="ostat">Rate <span>'+todayPct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+todayPct+'%;background:'+(todayPct===100?"#16A34A":todayPct>60?"#2563EB":"#D97706")+'"></div></div></div>';
   html+='<div class="overall" style="opacity:.85"><div class="overall-title">All Loaded Dates (Backlog + Today)</div><div class="overall-stats"><div class="ostat">Confirmed <span>'+conf+'</span></div><div class="ostat">Missing <span style="color:'+(total-conf>0?"#DC2626":"#16A34A")+'">'+Math.max(0,total-conf)+'</span></div><div class="ostat">Total <span>'+total+'</span></div><div class="ostat">Rate <span>'+pct+'%</span></div></div><div class="prog" style="border-radius:4px;height:8px"><div class="prog-fill" style="width:'+pct+'%;background:'+(pct===100?"#16A34A":pct>60?"#2563EB":"#D97706")+'"></div></div></div>';
 
   // CARRIER BREAKDOWN - today only
