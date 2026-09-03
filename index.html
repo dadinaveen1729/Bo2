@@ -454,6 +454,16 @@ function isResolved(tn){return !!actionOf(tn,"RESHIPPED");}
 //   1. the carrier says so in the tracking status
 //   2. we voided it ourselves when reshipping (already covered by isResolved)
 var VOID_PAT=/(cancel|void|deleted|shipment\s*not\s*found|no\s*longer\s*valid)/i;
+// Freight is not a parcel and has no pickup scan to chase. Pallet SSCC codes,
+// the "(00)..." numbers NetSuite puts in the tracking column, were showing up
+// in the no-movement list with a Start claim button next to them, which makes
+// no sense: no parcel carrier ever had them.
+function isFreightRow(t){
+  if(!t)return false;
+  if(String(t.carrier||"").toLowerCase()==="freight")return true;
+  return /^\(?00\)?\d{16,}$/.test(String(t.tracking||"").trim());
+}
+
 function isVoided(t){
   if(!t)return false;
   if(VOID_PAT.test(String(t.latestStatus||"")))return true;
@@ -2125,7 +2135,7 @@ function computeCarrierStats(list,carrierName){
 }
 
 function trackingStuckList(scoped,carrierFilter){
-  var list=scoped.filter(function(t){return isAwaitingPickup(t)&&!isResolved(t.tracking)&&!isVoided(t)&&!supersededBy(t.tracking)&&!isFreight({tracking:t.tracking,carrier:t.carrier});});
+  var list=scoped.filter(function(t){return isAwaitingPickup(t)&&!isResolved(t.tracking)&&!isVoided(t)&&!isFreightRow(t)&&!supersededBy(t.tracking)&&!isFreight({tracking:t.tracking,carrier:t.carrier});});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   // Oldest label first - those are the ones that never made it onto a truck.
   list.sort(function(a,b){return (ageOf(b)||0)-(ageOf(a)||0);});
@@ -2133,7 +2143,7 @@ function trackingStuckList(scoped,carrierFilter){
 }
 
 function trackingStalledList(scoped,carrierFilter){
-  var list=scoped.filter(function(t){return isStalled(t)&&!isResolved(t.tracking)&&!isVoided(t)&&!supersededBy(t.tracking)&&!isFreight({tracking:t.tracking,carrier:t.carrier});});
+  var list=scoped.filter(function(t){return isStalled(t)&&!isResolved(t.tracking)&&!isVoided(t)&&!isFreightRow(t)&&!supersededBy(t.tracking)&&!isFreight({tracking:t.tracking,carrier:t.carrier});});
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   // Longest-sitting first - those are the ones to chase.
   list.sort(function(a,b){return (daysSince(b.lastEventDate)||0)-(daysSince(a.lastEventDate)||0);});
