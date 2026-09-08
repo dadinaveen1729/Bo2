@@ -761,7 +761,7 @@ function updateBanner(){
   var todayMiss=Math.max(0,todayPkgs.length-todayConf);
   if(!pkgsLoaded){b.className="banner b-info";b.textContent="Connecting to Supabase...";}
   else if(!todayPkgs.length){b.className="banner b-warn";b.textContent="No packages for today | Run scan_daily_loader.py";}
-  else if(h<12){b.className="banner b-info";b.textContent=todayPkgs.length+" packages ready for today | Scan window opens at 12:00 PM";}
+  else if(h<12){b.className="banner b-info";b.textContent=todayPkgs.length+" packages ready for today | Scan window opens at 9:05 AM- 3:35 PM";}
   else if(h<14){
     var left=(14-h)*60-m;
     b.className="banner "+(todayMiss>0?"b-warn":"b-ok");
