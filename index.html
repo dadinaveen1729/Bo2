@@ -251,6 +251,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   <div class="tab" id="tb-srch" onclick="showTab('srch')">Search</div>
   <div class="tab" id="tb-rpt" onclick="showTab('rpt')">Report</div>
   <div class="tab" id="tb-track" onclick="showTab('track')">Tracking</div>
+  <div class="tab" id="tb-amz" onclick="showTab('amz')">Amazon</div>
 </div>
 
 <div class="conn-bar conn-info" id="conn-bar">Connecting to Supabase...</div>
@@ -340,6 +341,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 </div>
 
 <!-- TRACKING -->
+<div class="panel" id="tab-amz">
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+    <select id="amz-carrier" style="flex:1;padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px" onchange="renderAmazon()">
+      <option value="">All Carriers</option>
+      <option value="FedEx">FedEx</option>
+      <option value="UPS">UPS</option>
+      <option value="USPS">USPS</option>
+    </select>
+    <input type="date" id="amz-date" style="padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px" onchange="renderAmazon()">
+    <button class="rbtn" style="margin:0" onclick="document.getElementById('amz-date').value='';renderAmazon()">All dates</button>
+    <button class="rbtn" style="margin:0" onclick="loadAmazonRegister(true)">Refresh</button>
+  </div>
+  <div id="amz-content"></div>
+</div>
+
 <div class="panel" id="tab-track">
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
     <select id="track-carrier" style="flex:1;padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px" onchange="renderTracking()">
@@ -761,7 +777,7 @@ function updateBanner(){
   var todayMiss=Math.max(0,todayPkgs.length-todayConf);
   if(!pkgsLoaded){b.className="banner b-info";b.textContent="Connecting to Supabase...";}
   else if(!todayPkgs.length){b.className="banner b-warn";b.textContent="No packages for today | Run scan_daily_loader.py";}
-  else if(h<12){b.className="banner b-info";b.textContent=todayPkgs.length+" packages ready for today | Scan window opens at 9:05 AM- 3:35 PM";}
+  else if(h<12){b.className="banner b-info";b.textContent=todayPkgs.length+" packages ready for today | Scan window opens at 12:00 PM";}
   else if(h<14){
     var left=(14-h)*60-m;
     b.className="banner "+(todayMiss>0?"b-warn":"b-ok");
@@ -786,6 +802,7 @@ function showTab(id){
   if(id==="srch"){buildReportDateOpts();setTimeout(function(){document.getElementById("srch-input").focus();},100);}
   if(id==="rpt"){buildReportDateOpts();renderReport();}
   if(id==="track")loadTracking(true);
+  if(id==="amz")loadAmazonRegister(false);
   if(id==="scan"&&!pinUnlocked){showPin();return;}
   if(id==="scan")setTimeout(function(){document.getElementById("scan-input").focus();},100);
 }
@@ -2155,6 +2172,151 @@ function trackingErrorList(scoped,carrierFilter){
   if(carrierFilter)list=list.filter(function(t){return t.carrier.toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   list.sort(function(a,b){return (a.tracking||"").localeCompare(b.tracking||"");});
   return list;
+}
+
+// AMAZON
+// Nothing in the shipping data says "Amazon". NetSuite's shipping report gives
+// the shipping addressee, not the sales channel, so an Amazon order and a
+// website order are indistinguishable by the time they reach the warehouse.
+// A separate NetSuite email, "Amazon Orders Pending Fulfillment", lists every
+// Amazon order against the same SO number the shipping report uses.
+// amazon_orders_fetch.py parses that email into amazon_orders.json, published
+// next to this page, and that register is what makes this tab possible.
+var amazonReg=null, amazonLoading=false;
+
+// Amazon scores its own OTDR against the delivery date it promised the buyer,
+// and that promise reaches us in no data NetSuite sends. So this must not be
+// called Amazon's number. What it measures is delivery within AMZ_TARGET_DAYS
+// of the box leaving us, which is the half we control and the half that moves
+// their metric. The point is to see trouble here before Seller Central does.
+var AMZ_TARGET_DAYS=5;
+
+function loadAmazonRegister(force){
+  if(amazonLoading)return;
+  if(amazonReg&&!force){renderAmazon();return;}
+  amazonLoading=true;
+  var el=document.getElementById("amz-content");
+  if(el)el.innerHTML='<div class="empty">Loading Amazon orders...</div>';
+  fetch("amazon_orders.json?t="+Date.now()).then(function(r){
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    return r.json();
+  }).then(function(j){
+    amazonReg=(j&&j.orders)?j.orders:{};
+    amazonLoading=false;
+    if(!trackingData.length){loadTracking(true).then(renderAmazon)["catch"](renderAmazon);}
+    else renderAmazon();
+  })["catch"](function(e){
+    amazonLoading=false;
+    if(el)el.innerHTML='<div class="empty">Could not load amazon_orders.json ('+e.message+').<br>Run <b>python amazon_orders_fetch.py --deploy</b> to publish it.</div>';
+  });
+}
+
+function isAmazonOrder(order){
+  if(!amazonReg)return false;
+  return !!amazonReg[String(order||"").trim()];
+}
+
+function renderAmazon(){
+  var el=document.getElementById("amz-content");
+  if(!el)return;
+  if(!amazonReg){loadAmazonRegister(false);return;}
+
+  var carrierFilter=(document.getElementById("amz-carrier")||{}).value||"";
+  var dateFilter=dateFilterValue("amz-date");
+
+  var rows=[];
+  Object.keys(allPkgs).forEach(function(tn){
+    var p=allPkgs[tn];
+    if(!isAmazonOrder(p.order))return;
+    if(dateFilter&&p.date!==dateFilter)return;
+    if(carrierFilter&&String(p.carrier||"").toUpperCase().indexOf(carrierFilter.toUpperCase())<0)return;
+    if(isFreight(p))return;
+    rows.push(p);
+  });
+
+  if(!rows.length){
+    el.innerHTML='<div class="empty">No Amazon packages'+(dateFilter?(" for "+dateFilter):"")+'.<br><span style="font-size:12px">Register holds '+Object.keys(amazonReg).length.toLocaleString()+' Amazon order(s).</span></div>';
+    return;
+  }
+
+  var byTn={};
+  trackingData.forEach(function(t){byTn[t.tracking]=t;});
+
+  var delivered=0,onTime=0,judgeable=0,late=0,atRisk=0,transitSum=0,transitN=0;
+  var riskRows=[],lateRows=[];
+
+  rows.forEach(function(p){
+    var t=byTn[p.tracking];
+    var age=t?shipAgeOf(t):null;
+    if(age===null){
+      var sd=usToIso(p.date);
+      if(sd)age=Math.round((estMidnightToday()-new Date(sd+"T00:00:00").getTime())/86400000);
+    }
+    var days=t?transitDaysOf(t):null;
+    if(t&&t.delivered){
+      delivered++;
+      if(days!==null){transitSum+=days;transitN++;}
+    }
+    if(age!==null&&age>=AMZ_TARGET_DAYS){
+      judgeable++;
+      if(days!==null&&days<=AMZ_TARGET_DAYS)onTime++;
+      else{late++;lateRows.push({p:p,t:t,age:age,days:days});}
+    }
+    if(t&&!t.delivered&&age!==null&&age<AMZ_TARGET_DAYS&&(t.awaitingPickup||!t.hasMovement)){
+      atRisk++;riskRows.push({p:p,t:t,age:age,days:null});
+    }
+  });
+
+  var pct=judgeable?Math.round(onTime/judgeable*1000)/10:null;
+  var avg=transitN?Math.round(transitSum/transitN*10)/10:null;
+
+  function tile(label,val,colour,note){
+    return '<div style="flex:1;min-width:140px;background:#fff;border:1px solid #E5E7EB;border-left:4px solid '+colour+';border-radius:8px;padding:10px 13px">'
+      +'<div style="font-size:24px;font-weight:800;color:'+colour+';line-height:1.1">'+val+'</div>'
+      +'<div style="font-size:11px;color:#374151;font-weight:600;margin-top:2px">'+label+'</div>'
+      +'<div style="font-size:10px;color:#6B7280">'+note+'</div></div>';
+  }
+
+  var col=(pct===null)?"#6B7280":(pct>=95?"#16A34A":(pct>=90?"#D97706":"#DC2626"));
+  var html='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'
+    +tile("Delivered within "+AMZ_TARGET_DAYS+" days",(pct===null?"n/a":pct+"%"),col,onTime+" of "+judgeable+" judged")
+    +tile("At risk right now",atRisk,"#DC2626","no movement, still inside the window")
+    +tile("Already late",late,"#B45309","past "+AMZ_TARGET_DAYS+" days")
+    +tile("Delivered",delivered,"#16A34A",(avg===null?"":"avg "+avg+" days"))
+    +tile("Amazon packages",rows.length,"#374151",(dateFilter||"all loaded dates"))
+    +'</div>';
+
+  html+='<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#92400E">'
+    +'<b>Read this as an early warning, not as Amazon’s number.</b> Amazon scores on the delivery date they promised the buyer, and that promise is not in any data NetSuite sends us. '
+    +'This measures delivery within '+AMZ_TARGET_DAYS+' days of the box leaving our building, which is the part we control. '
+    +'The <b>at risk</b> figure is the one to act on: those are still inside the window, so they can be fixed before Seller Central ever sees them.</div>';
+
+  function table(title,items,colour,note,showDays){
+    if(!items.length)return "";
+    items.sort(function(a,b){return (b.age||0)-(a.age||0);});
+    var h='<div class="overall" style="border-color:'+colour+';border-left:4px solid '+colour+'">'
+      +'<div class="overall-title" style="color:'+colour+'">'+title+' ('+items.length+')</div>'
+      +'<div style="font-size:12px;color:#4B5563;margin-bottom:10px">'+note+'</div>';
+    items.slice(0,40).forEach(function(r){
+      var amz=amazonReg[r.p.order]||{};
+      h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 10px;background:#fff;border-radius:6px;margin-bottom:3px;font-size:12px;border-left:3px solid '+colour+'">'
+        +'<span style="font-weight:800;color:'+colour+';min-width:42px">'+(r.age===null?"?":r.age+"d")+'</span>'
+        +'<span style="font-family:Consolas,monospace;min-width:180px">'+trackLink(r.p.tracking,r.p.carrier)+'</span>'
+        +'<span style="color:#4B5563;min-width:78px">'+(r.p.order||"")+'</span>'
+        +'<span style="color:#6B7280;flex:1;min-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(amz.customer||r.p.customer||"")+'</span>'
+        +'<span style="color:#6B7280;min-width:52px">'+(r.p.carrier||"")+'</span>'
+        +'<span style="color:#6B7280;font-size:11px;min-width:150px;text-align:right">'+((r.t&&r.t.latestStatus)||"no carrier data")+'</span>'
+        +((showDays&&r.days!==null&&r.days!==undefined)?'<span style="color:#B45309;font-size:11px;min-width:78px;text-align:right">took '+r.days+'d</span>':'')
+        +'</div>';
+    });
+    if(items.length>40)h+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(items.length-40)+' more</div>';
+    return h+'</div>';
+  }
+
+  html+=table("At risk - fix these today",riskRows,"#DC2626","Left us within the last "+AMZ_TARGET_DAYS+" days and the carrier has recorded no movement. Still inside the window, so these are the ones worth chasing now.",false);
+  html+=table("Missed the "+AMZ_TARGET_DAYS+" day window",lateRows,"#B45309","More than "+AMZ_TARGET_DAYS+" days since leaving us. Either delivered late, or still not delivered.",true);
+
+  el.innerHTML=html;
 }
 
 function renderTracking(){
