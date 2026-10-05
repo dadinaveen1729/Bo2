@@ -351,7 +351,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </select>
     <input type="date" id="amz-date" style="padding:10px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#111827;font-size:13px" onchange="renderAmazon()">
     <button class="rbtn" style="margin:0" onclick="document.getElementById('amz-date').value='';renderAmazon()">All dates</button>
-    <button class="rbtn" style="margin:0" onclick="loadAmazonRegister(true)">Refresh</button>
+    <button class="rbtn" style="margin:0" onclick="amazonTrk=null;loadAmazonRegister(true)">Refresh</button>
   </div>
   <div id="amz-content"></div>
 </div>
@@ -2184,6 +2184,40 @@ function trackingErrorList(scoped,carrierFilter){
 // next to this page, and that register is what makes this tab possible.
 var amazonReg=null, amazonLoading=false;
 
+// The shared tracking load deliberately leaves out delivered shipments, because
+// pulling every delivered row on every page load is what pushed Supabase egress
+// to 248% of the free allowance back in August. That is the right call for the
+// Tracking tab, which only cares about what is still moving.
+//
+// This tab cannot work from that, because on-time delivery is measured almost
+// entirely on shipments that HAVE arrived. Asking for the full table again would
+// undo the egress fix, so instead it asks only for the Amazon tracking numbers,
+// three columns wide, in batches small enough for a URL. Roughly 4,700 rows of
+// three fields rather than 19,000 rows of sixteen.
+var amazonTrk=null, amazonTrkLoading=false;
+
+function loadAmazonTracking(tns){
+  if(amazonTrk||amazonTrkLoading)return Promise.resolve(amazonTrk||{});
+  amazonTrkLoading=true;
+  var CHUNK=120, batches=[];
+  for(var i=0;i<tns.length;i+=CHUNK)batches.push(tns.slice(i,i+CHUNK));
+  var out={};
+  return batches.reduce(function(chain,batch){
+    return chain.then(function(){
+      var q="select=tracking,delivered,delivered_date,awaiting_pickup,has_movement,latest_status"
+           +"&tracking=in.("+batch.map(encodeURIComponent).join(",")+")";
+      return sbGet("tracking_details",q).then(function(rows){
+        (rows||[]).forEach(function(r){
+          out[r.tracking]={tracking:r.tracking,delivered:!!r.delivered,deliveredDate:r.delivered_date,
+            awaitingPickup:!!r.awaiting_pickup,hasMovement:!!r.has_movement,latestStatus:r.latest_status};
+        });
+      });
+    });
+  },Promise.resolve()).then(function(){
+    amazonTrk=out; amazonTrkLoading=false; return out;
+  })["catch"](function(e){ amazonTrkLoading=false; throw e; });
+}
+
 // Amazon scores its own OTDR against the delivery date it promised the buyer,
 // and that promise reaches us in no data NetSuite sends. So this must not be
 // called Amazon's number. What it measures is delivery within AMZ_TARGET_DAYS
@@ -2239,10 +2273,20 @@ function renderAmazon(){
     return;
   }
 
+  // Fetch the Amazon tracking rows the first time this tab is opened, then render.
+  if(!amazonTrk){
+    var need=rows.map(function(p){return p.tracking;});
+    el.innerHTML='<div class="empty">Loading delivery data for '+need.length.toLocaleString()+' Amazon package(s)...</div>';
+    loadAmazonTracking(need).then(renderAmazon)["catch"](function(e){
+      el.innerHTML='<div class="empty">Could not load Amazon delivery data ('+e.message+').</div>';
+    });
+    return;
+  }
   var byTn={};
   trackingData.forEach(function(t){byTn[t.tracking]=t;});
+  Object.keys(amazonTrk).forEach(function(k){ if(!byTn[k]) byTn[k]=amazonTrk[k]; });
 
-  var delivered=0,onTime=0,judgeable=0,late=0,atRisk=0,transitSum=0,transitN=0;
+  var delivered=0,onTime=0,judgeable=0,late=0,atRisk=0,transitSum=0,transitN=0,noData=0;
   var riskRows=[],lateRows=[];
 
   rows.forEach(function(p){
@@ -2257,10 +2301,12 @@ function renderAmazon(){
       delivered++;
       if(days!==null){transitSum+=days;transitN++;}
     }
-    if(age!==null&&age>=AMZ_TARGET_DAYS){
+    if(t&&age!==null&&age>=AMZ_TARGET_DAYS){
       judgeable++;
       if(days!==null&&days<=AMZ_TARGET_DAYS)onTime++;
       else{late++;lateRows.push({p:p,t:t,age:age,days:days});}
+    }else if(!t){
+      noData++;
     }
     if(t&&!t.delivered&&age!==null&&age<AMZ_TARGET_DAYS&&(t.awaitingPickup||!t.hasMovement)){
       atRisk++;riskRows.push({p:p,t:t,age:age,days:null});
@@ -2284,6 +2330,7 @@ function renderAmazon(){
     +tile("Already late",late,"#B45309","past "+AMZ_TARGET_DAYS+" days")
     +tile("Delivered",delivered,"#16A34A",(avg===null?"":"avg "+avg+" days"))
     +tile("Amazon packages",rows.length,"#374151",(dateFilter||"all loaded dates"))
+    +(noData?tile("No carrier data",noData,"#6B7280","not scored either way"):"")
     +'</div>';
 
   html+='<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#92400E">'
