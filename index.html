@@ -2184,7 +2184,7 @@ function trackingErrorList(scoped,carrierFilter){
 //     failure. That file cannot produce a rate on its own; the denominator
 //     comes from our own shipment count for the same window.
 var amazonReg=null, amazonLoading=false;
-var amazonOtd=null;
+var amazonOtd=null, amazonOtdMeta=null;
 var amazonTrk=null, amazonTrkLoading=false;
 
 // Amazon's published target.
@@ -2226,6 +2226,7 @@ function loadAmazonRegister(force){
   ]).then(function(res){
     amazonReg=(res[0]&&res[0].orders)||{};
     amazonOtd=(res[1]&&res[1].units)||{};
+    amazonOtdMeta=res[1]||null;
     amazonLoading=false;
     if(!trackingData.length){loadTracking(true).then(renderAmazon)["catch"](renderAmazon);}
     else renderAmazon();
@@ -2323,8 +2324,18 @@ function renderAmazon(){
     }
   });
 
-  var totalLate=lateHere.length;
-  var otdr=shipped?Math.round((shipped-totalLate)/shipped*1000)/10:null;
+  // THE RATE COMES FROM THE IMPORT, NOT FROM THIS PAGE.
+  // The browser only holds a rolling window of recent packages. Working the
+  // rate out here matched 13 of 441 late units against whatever happened to be
+  // loaded and reported 99.1% on time when the truth was 86.1%. The denominator
+  // is counted once at import time, over exactly the export's window, and
+  // shipped alongside the data.
+  var totalLate=(amazonOtdMeta&&amazonOtdMeta.count)||lateHere.length;
+  var windowShipped=(amazonOtdMeta&&amazonOtdMeta.shippedInWindow)||0;
+  var otdr=(amazonOtdMeta&&amazonOtdMeta.onTimePct!==null&&amazonOtdMeta.onTimePct!==undefined)
+           ?amazonOtdMeta.onTimePct:null;
+  var windowTxt=(amazonOtdMeta&&amazonOtdMeta.window)
+                ?(amazonOtdMeta.window.from+" to "+amazonOtdMeta.window.to):"";
   var gap=otdr===null?null:Math.round((AMZ_TARGET_PCT-otdr)*10)/10;
 
   function tile(label,val,colour,note,wide){
@@ -2336,7 +2347,8 @@ function renderAmazon(){
 
   var col=otdr===null?"#6B7280":(otdr>=AMZ_TARGET_PCT?"#16A34A":(otdr>=95?"#D97706":"#DC2626"));
   var html='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
-    +tile("On-time delivery rate",(otdr===null?"n/a":otdr+"%"),col,(shipped-totalLate).toLocaleString()+" of "+shipped.toLocaleString()+" on time",true)
+    +tile("On-time delivery rate",(otdr===null?"n/a":otdr+"%"),col,
+          (windowShipped?((windowShipped-totalLate).toLocaleString()+" of "+windowShipped.toLocaleString()+" on time, "+windowTxt):"import the Amazon export to score this"),true)
     +tile("Below Amazon target",(gap===null?"-":(gap>0?gap+" pts":"on target")),(gap>0?"#DC2626":"#16A34A"),"target "+AMZ_TARGET_PCT+"%")
     +tile("Late units",totalLate.toLocaleString(),"#B45309","from Amazon’s own export")
     +tile("USPS last mile",(totalLate?Math.round(stat.uspsLast/totalLate*100):0)+"%","#DC2626",stat.uspsLast+" of "+totalLate+" failures")
@@ -2378,7 +2390,12 @@ function renderAmazon(){
   // ---- carrier scorecard ------------------------------------------------
   var cs=Object.keys(stat.carrier).map(function(c){
     var e=stat.carrier[c];
-    return {c:c,shipped:e.shipped,late:e.late,rate:e.shipped?100*e.late/e.shipped:0,
+    // e.shipped only counts packages currently loaded in the browser, so the
+    // per-carrier rate is scaled onto the export window instead of being
+    // computed against a denominator that is not comparable.
+    var share=shipped?e.shipped/shipped:0;
+    var est=Math.max(e.late, Math.round((windowShipped||shipped)*share));
+    return {c:c,shipped:est,late:e.late,rate:est?100*e.late/est:0,
             pickup:amzMedian(e.pickup),transit:amzMedian(e.transit),lateBy:amzMedian(e.lateBy)};
   }).sort(function(x,y){return y.late-x.late;});
 
@@ -2391,7 +2408,8 @@ function renderAmazon(){
     +'<th style="text-align:right;padding:7px 9px">Fixing it worth</th></tr>';
   cs.forEach(function(r){
     var rc=r.rate>=25?"#DC2626":(r.rate>=10?"#B45309":"#16A34A");
-    var worth=shipped?Math.round((100*(shipped-(totalLate-r.late))/shipped-otdr)*10)/10:0;
+    var denom=windowShipped||shipped;
+    var worth=(denom&&otdr!==null)?Math.round((100*(denom-(totalLate-r.late))/denom-otdr)*10)/10:0;
     html+='<tr><td style="padding:7px 9px;border-top:1px solid #eee;font-weight:700">'+r.c+'</td>'
       +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+r.shipped.toLocaleString()+'</td>'
       +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+r.late+'</td>'
@@ -2431,7 +2449,8 @@ function renderAmazon(){
   var best=cs.filter(function(r){return r.shipped>=50;}).sort(function(x,y){return x.rate-y.rate;})[0];
   if(worst&&best&&worst.c!==best.c){
     var saved=Math.round(worst.late-worst.shipped*best.rate/100);
-    var newPct=Math.round((100*(shipped-(totalLate-saved))/shipped)*10)/10;
+    var dn=windowShipped||shipped;
+    var newPct=Math.round((100*(dn-(totalLate-saved))/dn)*10)/10;
     recs.push({t:"Move "+worst.c+" volume to "+best.c,
       w:"+"+(Math.round((newPct-otdr)*10)/10)+" pts  ->  "+newPct+"%",
       d:worst.c+" fails on "+(Math.round(worst.rate*10)/10)+"% of its shipments; "+best.c+" fails on "+(Math.round(best.rate*10)/10)+"%. "
@@ -2443,7 +2462,8 @@ function renderAmazon(){
     var recoverable=0;
     slowPick.forEach(function(r){ if((r.lateBy||0)<=1.5)recoverable+=Math.round(r.late*0.45); });
     if(recoverable>0){
-      var np=Math.round((100*(shipped-(totalLate-recoverable))/shipped)*10)/10;
+      var dn2=windowShipped||shipped;
+      var np=Math.round((100*(dn2-(totalLate-recoverable))/dn2)*10)/10;
       recs.push({t:"Get the carrier collecting earlier",
         w:"+"+(Math.round((np-otdr)*10)/10)+" pts  ->  "+np+"%",
         d:slowPick.map(function(r){return r.c+" takes "+amzFmt(r.pickup," h")+" to first scan";}).join(", ")
