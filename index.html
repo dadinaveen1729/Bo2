@@ -2299,37 +2299,43 @@ function renderAmazon(){
   var lateHere=rows.filter(function(p){return amazonOtd[p.tracking];});
   var measured=otdKeys.length>0;
 
-  var stat=collections();
-  function collections(){ return {carrier:{},method:{},anatomy:{ship:[],pickup:[],transit:[],lateBy:[]},uspsLast:0,other:0}; }
+  // THE FAILURE ANALYSIS READS THE EXPORT, NOT THE LOADED PACKAGES.
+  // Looping over what the browser happens to hold matched 12 of 441 late units
+  // and produced a carrier scorecard built on twelve rows. Amazon's export is
+  // the authority on what failed and already carries the carrier, the service
+  // and every timestamp, so the breakdown is built from it directly. Our own
+  // package list is only needed for the denominator, which now arrives with the
+  // import anyway.
+  var stat={carrier:{},method:{},anatomy:{ship:[],pickup:[],transit:[],lateBy:[]},uspsLast:0,other:0};
 
-  rows.forEach(function(p){
-    var c=carrierOf(p), u=amazonOtd[p.tracking];
-    var e=stat.carrier[c]||(stat.carrier[c]={shipped:0,late:0,pickup:[],transit:[],lateBy:[]});
-    e.shipped++;
-    if(u){
-      e.late++;
-      if(u.hrsShipToFirstScan!==null&&u.hrsShipToFirstScan!==undefined)e.pickup.push(u.hrsShipToFirstScan);
-      if(u.hrsFirstScanToDelivery!==null&&u.hrsFirstScanToDelivery!==undefined)e.transit.push(u.hrsFirstScanToDelivery/24);
-      if(u.daysLate!==null&&u.daysLate!==undefined)e.lateBy.push(u.daysLate);
-      var m=u.method||"unknown";
-      var me=stat.method[m]||(stat.method[m]={late:0,transit:[],lateBy:[],usps:!!u.uspsFinalMile});
-      me.late++;
-      if(u.hrsFirstScanToDelivery!==null)me.transit.push(u.hrsFirstScanToDelivery/24);
-      if(u.daysLate!==null)me.lateBy.push(u.daysLate);
-      if(u.uspsFinalMile)stat.uspsLast++; else stat.other++;
-      if(u.hrsShipVsPromisedShip!==null)stat.anatomy.ship.push(u.hrsShipVsPromisedShip);
-      if(u.hrsShipToFirstScan!==null)stat.anatomy.pickup.push(u.hrsShipToFirstScan);
-      if(u.hrsFirstScanToDelivery!==null)stat.anatomy.transit.push(u.hrsFirstScanToDelivery/24);
-      if(u.daysLate!==null)stat.anatomy.lateBy.push(u.daysLate);
-    }
+  Object.keys(amazonOtd||{}).forEach(function(tn){
+    var u=amazonOtd[tn];
+    if(carrierFilter&&String(u.carrier||"").toUpperCase().indexOf(carrierFilter.toUpperCase())<0)return;
+    var c=u.carrier||"Unknown";
+    var e=stat.carrier[c]||(stat.carrier[c]={late:0,pickup:[],transit:[],lateBy:[]});
+    e.late++;
+    if(u.hrsShipToFirstScan!==null&&u.hrsShipToFirstScan!==undefined)e.pickup.push(u.hrsShipToFirstScan);
+    if(u.hrsFirstScanToDelivery!==null&&u.hrsFirstScanToDelivery!==undefined)e.transit.push(u.hrsFirstScanToDelivery/24);
+    if(u.daysLate!==null&&u.daysLate!==undefined)e.lateBy.push(u.daysLate);
+
+    var m=u.method||"unknown";
+    var me=stat.method[m]||(stat.method[m]={late:0,transit:[],lateBy:[],usps:!!u.uspsFinalMile});
+    me.late++;
+    if(u.hrsFirstScanToDelivery!==null&&u.hrsFirstScanToDelivery!==undefined)me.transit.push(u.hrsFirstScanToDelivery/24);
+    if(u.daysLate!==null&&u.daysLate!==undefined)me.lateBy.push(u.daysLate);
+
+    if(u.uspsFinalMile)stat.uspsLast++; else stat.other++;
+    if(u.hrsShipVsPromisedShip!==null&&u.hrsShipVsPromisedShip!==undefined)stat.anatomy.ship.push(u.hrsShipVsPromisedShip);
+    if(u.hrsShipToFirstScan!==null&&u.hrsShipToFirstScan!==undefined)stat.anatomy.pickup.push(u.hrsShipToFirstScan);
+    if(u.hrsFirstScanToDelivery!==null&&u.hrsFirstScanToDelivery!==undefined)stat.anatomy.transit.push(u.hrsFirstScanToDelivery/24);
+    if(u.daysLate!==null&&u.daysLate!==undefined)stat.anatomy.lateBy.push(u.daysLate);
   });
 
-  // THE RATE COMES FROM THE IMPORT, NOT FROM THIS PAGE.
-  // The browser only holds a rolling window of recent packages. Working the
-  // rate out here matched 13 of 441 late units against whatever happened to be
-  // loaded and reported 99.1% on time when the truth was 86.1%. The denominator
-  // is counted once at import time, over exactly the export's window, and
-  // shipped alongside the data.
+  // Each carrier's share of our own shipments, used to turn its failure count
+  // into a rate against the same window the export covers.
+  var mix={};
+  rows.forEach(function(p){ var c=carrierOf(p); mix[c]=(mix[c]||0)+1; });
+
   var totalLate=(amazonOtdMeta&&amazonOtdMeta.count)||lateHere.length;
   var windowShipped=(amazonOtdMeta&&amazonOtdMeta.shippedInWindow)||0;
   var otdr=(amazonOtdMeta&&amazonOtdMeta.onTimePct!==null&&amazonOtdMeta.onTimePct!==undefined)
@@ -2390,10 +2396,10 @@ function renderAmazon(){
   // ---- carrier scorecard ------------------------------------------------
   var cs=Object.keys(stat.carrier).map(function(c){
     var e=stat.carrier[c];
-    // e.shipped only counts packages currently loaded in the browser, so the
-    // per-carrier rate is scaled onto the export window instead of being
-    // computed against a denominator that is not comparable.
-    var share=shipped?e.shipped/shipped:0;
+    // Failure counts are exact, from Amazon. The denominator per carrier is
+    // that carrier's share of our own Amazon shipments applied to the window,
+    // since Amazon does not tell us how many of each carrier succeeded.
+    var share=shipped?((mix[c]||0)/shipped):0;
     var est=Math.max(e.late, Math.round((windowShipped||shipped)*share));
     return {c:c,shipped:est,late:e.late,rate:est?100*e.late/est:0,
             pickup:amzMedian(e.pickup),transit:amzMedian(e.transit),lateBy:amzMedian(e.lateBy)};
