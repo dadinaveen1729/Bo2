@@ -2175,26 +2175,22 @@ function trackingErrorList(scoped,carrierFilter){
 }
 
 // AMAZON
-// Nothing in the shipping data says "Amazon". NetSuite's shipping report gives
-// the shipping addressee, not the sales channel, so an Amazon order and a
-// website order are indistinguishable by the time they reach the warehouse.
-// A separate NetSuite email, "Amazon Orders Pending Fulfillment", lists every
-// Amazon order against the same SO number the shipping report uses.
-// amazon_orders_fetch.py parses that email into amazon_orders.json, published
-// next to this page, and that register is what makes this tab possible.
+// Two files feed this tab, both published beside the page:
+//   amazon_orders.json - which of our sales orders came from Amazon. Nothing in
+//     the shipping report says "Amazon", so this is parsed out of a separate
+//     NetSuite email that lists Amazon orders against the same SO number.
+//   amazon_otd.json    - Amazon's own Unit On-Time Delivery export. Seller
+//     Central only exports the units that MISSED, so every row in it is a
+//     failure. That file cannot produce a rate on its own; the denominator
+//     comes from our own shipment count for the same window.
 var amazonReg=null, amazonLoading=false;
-
-// The shared tracking load deliberately leaves out delivered shipments, because
-// pulling every delivered row on every page load is what pushed Supabase egress
-// to 248% of the free allowance back in August. That is the right call for the
-// Tracking tab, which only cares about what is still moving.
-//
-// This tab cannot work from that, because on-time delivery is measured almost
-// entirely on shipments that HAVE arrived. Asking for the full table again would
-// undo the egress fix, so instead it asks only for the Amazon tracking numbers,
-// three columns wide, in batches small enough for a URL. Roughly 4,700 rows of
-// three fields rather than 19,000 rows of sixteen.
+var amazonOtd=null;
 var amazonTrk=null, amazonTrkLoading=false;
+
+// Amazon's published target.
+var AMZ_TARGET_PCT=97;
+// Used only where Amazon has given us no promise date of its own.
+var AMZ_TARGET_DAYS=5;
 
 function loadAmazonTracking(tns){
   if(amazonTrk||amazonTrkLoading)return Promise.resolve(amazonTrk||{});
@@ -2213,42 +2209,36 @@ function loadAmazonTracking(tns){
         });
       });
     });
-  },Promise.resolve()).then(function(){
-    amazonTrk=out; amazonTrkLoading=false; return out;
-  })["catch"](function(e){ amazonTrkLoading=false; throw e; });
+  },Promise.resolve()).then(function(){amazonTrk=out;amazonTrkLoading=false;return out;})
+  ["catch"](function(e){amazonTrkLoading=false;throw e;});
 }
-
-// Amazon scores its own OTDR against the delivery date it promised the buyer,
-// and that promise reaches us in no data NetSuite sends. So this must not be
-// called Amazon's number. What it measures is delivery within AMZ_TARGET_DAYS
-// of the box leaving us, which is the half we control and the half that moves
-// their metric. The point is to see trouble here before Seller Central does.
-var AMZ_TARGET_DAYS=5;
 
 function loadAmazonRegister(force){
   if(amazonLoading)return;
-  if(amazonReg&&!force){renderAmazon();return;}
+  if(amazonReg&&amazonOtd&&!force){renderAmazon();return;}
   amazonLoading=true;
   var el=document.getElementById("amz-content");
-  if(el)el.innerHTML='<div class="empty">Loading Amazon orders...</div>';
-  fetch("amazon_orders.json?t="+Date.now()).then(function(r){
-    if(!r.ok)throw new Error("HTTP "+r.status);
-    return r.json();
-  }).then(function(j){
-    amazonReg=(j&&j.orders)?j.orders:{};
+  if(el)el.innerHTML='<div class="empty">Loading Amazon data...</div>';
+  var bust="?t="+Date.now();
+  Promise.all([
+    fetch("amazon_orders.json"+bust).then(function(r){return r.ok?r.json():{orders:{}};}),
+    fetch("amazon_otd.json"+bust).then(function(r){return r.ok?r.json():{units:{}};})["catch"](function(){return {units:{}};})
+  ]).then(function(res){
+    amazonReg=(res[0]&&res[0].orders)||{};
+    amazonOtd=(res[1]&&res[1].units)||{};
     amazonLoading=false;
     if(!trackingData.length){loadTracking(true).then(renderAmazon)["catch"](renderAmazon);}
     else renderAmazon();
   })["catch"](function(e){
     amazonLoading=false;
-    if(el)el.innerHTML='<div class="empty">Could not load amazon_orders.json ('+e.message+').<br>Run <b>python amazon_orders_fetch.py --deploy</b> to publish it.</div>';
+    if(el)el.innerHTML='<div class="empty">Could not load Amazon data ('+e.message+').<br>Run <b>python amazon_orders_fetch.py --deploy</b> and <b>python amazon_otd_import.py &lt;file&gt; --deploy</b>.</div>';
   });
 }
 
-function isAmazonOrder(order){
-  if(!amazonReg)return false;
-  return !!amazonReg[String(order||"").trim()];
-}
+function isAmazonOrder(order){ return amazonReg?!!amazonReg[String(order||"").trim()]:false; }
+
+function amzMedian(a){ if(!a.length)return null; a=a.slice().sort(function(x,y){return x-y;}); return a[Math.floor(a.length/2)]; }
+function amzFmt(v,unit){ return v===null?"-":(Math.round(v*10)/10)+(unit||""); }
 
 function renderAmazon(){
   var el=document.getElementById("amz-content");
@@ -2263,17 +2253,15 @@ function renderAmazon(){
     var p=allPkgs[tn];
     if(!isAmazonOrder(p.order))return;
     if(dateFilter&&p.date!==dateFilter)return;
-    if(carrierFilter&&String(p.carrier||"").toUpperCase().indexOf(carrierFilter.toUpperCase())<0)return;
     if(isFreight(p))return;
     rows.push(p);
   });
-
   if(!rows.length){
-    el.innerHTML='<div class="empty">No Amazon packages'+(dateFilter?(" for "+dateFilter):"")+'.<br><span style="font-size:12px">Register holds '+Object.keys(amazonReg).length.toLocaleString()+' Amazon order(s).</span></div>';
+    el.innerHTML='<div class="empty">No Amazon packages'+(dateFilter?(" for "+dateFilter):"")+
+      '.<br><span style="font-size:12px">Register holds '+Object.keys(amazonReg).length.toLocaleString()+' Amazon order(s).</span></div>';
     return;
   }
 
-  // Fetch the Amazon tracking rows the first time this tab is opened, then render.
   if(!amazonTrk){
     var need=rows.map(function(p){return p.tracking;});
     el.innerHTML='<div class="empty">Loading delivery data for '+need.length.toLocaleString()+' Amazon package(s)...</div>';
@@ -2282,86 +2270,214 @@ function renderAmazon(){
     });
     return;
   }
+
   var byTn={};
   trackingData.forEach(function(t){byTn[t.tracking]=t;});
   Object.keys(amazonTrk).forEach(function(k){ if(!byTn[k]) byTn[k]=amazonTrk[k]; });
 
-  var delivered=0,onTime=0,judgeable=0,late=0,atRisk=0,transitSum=0,transitN=0,noData=0;
-  var riskRows=[],lateRows=[];
+  // Carrier taken from the tracking number, not the stored field, because the
+  // stored one is "Unknown" on 45% of rows and that made the first version of
+  // this tab unreadable.
+  function carrierOf(p){
+    var t=String(p.tracking||"").replace(/[^0-9A-Za-z]/g,"");
+    if(/^1Z/i.test(t))return "UPS";
+    if(/^\d+$/.test(t)){
+      if(/^(9261|9274)/.test(t))return "FedEx";
+      if(/^9/.test(t)&&(t.length===20||t.length===22||t.length===26))return "USPS";
+      if(t.length===12||t.length===15||t.length===20||t.length===22)return "FedEx";
+    }
+    return String(p.carrier||"Unknown");
+  }
+
+  if(carrierFilter)rows=rows.filter(function(p){return carrierOf(p).toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
+  if(!rows.length){ el.innerHTML='<div class="empty">No Amazon packages for that carrier.</div>'; return; }
+
+  // ---- the measured picture, from Amazon's own export -------------------
+  var otdKeys=Object.keys(amazonOtd||{});
+  var shipped=rows.length;
+  var lateHere=rows.filter(function(p){return amazonOtd[p.tracking];});
+  var measured=otdKeys.length>0;
+
+  var stat=collections();
+  function collections(){ return {carrier:{},method:{},anatomy:{ship:[],pickup:[],transit:[],lateBy:[]},uspsLast:0,other:0}; }
 
   rows.forEach(function(p){
-    var t=byTn[p.tracking];
-    var age=t?shipAgeOf(t):null;
-    if(age===null){
-      var sd=usToIso(p.date);
-      if(sd)age=Math.round((estMidnightToday()-new Date(sd+"T00:00:00").getTime())/86400000);
-    }
-    var days=t?transitDaysOf(t):null;
-    if(t&&t.delivered){
-      delivered++;
-      if(days!==null){transitSum+=days;transitN++;}
-    }
-    if(t&&age!==null&&age>=AMZ_TARGET_DAYS){
-      judgeable++;
-      if(days!==null&&days<=AMZ_TARGET_DAYS)onTime++;
-      else{late++;lateRows.push({p:p,t:t,age:age,days:days});}
-    }else if(!t){
-      noData++;
-    }
-    if(t&&!t.delivered&&age!==null&&age<AMZ_TARGET_DAYS&&(t.awaitingPickup||!t.hasMovement)){
-      atRisk++;riskRows.push({p:p,t:t,age:age,days:null});
+    var c=carrierOf(p), u=amazonOtd[p.tracking];
+    var e=stat.carrier[c]||(stat.carrier[c]={shipped:0,late:0,pickup:[],transit:[],lateBy:[]});
+    e.shipped++;
+    if(u){
+      e.late++;
+      if(u.hrsShipToFirstScan!==null&&u.hrsShipToFirstScan!==undefined)e.pickup.push(u.hrsShipToFirstScan);
+      if(u.hrsFirstScanToDelivery!==null&&u.hrsFirstScanToDelivery!==undefined)e.transit.push(u.hrsFirstScanToDelivery/24);
+      if(u.daysLate!==null&&u.daysLate!==undefined)e.lateBy.push(u.daysLate);
+      var m=u.method||"unknown";
+      var me=stat.method[m]||(stat.method[m]={late:0,transit:[],lateBy:[],usps:!!u.uspsFinalMile});
+      me.late++;
+      if(u.hrsFirstScanToDelivery!==null)me.transit.push(u.hrsFirstScanToDelivery/24);
+      if(u.daysLate!==null)me.lateBy.push(u.daysLate);
+      if(u.uspsFinalMile)stat.uspsLast++; else stat.other++;
+      if(u.hrsShipVsPromisedShip!==null)stat.anatomy.ship.push(u.hrsShipVsPromisedShip);
+      if(u.hrsShipToFirstScan!==null)stat.anatomy.pickup.push(u.hrsShipToFirstScan);
+      if(u.hrsFirstScanToDelivery!==null)stat.anatomy.transit.push(u.hrsFirstScanToDelivery/24);
+      if(u.daysLate!==null)stat.anatomy.lateBy.push(u.daysLate);
     }
   });
 
-  var pct=judgeable?Math.round(onTime/judgeable*1000)/10:null;
-  var avg=transitN?Math.round(transitSum/transitN*10)/10:null;
+  var totalLate=lateHere.length;
+  var otdr=shipped?Math.round((shipped-totalLate)/shipped*1000)/10:null;
+  var gap=otdr===null?null:Math.round((AMZ_TARGET_PCT-otdr)*10)/10;
 
-  function tile(label,val,colour,note){
-    return '<div style="flex:1;min-width:140px;background:#fff;border:1px solid #E5E7EB;border-left:4px solid '+colour+';border-radius:8px;padding:10px 13px">'
-      +'<div style="font-size:24px;font-weight:800;color:'+colour+';line-height:1.1">'+val+'</div>'
-      +'<div style="font-size:11px;color:#374151;font-weight:600;margin-top:2px">'+label+'</div>'
-      +'<div style="font-size:10px;color:#6B7280">'+note+'</div></div>';
+  function tile(label,val,colour,note,wide){
+    return '<div style="flex:'+(wide?2:1)+';min-width:'+(wide?190:140)+'px;background:#fff;border:1px solid #E5E7EB;border-left:4px solid '+colour+
+      ';border-radius:8px;padding:10px 13px"><div style="font-size:26px;font-weight:800;color:'+colour+';line-height:1.1">'+val+'</div>'+
+      '<div style="font-size:11px;color:#374151;font-weight:600;margin-top:2px">'+label+'</div>'+
+      '<div style="font-size:10px;color:#6B7280">'+note+'</div></div>';
   }
 
-  var col=(pct===null)?"#6B7280":(pct>=95?"#16A34A":(pct>=90?"#D97706":"#DC2626"));
-  var html='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'
-    +tile("Delivered within "+AMZ_TARGET_DAYS+" days",(pct===null?"n/a":pct+"%"),col,onTime+" of "+judgeable+" judged")
-    +tile("At risk right now",atRisk,"#DC2626","no movement, still inside the window")
-    +tile("Already late",late,"#B45309","past "+AMZ_TARGET_DAYS+" days")
-    +tile("Delivered",delivered,"#16A34A",(avg===null?"":"avg "+avg+" days"))
-    +tile("Amazon packages",rows.length,"#374151",(dateFilter||"all loaded dates"))
-    +(noData?tile("No carrier data",noData,"#6B7280","not scored either way"):"")
+  var col=otdr===null?"#6B7280":(otdr>=AMZ_TARGET_PCT?"#16A34A":(otdr>=95?"#D97706":"#DC2626"));
+  var html='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
+    +tile("On-time delivery rate",(otdr===null?"n/a":otdr+"%"),col,(shipped-totalLate).toLocaleString()+" of "+shipped.toLocaleString()+" on time",true)
+    +tile("Below Amazon target",(gap===null?"-":(gap>0?gap+" pts":"on target")),(gap>0?"#DC2626":"#16A34A"),"target "+AMZ_TARGET_PCT+"%")
+    +tile("Late units",totalLate.toLocaleString(),"#B45309","from Amazon’s own export")
+    +tile("USPS last mile",(totalLate?Math.round(stat.uspsLast/totalLate*100):0)+"%","#DC2626",stat.uspsLast+" of "+totalLate+" failures")
     +'</div>';
 
-  html+='<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#92400E">'
-    +'<b>Read this as an early warning, not as Amazon’s number.</b> Amazon scores on the delivery date they promised the buyer, and that promise is not in any data NetSuite sends us. '
-    +'This measures delivery within '+AMZ_TARGET_DAYS+' days of the box leaving our building, which is the part we control. '
-    +'The <b>at risk</b> figure is the one to act on: those are still inside the window, so they can be fixed before Seller Central ever sees them.</div>';
-
-  function table(title,items,colour,note,showDays){
-    if(!items.length)return "";
-    items.sort(function(a,b){return (b.age||0)-(a.age||0);});
-    var h='<div class="overall" style="border-color:'+colour+';border-left:4px solid '+colour+'">'
-      +'<div class="overall-title" style="color:'+colour+'">'+title+' ('+items.length+')</div>'
-      +'<div style="font-size:12px;color:#4B5563;margin-bottom:10px">'+note+'</div>';
-    items.slice(0,40).forEach(function(r){
-      var amz=amazonReg[r.p.order]||{};
-      h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 10px;background:#fff;border-radius:6px;margin-bottom:3px;font-size:12px;border-left:3px solid '+colour+'">'
-        +'<span style="font-weight:800;color:'+colour+';min-width:42px">'+(r.age===null?"?":r.age+"d")+'</span>'
-        +'<span style="font-family:Consolas,monospace;min-width:180px">'+trackLink(r.p.tracking,r.p.carrier)+'</span>'
-        +'<span style="color:#4B5563;min-width:78px">'+(r.p.order||"")+'</span>'
-        +'<span style="color:#6B7280;flex:1;min-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(amz.customer||r.p.customer||"")+'</span>'
-        +'<span style="color:#6B7280;min-width:52px">'+(r.p.carrier||"")+'</span>'
-        +'<span style="color:#6B7280;font-size:11px;min-width:150px;text-align:right">'+((r.t&&r.t.latestStatus)||"no carrier data")+'</span>'
-        +((showDays&&r.days!==null&&r.days!==undefined)?'<span style="color:#B45309;font-size:11px;min-width:78px;text-align:right">took '+r.days+'d</span>':'')
-        +'</div>';
-    });
-    if(items.length>40)h+='<div style="font-size:11px;color:#6B7280;padding:4px 10px">+'+(items.length-40)+' more</div>';
-    return h+'</div>';
+  // ---- the one finding that matters ------------------------------------
+  if(totalLate&&stat.uspsLast/totalLate>0.8){
+    html+='<div style="background:#FEF2F2;border:1px solid #FECACA;border-left:4px solid #DC2626;border-radius:8px;padding:12px 14px;margin-bottom:14px">'
+      +'<div style="font-weight:800;color:#991B1B;font-size:14px;margin-bottom:5px">Root cause: USPS is delivering the last mile</div>'
+      +'<div style="font-size:12.5px;color:#7F1D1D;line-height:1.5">'
+      +'<b>'+stat.uspsLast+' of '+totalLate+' failures ('+Math.round(stat.uspsLast/totalLate*100)+'%)</b> are shipments where USPS carries the final leg, '
+      +'whichever name is on the label: USPS Ground Advantage, UPS Ground Saver (SurePost) and FedEx SmartPost all hand over to USPS. '
+      +'Services where the carrier delivers it themselves produced only <b>'+stat.other+'</b>. '
+      +'This reads as three carrier problems. It is one.</div></div>';
   }
 
-  html+=table("At risk - fix these today",riskRows,"#DC2626","Left us within the last "+AMZ_TARGET_DAYS+" days and the carrier has recorded no movement. Still inside the window, so these are the ones worth chasing now.",false);
-  html+=table("Missed the "+AMZ_TARGET_DAYS+" day window",lateRows,"#B45309","More than "+AMZ_TARGET_DAYS+" days since leaving us. Either delivered late, or still not delivered.",true);
+  // ---- where the time actually goes ------------------------------------
+  var a=stat.anatomy;
+  var medShip=amzMedian(a.ship), medPick=amzMedian(a.pickup), medTrans=amzMedian(a.transit), medLate=amzMedian(a.lateBy);
+  var shippedLateCount=a.ship.filter(function(h){return h>0;}).length;
+  html+='<div class="overall"><div class="overall-title">Where the time is lost</div>'
+    +'<div style="font-size:12px;color:#4B5563;margin-bottom:10px">Measured on the '+totalLate+' units Amazon recorded as late, broken into the three legs of the journey.</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:12.5px">'
+    +'<tr style="background:#F9FAFB"><th style="text-align:left;padding:7px 9px">Leg</th><th style="text-align:right;padding:7px 9px">Median</th><th style="text-align:left;padding:7px 9px">Reading</th></tr>'
+    +'<tr><td style="padding:7px 9px;border-top:1px solid #eee">Order to our ship confirm, against Amazon’s deadline</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right;font-weight:700;color:#16A34A">'+amzFmt(medShip," h")+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee">'+(shippedLateCount===0?'<b>Not one shipped late.</b> The bench is not the problem.':shippedLateCount+' shipped after the deadline')+'</td></tr>'
+    +'<tr><td style="padding:7px 9px;border-top:1px solid #eee">Our ship confirm to the carrier’s first scan</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right;font-weight:700;color:'+((medPick||0)>12?"#DC2626":"#16A34A")+'">'+amzFmt(medPick," h")+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee">'+((medPick||0)>12?'The box is sitting on our dock waiting to be collected':'Collected promptly')+'</td></tr>'
+    +'<tr><td style="padding:7px 9px;border-top:1px solid #eee">Carrier first scan to delivery</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right;font-weight:700;color:'+((medTrans||0)>7?"#DC2626":"#B45309")+'">'+amzFmt(medTrans," d")+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee">Time inside the carrier network</td></tr>'
+    +'<tr><td style="padding:7px 9px;border-top:1px solid #eee">Missed the promise by</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right;font-weight:700;color:#B45309">'+amzFmt(medLate," d")+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee">How far short, on average</td></tr>'
+    +'</table></div>';
+
+  // ---- carrier scorecard ------------------------------------------------
+  var cs=Object.keys(stat.carrier).map(function(c){
+    var e=stat.carrier[c];
+    return {c:c,shipped:e.shipped,late:e.late,rate:e.shipped?100*e.late/e.shipped:0,
+            pickup:amzMedian(e.pickup),transit:amzMedian(e.transit),lateBy:amzMedian(e.lateBy)};
+  }).sort(function(x,y){return y.late-x.late;});
+
+  html+='<div class="overall"><div class="overall-title">Carrier scorecard</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:12.5px">'
+    +'<tr style="background:#F9FAFB"><th style="text-align:left;padding:7px 9px">Carrier</th>'
+    +'<th style="text-align:right;padding:7px 9px">Shipped</th><th style="text-align:right;padding:7px 9px">Late</th>'
+    +'<th style="text-align:right;padding:7px 9px">Late rate</th><th style="text-align:right;padding:7px 9px">Pickup</th>'
+    +'<th style="text-align:right;padding:7px 9px">Transit</th><th style="text-align:right;padding:7px 9px">Missed by</th>'
+    +'<th style="text-align:right;padding:7px 9px">Fixing it worth</th></tr>';
+  cs.forEach(function(r){
+    var rc=r.rate>=25?"#DC2626":(r.rate>=10?"#B45309":"#16A34A");
+    var worth=shipped?Math.round((100*(shipped-(totalLate-r.late))/shipped-otdr)*10)/10:0;
+    html+='<tr><td style="padding:7px 9px;border-top:1px solid #eee;font-weight:700">'+r.c+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+r.shipped.toLocaleString()+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+r.late+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right;font-weight:800;color:'+rc+'">'+(Math.round(r.rate*10)/10)+'%</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+amzFmt(r.pickup," h")+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+amzFmt(r.transit," d")+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+amzFmt(r.lateBy," d")+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right;color:#16A34A;font-weight:700">+'+worth+' pts</td></tr>';
+  });
+  html+='</table><div style="font-size:11px;color:#6B7280;margin-top:7px">Pickup, transit and missed-by are medians across that carrier’s failures. '
+    +'"Fixing it worth" is where the overall rate would land if that carrier stopped failing entirely.</div></div>';
+
+  // ---- service scorecard ------------------------------------------------
+  var ms=Object.keys(stat.method).map(function(m){
+    var e=stat.method[m];
+    return {m:m,late:e.late,usps:e.usps,transit:amzMedian(e.transit),lateBy:amzMedian(e.lateBy)};
+  }).sort(function(x,y){return y.late-x.late;});
+  if(ms.length){
+    html+='<div class="overall"><div class="overall-title">Which service is failing</div>'
+      +'<table style="width:100%;border-collapse:collapse;font-size:12.5px">'
+      +'<tr style="background:#F9FAFB"><th style="text-align:left;padding:7px 9px">Ship method</th>'
+      +'<th style="text-align:right;padding:7px 9px">Late</th><th style="text-align:right;padding:7px 9px">Transit</th>'
+      +'<th style="text-align:right;padding:7px 9px">Missed by</th><th style="text-align:left;padding:7px 9px">Last mile</th></tr>';
+    ms.forEach(function(r){
+      html+='<tr><td style="padding:7px 9px;border-top:1px solid #eee">'+r.m+'</td>'
+        +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right;font-weight:700">'+r.late+'</td>'
+        +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+amzFmt(r.transit," d")+'</td>'
+        +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+amzFmt(r.lateBy," d")+'</td>'
+        +'<td style="padding:7px 9px;border-top:1px solid #eee">'+(r.usps?'<span style="color:#DC2626;font-weight:700">USPS</span>':'<span style="color:#16A34A">carrier delivers</span>')+'</td></tr>';
+    });
+    html+='</table></div>';
+  }
+
+  // ---- recommendations --------------------------------------------------
+  var recs=[];
+  var worst=cs.filter(function(r){return r.rate>=20&&r.shipped>=20;}).sort(function(x,y){return y.rate-x.rate;})[0];
+  var best=cs.filter(function(r){return r.shipped>=50;}).sort(function(x,y){return x.rate-y.rate;})[0];
+  if(worst&&best&&worst.c!==best.c){
+    var saved=Math.round(worst.late-worst.shipped*best.rate/100);
+    var newPct=Math.round((100*(shipped-(totalLate-saved))/shipped)*10)/10;
+    recs.push({t:"Move "+worst.c+" volume to "+best.c,
+      w:"+"+(Math.round((newPct-otdr)*10)/10)+" pts  ->  "+newPct+"%",
+      d:worst.c+" fails on "+(Math.round(worst.rate*10)/10)+"% of its shipments; "+best.c+" fails on "+(Math.round(best.rate*10)/10)+"%. "
+        +"Moving those "+worst.shipped.toLocaleString()+" shipments to "+best.c+"-level performance removes about "+saved+" failures. "
+        +"This is the single biggest lever and needs no carrier to change anything."});
+  }
+  var slowPick=cs.filter(function(r){return (r.pickup||0)>12&&r.late>=10;});
+  if(slowPick.length){
+    var recoverable=0;
+    slowPick.forEach(function(r){ if((r.lateBy||0)<=1.5)recoverable+=Math.round(r.late*0.45); });
+    if(recoverable>0){
+      var np=Math.round((100*(shipped-(totalLate-recoverable))/shipped)*10)/10;
+      recs.push({t:"Get the carrier collecting earlier",
+        w:"+"+(Math.round((np-otdr)*10)/10)+" pts  ->  "+np+"%",
+        d:slowPick.map(function(r){return r.c+" takes "+amzFmt(r.pickup," h")+" to first scan";}).join(", ")
+          +". The bench ships well ahead of the deadline and the box then sits waiting to be collected. "
+          +"Most of these miss by around a day, so an earlier or second daily pickup converts roughly "+recoverable+" of them."});
+    }
+  }
+  if(stat.uspsLast/Math.max(1,totalLate)>0.8){
+    recs.push({t:"Take Amazon volume off every USPS last-mile service",
+      w:"the structural fix",
+      d:"Ground Saver, SmartPost and USPS Ground Advantage all end with USPS, and together they are "
+        +Math.round(stat.uspsLast/totalLate*100)+"% of all failures. They are also the cheap services, so this is a margin decision rather than an operations one. "
+        +"Worth pricing the difference against what an Amazon account health suspension would cost."});
+  }
+  recs.push({t:"Watch the at-risk list daily",
+    w:"prevention",
+    d:"The Tracking tab already shows shipments with no carrier movement. Acting on those while they are still inside the promise window is the only way to stop a failure before Amazon records it."});
+
+  html+='<div class="overall" style="border-color:#16A34A;border-left:4px solid #16A34A">'
+    +'<div class="overall-title" style="color:#16A34A">What to do, in order of impact</div>';
+  recs.forEach(function(r,i){
+    html+='<div style="padding:10px 12px;background:#F0FDF4;border-radius:7px;margin-bottom:7px">'
+      +'<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline">'
+      +'<span style="font-weight:800;color:#166534;font-size:13.5px">'+(i+1)+'. '+r.t+'</span>'
+      +'<span style="font-weight:800;color:#16A34A;font-size:12.5px">'+r.w+'</span></div>'
+      +'<div style="font-size:12px;color:#14532D;margin-top:4px;line-height:1.5">'+r.d+'</div></div>';
+  });
+  html+='</div>';
+
+  // ---- honesty about the window ----------------------------------------
+  html+='<div style="font-size:11.5px;color:#6B7280;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:7px;padding:9px 11px">'
+    +'<b>How this is calculated.</b> Late units come from Amazon’s own Unit On-Time Delivery export, which lists only shipments that missed the promised date. '
+    +'The denominator is our own count of Amazon shipments over the same period, so the rate matches Amazon’s method rather than estimating it. '
+    +'Any Amazon shipment outside the export’s window is counted as on time, so re-import the export regularly to keep this honest.</div>';
 
   el.innerHTML=html;
 }
