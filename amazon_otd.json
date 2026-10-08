@@ -3,6 +3,11 @@
 "denominatorSource": "Amazon Seller Central total tracked units",
 "note": "Seller Central exports only units that MISSED the promise. Every unit here is a failure.",
 "onTimePct": 81.8,
+"shippedByCarrier": {
+"FedEx": 1246,
+"UPS": 812,
+"USPS": 314
+},
 "shippedInWindow": 2027,
 "source": "Amazon Seller Central - Unit On-Time Delivery export",
 "targetPct": 90,
@@ -5912,7 +5917,7 @@
 "uspsFinalMile": true
 }
 },
-"updated": "2026-10-08T09:58:19",
+"updated": "2026-10-08T12:35:08",
 "warnBelowPct": 95,
 "window": {
 "from": "2026-09-16",
