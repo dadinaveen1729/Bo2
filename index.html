@@ -2535,6 +2535,17 @@ function renderAmazon(){
     var st=Object.keys(byState).map(function(k){
       return {s:k,late:byState[k].late,med:amzMedian(byState[k].days)};
     }).sort(function(a,b){return b.late-a.late;}).slice(0,12);
+    if(!st.length){
+      // Destinations are captured from the NetSuite shipping report, which only
+      // covers the last three days, so this builds up going forward and cannot
+      // reach back over failures that happened weeks ago. Say so rather than
+      // hiding the section and leaving it looking broken.
+      html+='<div class="overall"><div class="overall-title">Where the failures were going</div>'
+        +'<div style="font-size:12px;color:#4B5563">Holding destinations for <b>'+Object.keys(amazonDest).length.toLocaleString()
+        +'</b> shipments, but none of them overlap this batch of failures yet. '
+        +'NetSuite’s shipping report only carries the last three days of addresses, so this fills in as it is collected daily. '
+        +'Expect state level analysis on the next export.</div></div>';
+    }
     if(st.length){
       html+='<div class="overall"><div class="overall-title">Where the failures were going</div>'
         +'<div style="font-size:12px;color:#4B5563;margin-bottom:10px">Destination known for '+known+' of '+totalLate
