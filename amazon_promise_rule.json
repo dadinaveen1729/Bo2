@@ -1,17 +1,27 @@
 {
  "byCarrier": {
-  "FedEx": 5,
-  "UPS": 7,
-  "USPS": 8
+  "FedEx": 7.5,
+  "UPS": 8.7,
+  "USPS": 9.7,
+  "Unknown": 8.7
  },
  "byMethod": {
-  "RF-SMART FedEx Home Delivery": 5,
-  "RF-SMART SmartPost parcel select": 5,
-  "RF-SMART UPS Ground": 8,
-  "RF-SMART UPS Ground Saver": 7,
-  "RF-SMART USPS Ground Advantage": 8
+  "RF-SMART FedEx Home Delivery": 5.5,
+  "RF-SMART SmartPost parcel select": 7.5,
+  "RF-SMART UPS Ground": 8.7,
+  "RF-SMART UPS Ground Saver": 8.7,
+  "RF-SMART USPS Ground Advantage": 9.7
  },
- "defaultDays": 7,
+ "calibratedAgainst": {
+  "amazonReportedPct": 81.2,
+  "ourComputedPct": 82.2,
+  "window": "2026-09-16 to 2026-09-30"
+ },
+ "caveat": "Amazon only exports units that MISSED, so the rule is learned from failures. It reproduces Amazon's published rate closely but is an approximation of a promise only Amazon sets. Re-calibrate whenever a fresh export and a fresh Seller Central percentage are to hand.",
+ "defaultDays": 8.7,
  "learnedFrom": 814,
- "note": "Days from OUR ship confirmation to Amazon's promised delivery date, learned from Amazon's own export. p25 is used as the working deadline so the warning fires before the tightest promises are missed, not after the median one."
+ "note": "Days from OUR ship confirmation to Amazon's promised delivery date. Learned from Amazon's own Unit On-Time Delivery export, then calibrated against the rate Seller Central actually published for the same window: these values reproduce 82.2% where Amazon reported 81.2%.",
+ "targetPct": 90,
+ "warnBelowPct": 95,
+ "warnDaysEarly": 2
 }
