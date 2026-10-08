@@ -1,6 +1,8 @@
 {
 "count": 441,
 "note": "Seller Central exports only units that MISSED the promise. Every unit here is a failure.",
+"onTimePct": 86.1,
+"shippedInWindow": 3164,
 "source": "Amazon Seller Central - Unit On-Time Delivery export",
 "units": {
 "1Z201627YW01352115": {
@@ -7060,7 +7062,7 @@
 "uspsFinalMile": true
 }
 },
-"updated": "2026-10-08T09:35:21",
+"updated": "2026-10-08T09:39:06",
 "window": {
 "from": "2026-08-28",
 "to": "2026-09-21"
