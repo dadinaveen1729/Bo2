@@ -1,0 +1,17 @@
+{
+ "byCarrier": {
+  "FedEx": 5,
+  "UPS": 7,
+  "USPS": 8
+ },
+ "byMethod": {
+  "RF-SMART FedEx Home Delivery": 5,
+  "RF-SMART SmartPost parcel select": 5,
+  "RF-SMART UPS Ground": 8,
+  "RF-SMART UPS Ground Saver": 7,
+  "RF-SMART USPS Ground Advantage": 8
+ },
+ "defaultDays": 7,
+ "learnedFrom": 814,
+ "note": "Days from OUR ship confirmation to Amazon's promised delivery date, learned from Amazon's own export. p25 is used as the working deadline so the warning fires before the tightest promises are missed, not after the median one."
+}
