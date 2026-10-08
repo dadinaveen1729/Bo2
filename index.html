@@ -2567,12 +2567,14 @@ function renderAmazon(){
   // ---- carrier scorecard ------------------------------------------------
   var cs=Object.keys(stat.carrier).map(function(c){
     var e=stat.carrier[c];
-    // Failure counts are exact, from Amazon. The denominator per carrier is
-    // that carrier's share of our own Amazon shipments applied to the window,
-    // since Amazon does not tell us how many of each carrier succeeded.
-    var share=shipped?((mix[c]||0)/shipped):0;
-    var est=Math.max(e.late, Math.round((windowShipped||shipped)*share));
-    return {c:c,shipped:est,late:e.late,rate:est?100*e.late/est:0,
+    // Both numbers are real. Failures come from Amazon's export; the shipped
+    // count per carrier is counted at import time over the same window.
+    // Estimating it from the browser's share reported USPS failing on 100% of
+    // its shipments when the truth is 61.5%, which is the kind of number that
+    // gets challenged the moment it is shown to a carrier.
+    var realShipped=(amazonOtdMeta&&amazonOtdMeta.shippedByCarrier&&amazonOtdMeta.shippedByCarrier[c])||0;
+    var est=realShipped||Math.max(e.late,(mix[c]||0));
+    return {c:c,shipped:est,late:e.late,rate:est?100*e.late/est:0,exact:!!realShipped,
             pickup:amzMedian(e.pickup),transit:amzMedian(e.transit),lateBy:amzMedian(e.lateBy)};
   }).sort(function(x,y){return y.late-x.late;});
 
@@ -2588,7 +2590,8 @@ function renderAmazon(){
     var denom=windowShipped||shipped;
     var worth=(denom&&otdr!==null)?Math.round((100*(denom-(totalLate-r.late))/denom-otdr)*10)/10:0;
     html+='<tr><td style="padding:7px 9px;border-top:1px solid #eee;font-weight:700">'+r.c+'</td>'
-      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+r.shipped.toLocaleString()+'</td>'
+      +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+r.shipped.toLocaleString()
+        +(r.exact?'':'<span title="estimated" style="color:#D97706">*</span>')+'</td>'
       +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+r.late+'</td>'
       +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right;font-weight:800;color:'+rc+'">'+(Math.round(r.rate*10)/10)+'%</td>'
       +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right">'+amzFmt(r.pickup," h")+'</td>'
@@ -2597,7 +2600,8 @@ function renderAmazon(){
       +'<td style="padding:7px 9px;border-top:1px solid #eee;text-align:right;color:#16A34A;font-weight:700">+'+worth+' pts</td></tr>';
   });
   html+='</table><div style="font-size:11px;color:#6B7280;margin-top:7px">Pickup, transit and missed-by are medians across that carrier’s failures. '
-    +'"Fixing it worth" is where the overall rate would land if that carrier stopped failing entirely.</div></div>';
+    +'"Fixing it worth" is where the overall rate would land if that carrier stopped failing entirely. '
+    +'Shipped counts are counted over the same window as the failures; an asterisk marks any that could not be and is an estimate.</div></div>';
 
   // ---- service scorecard ------------------------------------------------
   var ms=Object.keys(stat.method).map(function(m){
