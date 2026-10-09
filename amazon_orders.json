@@ -1,5 +1,5 @@
 {
-"count": 5490,
+"count": 5510,
 "orders": {
 "SO780298": {
 "amount": "47.91",
@@ -27450,8 +27450,108 @@
 "amount": "31.94",
 "customer": "Roig, Francisco",
 "order_date": "10/8/2026"
+},
+"SO792544": {
+"amount": "29.91",
+"customer": "spooner, ron",
+"order_date": "10/8/2026"
+},
+"SO792561": {
+"amount": "31.94",
+"customer": "Jennings, Jennings",
+"order_date": "10/8/2026"
+},
+"SO792602": {
+"amount": "56.94",
+"customer": "Vincent, Frances",
+"order_date": "10/8/2026"
+},
+"SO792603": {
+"amount": "29.91",
+"customer": "Brandsma, Donnie",
+"order_date": "10/8/2026"
+},
+"SO792605": {
+"amount": "56.94",
+"customer": "Hindman, Tim",
+"order_date": "10/9/2026"
+},
+"SO792606": {
+"amount": "31.94",
+"customer": "JOHNSON, JERRY",
+"order_date": "10/9/2026"
+},
+"SO792609": {
+"amount": "27.15",
+"customer": "Newton, Mollie R",
+"order_date": "10/9/2026"
+},
+"SO792610": {
+"amount": "56.94",
+"customer": "medellin, carlos",
+"order_date": "10/9/2026"
+},
+"SO792612": {
+"amount": "48.40",
+"customer": "Delgado, Brian D",
+"order_date": "10/9/2026"
+},
+"SO792613": {
+"amount": "96.75",
+"customer": "whaley, donald",
+"order_date": "10/9/2026"
+},
+"SO792614": {
+"amount": "27.15",
+"customer": "Sheila, Sheila",
+"order_date": "10/9/2026"
+},
+"SO792619": {
+"amount": "56.94",
+"customer": "ebright, Travis",
+"order_date": "10/9/2026"
+},
+"SO792620": {
+"amount": "31.94",
+"customer": "HOWARD, JAMES",
+"order_date": "10/9/2026"
+},
+"SO792622": {
+"amount": "31.94",
+"customer": "linit, jordan",
+"order_date": "10/9/2026"
+},
+"SO792633": {
+"amount": "31.94",
+"customer": "Daniel, Daniel",
+"order_date": "10/9/2026"
+},
+"SO792635": {
+"amount": "113.82",
+"customer": "Frankel, Aaron",
+"order_date": "10/9/2026"
+},
+"SO792637": {
+"amount": "31.94",
+"customer": "Wilson, Nancy",
+"order_date": "10/9/2026"
+},
+"SO792638": {
+"amount": "47.82",
+"customer": "Campbell, Bonnie C",
+"order_date": "10/9/2026"
+},
+"SO792643": {
+"amount": "29.91",
+"customer": "Young, William",
+"order_date": "10/9/2026"
+},
+"SO792644": {
+"amount": "32.25",
+"customer": "Anna M. Rumfolo c/o FASHION FOREST SALON",
+"order_date": "10/9/2026"
 }
 },
 "source": "NetSuite: Amazon Orders Pending Fulfillment",
-"updated": "2026-10-08T11:45:07"
+"updated": "2026-10-09T11:45:07"
 }
