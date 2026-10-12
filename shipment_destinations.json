@@ -1,6 +1,13 @@
 {
-"count": 2376,
+"count": 2442,
 "destinations": {
+"0888217484": {
+"city": "Sparks",
+"name": "Vistar / VSA Corporate",
+"state": "NV",
+"via": "RF-SMART USPS Ground Advantage",
+"zip": "89434"
+},
 "1Z2016270300265880": {
 "city": "Woonsocket",
 "name": "CVS Store # W101",
@@ -4544,6 +4551,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "80863"
 },
+"1Z29706W0397963999": {
+"city": "Fraser",
+"name": "Murdoch's #35 Fraser",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80442"
+},
 "1Z29706W0397983048": {
 "city": "Breckenridge",
 "name": "Lodge at Breckenridge",
@@ -5138,6 +5152,13 @@
 "state": "RI",
 "via": "RF-SMART UPS Ground",
 "zip": "02882"
+},
+"1Z2GV0380319232603": {
+"city": "Mascoutah",
+"name": "Dauber Pharmacy",
+"state": "IL",
+"via": "",
+"zip": "62258"
 },
 "1Z2GV0380320640884": {
 "city": "Sedona",
@@ -6405,6 +6426,41 @@
 "state": "MN",
 "via": "RF-SMART SmartPost parcel select",
 "zip": "56679"
+},
+"384134353427": {
+"city": "Scottsdale",
+"name": "Sylvia Palmisano",
+"state": "AZ",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "85260"
+},
+"384134391082": {
+"city": "Bloomington",
+"name": "Mindy Teach",
+"state": "IN",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "47408"
+},
+"384134716364": {
+"city": "Aurora",
+"name": "Help U Save",
+"state": "CO",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "80013"
+},
+"384134801776": {
+"city": "Sandy",
+"name": "William Harman",
+"state": "UT",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "84070"
+},
+"384136621628": {
+"city": "Metairie",
+"name": "Ronald Light",
+"state": "LA",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "70005"
 },
 "61299992412022082186": {
 "city": "Berwyn",
@@ -16395,6 +16451,391 @@
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "15650"
 },
+"878532366905": {
+"city": "ORANGE",
+"name": "yan wang",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "92865"
+},
+"878532418251": {
+"city": "LOUDON",
+"name": "William Young",
+"state": "NH",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "03307"
+},
+"878533051370": {
+"city": "SANDY",
+"name": "Sheena Brown",
+"state": "UT",
+"via": "RF-SMART FedEx Ground",
+"zip": "84070"
+},
+"878533151189": {
+"city": "GRIFFIN",
+"name": "Scottie Stanford",
+"state": "GA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "30224"
+},
+"878533239559": {
+"city": "Harrisburg",
+"name": "Richard via",
+"state": "PA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "17112"
+},
+"878536039140": {
+"city": "Evergreen",
+"name": "Evergreen Clothing & Mercantile",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80439"
+},
+"878536039151": {
+"city": "Evergreen",
+"name": "Evergreen Clothing & Mercantile",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80439"
+},
+"878536039162": {
+"city": "Evergreen",
+"name": "Evergreen Clothing & Mercantile",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80439"
+},
+"878536612519": {
+"city": "Livingston",
+"name": "Murdoch's #37 Livingston",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59047"
+},
+"878536612520": {
+"city": "Livingston",
+"name": "Murdoch's #37 Livingston",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59047"
+},
+"878536612530": {
+"city": "Livingston",
+"name": "Murdoch's #37 Livingston",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59047"
+},
+"878536798447": {
+"city": "Laurens",
+"name": "Marilyn  Hansen",
+"state": "IA",
+"via": "RF-SMART FedEx Ground",
+"zip": "50554"
+},
+"878539739550": {
+"city": "GARNER",
+"name": "RODNEY A WILLIFORD",
+"state": "NC",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "27529"
+},
+"878539804478": {
+"city": "SEBRING",
+"name": "Mimi Bergere",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "33875"
+},
+"878539821518": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821529": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821530": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821540": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821551": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821562": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821573": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821584": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821595": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821600": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821610": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539821621": {
+"city": "Red Lodge",
+"name": "Town Pump Red Lodge",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59068"
+},
+"878539954306": {
+"city": "PORTLAND",
+"name": "CJTS Cyndi Gaggero",
+"state": "OR",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "97230"
+},
+"878540005145": {
+"city": "BLACK CANYON CITY",
+"name": "Pamela Mark",
+"state": "AZ",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "85324"
+},
+"878540009655": {
+"city": "Silverthorne",
+"name": "Murdoch's #31 Silverthorne",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80498"
+},
+"878540125426": {
+"city": "THOMPSON",
+"name": "Ann Bourbeau",
+"state": "CT",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "06277"
+},
+"878540170175": {
+"city": "WRAY",
+"name": "Ruby Bliven",
+"state": "CO",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "80758"
+},
+"878540281462": {
+"city": "Bozeman",
+"name": "Western Drug Bozeman",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59715"
+},
+"878540281473": {
+"city": "Bozeman",
+"name": "Western Drug Bozeman",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59715"
+},
+"878540281484": {
+"city": "Bozeman",
+"name": "Western Drug Bozeman",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59715"
+},
+"878540281495": {
+"city": "Bozeman",
+"name": "Western Drug Bozeman",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59715"
+},
+"878540281500": {
+"city": "Bozeman",
+"name": "Western Drug Bozeman",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59715"
+},
+"878540281510": {
+"city": "Bozeman",
+"name": "Western Drug Bozeman",
+"state": "MT",
+"via": "RF-SMART FedEx Ground",
+"zip": "59715"
+},
+"878540299773": {
+"city": "JOHNSTOWN",
+"name": "Jon Brunner",
+"state": "CO",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "80534"
+},
+"878540349142": {
+"city": "TULSA",
+"name": "Michelle Jernigan",
+"state": "OK",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "74106"
+},
+"878540414493": {
+"city": "INDEPENDENCE",
+"name": "virginia faith",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "93526"
+},
+"878540859147": {
+"city": "Plano",
+"name": "9773 Langermania",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75074"
+},
+"878540859158": {
+"city": "Plano",
+"name": "9773 Langermania",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75074"
+},
+"878540859169": {
+"city": "Plano",
+"name": "9773 Langermania",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75074"
+},
+"878540859170": {
+"city": "Plano",
+"name": "9773 Langermania",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75074"
+},
+"878540859180": {
+"city": "Plano",
+"name": "9773 Langermania",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75074"
+},
+"878540859191": {
+"city": "Plano",
+"name": "9773 Langermania",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75074"
+},
+"878540859206": {
+"city": "Plano",
+"name": "9773 Langermania",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75074"
+},
+"878540859217": {
+"city": "Plano",
+"name": "9773 Langermania",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75074"
+},
+"878540859228": {
+"city": "Plano",
+"name": "9773 Langermania",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75074"
+},
+"878540859239": {
+"city": "Plano",
+"name": "9773 Langermania",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75074"
+},
+"878541267112": {
+"city": "EXETER",
+"name": "LARRY A CLINTON",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "93221"
+},
+"878541326343": {
+"city": "CHESAPEAKE",
+"name": "Kathleen Robertson",
+"state": "VA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "23320"
+},
+"878541450432": {
+"city": "LIVERPOOL",
+"name": "A&J Noble",
+"state": "NY",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "13088"
+},
+"878541502341": {
+"city": "SAN DIEGO",
+"name": "Sheri Galbreath",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "92111"
+},
+"878541562737": {
+"city": "PETALUMA",
+"name": "Gayleen klemme",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "94954"
+},
 "9418436208192274458252": {
 "city": "EWA BEACH",
 "name": "Lyann Hamada",
@@ -16612,6 +17053,27 @@
 "via": "RF-SMART USPS Ground Advantage",
 "zip": "99694"
 },
+"9436236208192274632470": {
+"city": "Dillingham",
+"name": "Michael Anthony Ramirez",
+"state": "AK",
+"via": "RF-SMART USPS Ground Advantage",
+"zip": "99576"
+},
+"9436236208192274632630": {
+"city": "HONOLULU",
+"name": "Claro Melquiades Cos",
+"state": "HI",
+"via": "RF-SMART USPS Ground Advantage",
+"zip": "96822"
+},
+"9436236208192274632678": {
+"city": "Juncos",
+"name": "Marielis Flores Polanco",
+"state": "PR",
+"via": "RF-SMART USPS Ground Advantage",
+"zip": "00777"
+},
 "Load#570928148": {
 "city": "Indianapolis",
 "name": "CVS Store # 1101",
@@ -16634,5 +17096,5 @@
 "zip": "98446"
 }
 },
-"updated": "2026-10-12T11:46:28"
+"updated": "2026-10-12T13:47:24"
 }
