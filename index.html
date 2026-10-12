@@ -2231,7 +2231,7 @@ function trackingErrorList(scoped,carrierFilter){
 //     failure. That file cannot produce a rate on its own; the denominator
 //     comes from our own shipment count for the same window.
 var amazonReg=null, amazonLoading=false;
-var amazonOtd=null, amazonOtdMeta=null, amazonDest=null, amazonRule=null;
+var amazonOtd=null, amazonOtdMeta=null, amazonDest=null, amazonRule=null, amazonNow=null;
 var amazonTrk=null, amazonTrkLoading=false;
 
 // Amazon's published target.
@@ -2274,13 +2274,15 @@ function loadAmazonRegister(force){
     fetch("amazon_orders.json"+bust).then(function(r){return r.ok?r.json():{orders:{}};}),
     fetch("amazon_otd.json"+bust).then(function(r){return r.ok?r.json():{units:{}};})["catch"](function(){return {units:{}};}),
     fetch("shipment_destinations.json"+bust).then(function(r){return r.ok?r.json():{destinations:{}};})["catch"](function(){return {destinations:{}};}),
-    fetch("amazon_promise_rule.json"+bust).then(function(r){return r.ok?r.json():null;})["catch"](function(){return null;})
+    fetch("amazon_promise_rule.json"+bust).then(function(r){return r.ok?r.json():null;})["catch"](function(){return null;}),
+    fetch("amazon_current.json"+bust).then(function(r){return r.ok?r.json():null;})["catch"](function(){return null;})
   ]).then(function(res){
     amazonReg=(res[0]&&res[0].orders)||{};
     amazonOtd=(res[1]&&res[1].units)||{};
     amazonOtdMeta=res[1]||null;
     amazonDest=(res[2]&&res[2].destinations)||{};
     amazonRule=res[3]||null;
+    amazonNow=res[4]||null;
     amazonLoading=false;
     if(!trackingData.length){loadTracking(true).then(renderAmazon)["catch"](renderAmazon);}
     else renderAmazon();
@@ -2506,7 +2508,39 @@ function renderAmazon(){
     html+='</div>';
   }
 
-  html+='<div style="font-size:12px;font-weight:800;color:#374151;margin:16px 0 7px">What Amazon has already recorded</div>';
+  // WHAT AMAZON ITSELF IS SHOWING TODAY
+  // Seller Central moves every day. The imported export does not, so the panel
+  // below it sat at 81.8% for a fortnight while Amazon read 86.79%, and a figure
+  // that old shown without its age is worse than showing nothing. Amazon's live
+  // number cannot be read without an SP-API application, so it is typed into
+  // amazon_current.txt and published with the date it was checked. Everything
+  // here says how old it is and refuses to imply otherwise.
+  if(amazonNow&&amazonNow.otdr_pct){
+    var nage=amazonNow.ageDays;
+    var ncol=amazonNow.otdr_pct>=AMZ_WARN_PCT?"#16A34A":(amazonNow.otdr_pct>=AMZ_TARGET_PCT?"#D97706":"#DC2626");
+    var stale=(nage!==null&&nage!==undefined&&nage>3);
+    html+='<div style="background:#fff;border:1px solid #E5E7EB;border-left:4px solid '+ncol+';border-radius:9px;padding:12px 14px;margin:16px 0 12px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">'
+      +'<span style="font-size:12px;font-weight:800;color:#374151">WHAT SELLER CENTRAL IS SHOWING</span>'
+      +'<span style="font-size:11px;color:'+(stale?"#DC2626":"#6B7280")+'">'
+      +(nage===0?"checked today":(nage===1?"checked yesterday":(nage===null||nage===undefined?"date not recorded":"checked "+nage+" days ago")))
+      +(stale?" — re-check it":"")+'</span></div>'
+      +'<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:baseline;margin-top:7px">'
+      +'<div><span style="font-size:28px;font-weight:800;color:'+ncol+'">'+amazonNow.otdr_pct+'%</span>'
+      +'<span style="font-size:11px;color:#6B7280;margin-left:7px">on-time delivery</span></div>'
+      +(amazonNow.total_units?'<div style="font-size:12px;color:#4B5563">'+Number(amazonNow.total_units).toLocaleString()+' tracked units</div>':'')
+      +(amazonNow.window_from?'<div style="font-size:12px;color:#4B5563">'+amazonNow.window_from+' to '+(amazonNow.window_to||"")+'</div>':'')
+      +'</div>'
+      +'<div style="font-size:11px;color:#6B7280;margin-top:6px">Amazon publishes no feed for this, so it is read from Shipping Performance and typed into <b>amazon_current.txt</b>. The live panel above comes from our own tracking and updates on its own every morning.</div>'
+      +'</div>';
+  }else{
+    html+='<div style="font-size:11.5px;color:#92400E;background:#FFFBEB;border:1px solid #FDE68A;border-radius:7px;padding:9px 11px;margin:16px 0 12px">'
+      +'Seller Central’s own figure is not recorded. Put it in <b>amazon_current.txt</b> and run <b>amazon_current_publish.py</b> to show it here beside ours.</div>';
+  }
+
+  html+='<div style="font-size:12px;font-weight:800;color:#374151;margin:16px 0 7px">From the last Amazon export'
+    +((amazonOtdMeta&&amazonOtdMeta.updated)?' <span style="font-weight:400;color:#9CA3AF">— imported '+String(amazonOtdMeta.updated).slice(0,10)+', covers '+windowTxt+'. Does not move until the next export.</span>':' <span style="font-weight:400;color:#9CA3AF">— a point-in-time snapshot, not today’s number.</span>')
+    +'</div>';
   html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
     +tile("On-time delivery rate",(otdr===null?"n/a":otdr+"%"),col,
           (windowShipped?((windowShipped-totalLate).toLocaleString()+" of "+windowShipped.toLocaleString()+" on time, "+windowTxt):"import the Amazon export to score this"),true)
@@ -2765,7 +2799,9 @@ function renderAmazon(){
 
   // ---- honesty about the window ----------------------------------------
   html+='<div style="font-size:11.5px;color:#6B7280;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:7px;padding:9px 11px">'
-    +'<b>How this is calculated.</b> Late units come from Amazon’s own Unit On-Time Delivery export, which lists only shipments that missed the promised date. '
+    +'<b>Which number to trust for what.</b> The live panel at the top is ours, scored from the carrier tracking that runs every morning, so it moves daily and it is the one that shows parcels still worth chasing. '
+    +'Seller Central’s figure is the one Amazon acts on, and is recorded here with the date it was read. The export block is a snapshot from whenever it was last downloaded and is kept for its per-unit detail, not for its headline rate. '
+    +'Late units come from Amazon’s own Unit On-Time Delivery export, which lists only shipments that missed the promised date. '
     +'The denominator is our own count of Amazon shipments over the same period, so the rate matches Amazon’s method rather than estimating it. '
     +'Any Amazon shipment outside the export’s window is counted as on time, so re-import the export regularly to keep this honest.</div>';
 
