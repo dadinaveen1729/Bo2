@@ -682,6 +682,28 @@ function setRange(prefix,days){
   else if(prefix==="miss")renderMissing();
 }
 
+
+// CARRIER, FROM THE TRACKING NUMBER
+// NetSuite leaves the carrier field empty on a large share of rows, so anything
+// that trusted it showed "Unknown" - five FedEx Ground parcels sat in the
+// missing list as Unknown on 2026-10-13 while their numbers said FedEx plainly.
+// The number itself is never missing, so it is the better source. The stored
+// field is kept only as a last resort, for a format not recognised here.
+//
+// This existed three times over, once per tab, which is why fixing it in the
+// Amazon tab left the others wrong. One function now, used everywhere.
+function carrierFor(x){
+  var t=String((x&&x.tracking!==undefined?x.tracking:x)||"").replace(/[^0-9A-Za-z]/g,"");
+  if(/^1Z/i.test(t))return "UPS";
+  if(/^\d+$/.test(t)){
+    // A SmartPost second barcode is a USPS-shaped number on a FedEx shipment.
+    if(/^(9261|9274)/.test(t))return "FedEx";
+    if(/^9/.test(t)&&(t.length===20||t.length===22||t.length===26))return "USPS";
+    if(t.length===12||t.length===15||t.length===20||t.length===22)return "FedEx";
+  }
+  return String((x&&x.carrier)||"Unknown");
+}
+
 function dateFilterValue(id){
   var el=document.getElementById(id);
   return el?isoToUS(el.value):"";
@@ -1518,7 +1540,7 @@ function renderDash(){
   // CARRIER BREAKDOWN - today only
   var carriers={};
   todayPkgs.forEach(function(p){
-    var c=p.carrier||"Unknown";
+    var c=carrierFor(p);
     if(!carriers[c])carriers[c]={total:0,conf:0};
     carriers[c].total++;
     if(confirmed[p.tracking])carriers[c].conf++;
@@ -1629,7 +1651,7 @@ function renderMissing(){
 
   // Carrier breakdown for whatever's currently missing in this scope
   var byCarrier={};
-  missing.forEach(function(p){var c=p.carrier||"Unknown";byCarrier[c]=(byCarrier[c]||0)+1;});
+  missing.forEach(function(p){var c=carrierFor(p);byCarrier[c]=(byCarrier[c]||0)+1;});
   var carrierKeys=Object.keys(byCarrier).sort(function(a,b){return byCarrier[b]-byCarrier[a];});
   html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">';
   carrierKeys.forEach(function(c){
@@ -2333,19 +2355,7 @@ function renderAmazon(){
   trackingData.forEach(function(t){byTn[t.tracking]=t;});
   Object.keys(amazonTrk).forEach(function(k){ if(!byTn[k]) byTn[k]=amazonTrk[k]; });
 
-  // Carrier taken from the tracking number, not the stored field, because the
-  // stored one is "Unknown" on 45% of rows and that made the first version of
-  // this tab unreadable.
-  function carrierOf(p){
-    var t=String(p.tracking||"").replace(/[^0-9A-Za-z]/g,"");
-    if(/^1Z/i.test(t))return "UPS";
-    if(/^\d+$/.test(t)){
-      if(/^(9261|9274)/.test(t))return "FedEx";
-      if(/^9/.test(t)&&(t.length===20||t.length===22||t.length===26))return "USPS";
-      if(t.length===12||t.length===15||t.length===20||t.length===22)return "FedEx";
-    }
-    return String(p.carrier||"Unknown");
-  }
+  var carrierOf=carrierFor;   // see carrierFor above
 
   if(carrierFilter)rows=rows.filter(function(p){return carrierOf(p).toUpperCase().indexOf(carrierFilter.toUpperCase())>-1;});
   if(!rows.length){ el.innerHTML='<div class="empty">No Amazon packages for that carrier.</div>'; return; }
@@ -2410,14 +2420,7 @@ function renderAmazon(){
   // can still be saved. One in Amazon's export cannot.
   function promiseDaysFor(p){
     if(!amazonRule)return 8.7;
-    var t=String(p.tracking||"").replace(/[^0-9A-Za-z]/g,"");
-    var c="Unknown";
-    if(/^1Z/i.test(t))c="UPS";
-    else if(/^\d+$/.test(t)){
-      if(/^(9261|9274)/.test(t))c="FedEx";
-      else if(/^9/.test(t)&&(t.length===20||t.length===22||t.length===26))c="USPS";
-      else if(t.length===12||t.length===15||t.length===20||t.length===22)c="FedEx";
-    }
+    var c=carrierFor(p);
     return (amazonRule.byCarrier&&amazonRule.byCarrier[c])||amazonRule.defaultDays||8.7;
   }
 
@@ -2505,6 +2508,48 @@ function renderAmazon(){
     });
     html+='</table></div>';
     if(riskList.length>120)html+='<div style="font-size:11px;color:#6B7280;padding:5px 8px">+'+(riskList.length-120)+' more</div>';
+    html+='</div>';
+  }
+
+  // ALREADY PAST THE PROMISE
+  // The count alone was not actionable: 40 late told nobody which 40. These are
+  // past saving for OTDR, but each one is still a customer without their order,
+  // and the ones with no delivery scan at all are the ones to chase - a parcel
+  // delivered two days late needs nothing, a parcel eleven days out with no
+  // scan is lost and needs a claim.
+  if(lateList.length){
+    lateList.sort(function(a,b){
+      var ua=(a.del?a.del-a.due:todayMs-a.due), ub=(b.del?b.del-b.due:todayMs-b.due);
+      return ub-ua;
+    });
+    var undel=lateList.filter(function(r){return !r.del;}).length;
+    html+='<div class="overall" style="border-color:#B45309;border-left:4px solid #B45309">'
+      +'<div class="overall-title" style="color:#B45309">Already past the promise ('+lateList.length+')</div>'
+      +'<div style="font-size:12px;color:#4B5563;margin-bottom:9px">Worst first. '
+      +(undel?'<b>'+undel+' of these have no delivery scan at all</b> &mdash; those are the ones still worth chasing or claiming; ':'')
+      +'the rest arrived, just late.</div>'
+      +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:900px">'
+      +'<tr style="background:#FFFBEB"><th style="text-align:left;padding:6px 8px">Late by</th>'
+      +'<th style="text-align:left;padding:6px 8px">Tracking</th><th style="text-align:left;padding:6px 8px">Order</th>'
+      +'<th style="text-align:left;padding:6px 8px">Customer</th><th style="text-align:left;padding:6px 8px">Destination</th>'
+      +'<th style="text-align:left;padding:6px 8px">Due</th><th style="text-align:left;padding:6px 8px">Delivered</th>'
+      +'<th style="text-align:left;padding:6px 8px">Where it is now</th></tr>';
+    lateList.slice(0,200).forEach(function(r){
+      var d=amazonDest[r.p.tracking]||{};
+      var days=Math.round(((r.del||todayMs)-r.due)/86400000);
+      var col=r.del?"#B45309":"#DC2626";
+      html+='<tr><td style="padding:6px 8px;border-top:1px solid #eee;font-weight:800;color:'+col+'">'+days+'d'
+        +(r.del?'':'<div style="font-size:10px;font-weight:400;color:#DC2626">no scan</div>')+'</td>'
+        +'<td style="padding:6px 8px;border-top:1px solid #eee;font-family:Consolas,monospace">'+trackLink(r.p.tracking,carrierFor(r.p))+'</td>'
+        +'<td style="padding:6px 8px;border-top:1px solid #eee">'+(r.p.order||"")+'</td>'
+        +'<td style="padding:6px 8px;border-top:1px solid #eee">'+(d.name||r.p.customer||"")+'</td>'
+        +'<td style="padding:6px 8px;border-top:1px solid #eee">'+([d.city,d.state].filter(Boolean).join(", ")||'<span style="color:#9CA3AF">-</span>')+'</td>'
+        +'<td style="padding:6px 8px;border-top:1px solid #eee;color:#6B7280">'+new Date(r.due).toISOString().slice(0,10)+'</td>'
+        +'<td style="padding:6px 8px;border-top:1px solid #eee">'+(r.del?new Date(r.del).toISOString().slice(0,10):'<span style="color:#DC2626;font-weight:700">not delivered</span>')+'</td>'
+        +'<td style="padding:6px 8px;border-top:1px solid #eee;color:#6B7280">'+((r.t&&r.t.latestStatus)||"no carrier scan")+'</td></tr>';
+    });
+    html+='</table></div>';
+    if(lateList.length>200)html+='<div style="font-size:11px;color:#6B7280;padding:5px 8px">+'+(lateList.length-200)+' more</div>';
     html+='</div>';
   }
 
@@ -3026,7 +3071,7 @@ function renderTracking(){
         +'<span>'+title+' ('+list.length+')</span></div>';
       h+='<div style="font-size:12px;color:#4B5563;margin:0 0 8px">'+note+'</div>';
       var byCar={};
-      list.forEach(function(t){var c=t.carrier||"Unknown";if(!byCar[c])byCar[c]=[];byCar[c].push(t);});
+      list.forEach(function(t){var c=carrierFor(t);if(!byCar[c])byCar[c]=[];byCar[c].push(t);});
       Object.keys(byCar).sort(function(a,b){return byCar[b].length-byCar[a].length;}).forEach(function(c){
         var g=byCar[c];
         var worst=Math.max.apply(null,g.map(function(t){return ageOf(t)||0;}));
@@ -3273,7 +3318,7 @@ function emailNoMovementList(){
 
   var todayFull=nowFullStr();
   var byCar={};
-  list.forEach(function(t){var c=t.carrier||"Unknown";if(!byCar[c])byCar[c]=[];byCar[c].push(t);});
+  list.forEach(function(t){var c=carrierFor(t);if(!byCar[c])byCar[c]=[];byCar[c].push(t);});
 
   var h=['<div style="font-family:Arial,sans-serif;font-size:13px;color:#000">'];
   h.push('<p>Hello,</p><p>The '+list.length+' shipment(s) below were scanned and confirmed leaving our facility and were handed to your driver, but your tracking still shows only <b>"Label Created / Shipment information sent"</b> with no pickup scan.</p>'
@@ -3363,7 +3408,14 @@ function buildReshipLog(){
   rows.forEach(function(a){var d=a.date||"Unknown";if(!byDate[d])byDate[d]=[];byDate[d].push(a);});
   var h='<div style="background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:12px">';
   h+='<div style="font-size:13px;font-weight:800;color:#166534;margin-bottom:2px">Reship Log ('+rows.length+')</div>';
-  h+='<div style="font-size:11px;color:#6B7280;margin-bottom:10px">Every package we had to send a second time, with the replacement tracking number where one was recorded.</div>';
+  var eligible=rows.filter(function(a){return !actionOf(a.tracking,"CLAIM")&&scannedByUs(a.tracking);});
+  h+='<div style="font-size:11px;color:#6B7280;margin-bottom:10px">Every package we had to send a second time, with the replacement tracking number where one was recorded. '
+    +'A reship covers the customer; the claim recovers our cost, and the two are separate.</div>';
+  if(eligible.length){
+    h+='<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-left:3px solid #1D4ED8;border-radius:7px;padding:8px 11px;margin-bottom:10px;font-size:11.5px;color:#1E3A8A">'
+      +'<b>'+eligible.length+' reshipped package'+(eligible.length>1?'s have':' has')+' a bench scan and no claim open yet.</b> '
+      +'We can prove the carrier took these, so the cost of the first label is recoverable. Use Start claim on the rows below.</div>';
+  }
   Object.keys(byDate).sort(function(a,b){
     var da=new Date(a),db=new Date(b);
     return (isNaN(da)||isNaN(db))?b.localeCompare(a):db-da;
@@ -3380,7 +3432,23 @@ function buildReshipLog(){
       h+='<span style="min-width:200px">'+(a.newTracking
             ?'<span style="color:#166534">new label <b style="font-family:Consolas,monospace">'+trackLinks(a.newTracking,pkg.carrier)+'</b></span>'
             :'<span style="color:#B45309">no new tracking recorded</span>')+'</span>';
-      if(claim)h+='<span style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;border-radius:5px;padding:2px 6px;font-size:10px;font-weight:700">CLAIMED</span>';
+      // CLAIM STATUS, AND WHY A CLAIM IS NOT ALWAYS OFFERED
+      // A reship replaces the customer's goods; it does not recover the cost of
+      // the first one. That is the claim, and it is a separate action that was
+      // easy to forget because nothing here asked for it.
+      //
+      // The button only appears where we hold a bench scan. A claim says the
+      // carrier took the parcel and lost it, so without our own scan proving we
+      // handed it over it is an argument we lose - the same rule the no-movement
+      // escalation already applies. Where that proof is missing the row says so
+      // rather than offering a button that leads somewhere bad.
+      if(claim){
+        h+='<span title="Claim opened '+fmtWhen(claim.date,claim.time)+'" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;border-radius:5px;padding:2px 6px;font-size:10px;font-weight:700;white-space:nowrap">CLAIMED '+(claim.date||"")+'</span>';
+      }else if(scannedByUs(a.tracking)){
+        h+='<button onclick="openAction(\''+a.tracking+'\',\'CLAIM\')" title="We have a bench scan for this one, so the carrier took it and lost it. Open a claim to recover the cost." style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap">Start claim</button>';
+      }else{
+        h+='<span title="No bench scan, so we cannot show the carrier ever had it. Void the old label instead so we are not billed for it." style="color:#9CA3AF;font-size:10px;white-space:nowrap;border:1px dashed #D1D5DB;border-radius:5px;padding:2px 6px">no scan &mdash; void, do not claim</span>';
+      }
       h+='<span style="color:#6B7280;font-size:11px;white-space:nowrap">'+(a.time||"")+'</span>';
       h+='</div>';
     });
