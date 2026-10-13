@@ -2433,6 +2433,13 @@ function renderAmazon(){
     var shipMs=new Date(iso+"T00:00:00").getTime();
     var dueMs=shipMs+promiseDaysFor(p)*86400000;
     var t=byTn[p.tracking];
+    // A CANCELLED LABEL IS NOT A LATE DELIVERY
+    // Three of the forty "late" parcels were reading "Shipment cancelled by
+    // sender". No box exists, so there is nothing to be late, and counting them
+    // both overstated the failures and dragged the on-time rate down. The same
+    // rule the rest of the app already applies: once a label is void it must not
+    // appear in any list or count.
+    if(isVoided(t))return;
     var delivered=t&&t.delivered&&t.deliveredDate;
     if(delivered){
       var dMs=new Date(String(t.deliveredDate).slice(0,10)+"T00:00:00").getTime();
