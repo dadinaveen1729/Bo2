@@ -1,5 +1,5 @@
 {
-"count": 5691,
+"count": 5697,
 "orders": {
 "SO780298": {
 "amount": "47.91",
@@ -28455,8 +28455,38 @@
 "amount": "31.94",
 "customer": "Nardizzi, Bruno",
 "order_date": "10/12/2026"
+},
+"SO793236": {
+"amount": "37.94",
+"customer": "Kurylowicz, Jon G",
+"order_date": "10/13/2026"
+},
+"SO793237": {
+"amount": "44.99",
+"customer": "Jr., Arnold P",
+"order_date": "10/13/2026"
+},
+"SO793257": {
+"amount": "31.94",
+"customer": "Dolci, Bob",
+"order_date": "10/13/2026"
+},
+"SO793259": {
+"amount": "113.88",
+"customer": "MOSS, THOMAS",
+"order_date": "10/13/2026"
+},
+"SO793262": {
+"amount": "23.91",
+"customer": "Baskin, Jeff",
+"order_date": "10/13/2026"
+},
+"SO793265": {
+"amount": "27.15",
+"customer": "Scott, Brian",
+"order_date": "10/13/2026"
 }
 },
 "source": "NetSuite: Amazon Orders Pending Fulfillment",
-"updated": "2026-10-12T13:47:20"
+"updated": "2026-10-13T11:45:13"
 }
