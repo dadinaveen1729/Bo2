@@ -2433,6 +2433,26 @@ function renderAmazon(){
     return (amazonRule.byCarrier&&amazonRule.byCarrier[c])||amazonRule.defaultDays||8.7;
   }
 
+  // THE PROMISE: AMAZON'S OWN DATE WHERE WE HAVE IT
+  // Until October the promised date was not in any feed we received, so it had
+  // to be inferred from the ship date using a rule learned from Amazon's
+  // failure export - a flat average per carrier. NetSuite now carries Amazon's
+  // actual Required Delivery Date, which varies order by order (6 to 11 days
+  // on the same ship date, where the estimate said a flat 7.5 to 9.7).
+  //
+  // Real date wherever it is held, estimate only as a fallback, and the tab
+  // says which is which so nobody mistakes an estimate for a commitment.
+  var usedReal=0, usedEstimate=0;
+  function promiseDueMs(p, shipMs){
+    var d=amazonDest[p.tracking];
+    if(d&&d.promised){
+      var t=new Date(d.promised+"T00:00:00").getTime();
+      if(!isNaN(t)){ usedReal++; return t; }
+    }
+    usedEstimate++;
+    return shipMs+promiseDaysFor(p)*86400000;
+  }
+
   var liveOn=0, liveLate=0, liveRisk=0, liveSafe=0, riskList=[], lateList=[];
   var warnEarly=(amazonRule&&amazonRule.warnDaysEarly)||2;
   var todayMs=estMidnightToday();
@@ -2440,7 +2460,7 @@ function renderAmazon(){
     var iso=usToIso(p.date);
     if(!iso)return;
     var shipMs=new Date(iso+"T00:00:00").getTime();
-    var dueMs=shipMs+promiseDaysFor(p)*86400000;
+    var dueMs=promiseDueMs(p, shipMs);
     var t=byTn[p.tracking];
     // A CANCELLED LABEL IS NOT A LATE DELIVERY
     // Three of the forty "late" parcels were reading "Shipment cancelled by
@@ -2487,6 +2507,13 @@ function renderAmazon(){
     +'<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">'
     +'<span style="font-size:13px;font-weight:800;letter-spacing:.3px">LIVE, FROM OUR OWN TRACKING &mdash; '+rangeLabel(amzRange)+'</span>'
     +'<span style="font-size:11px;opacity:.75">updated by the daily carrier run, not by an Amazon download</span></div>'
+    +'<div style="font-size:11px;opacity:.8;margin-top:5px">'
+    +(usedReal
+       ? '<b>'+usedReal.toLocaleString()+'</b> scored against Amazon’s own promised date'
+         +(usedEstimate? ', '+usedEstimate.toLocaleString()+' still estimated from the ship date':'')
+         +'. Real dates began arriving in the NetSuite report in October and build up daily.'
+       : 'Promised dates estimated from the ship date. Amazon’s own dates are being captured now and will take over as they accumulate.')
+    +'</div>'
     +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">'
     +'<div style="flex:1;min-width:150px"><div style="font-size:30px;font-weight:800;color:'+(livePct===null?"#9CA3AF":(livePct>=AMZ_WARN_PCT?"#4ADE80":(livePct>=AMZ_TARGET_PCT?"#FCD34D":"#FCA5A5")))+';line-height:1.1">'+(livePct===null?"n/a":livePct+"%")+'</div>'
       +'<div style="font-size:11px;opacity:.85">on-time, '+liveOn.toLocaleString()+' of '+liveJudged.toLocaleString()+'</div></div>'
