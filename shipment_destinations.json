@@ -1,5 +1,5 @@
 {
-"count": 4392,
+"count": 4424,
 "destinations": {
 "0888217484": {
 "city": "Sparks",
@@ -32,6 +32,7 @@
 "1Z2016270300395749": {
 "city": "Fredericksburg",
 "name": "CVS Store # M101",
+"promised": "2026-10-26",
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "22408"
@@ -158,6 +159,7 @@
 "1Z2016270303738113": {
 "city": "Fredericksburg",
 "name": "CVS Store # M101",
+"promised": "2026-10-26",
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "22408"
@@ -207,6 +209,7 @@
 "1Z2016270305252698": {
 "city": "Fredericksburg",
 "name": "CVS Store # M101",
+"promised": "2026-10-26",
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "22408"
@@ -270,6 +273,7 @@
 "1Z2016270306807168": {
 "city": "Fredericksburg",
 "name": "CVS Store # M101",
+"promised": "2026-10-26",
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "22408"
@@ -284,6 +288,7 @@
 "1Z2016270307017939": {
 "city": "Fredericksburg",
 "name": "CVS Store # M101",
+"promised": "2026-10-26",
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "22408"
@@ -326,6 +331,7 @@
 "1Z2016270308152773": {
 "city": "Fredericksburg",
 "name": "CVS Store # M101",
+"promised": "2026-10-26",
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "22408"
@@ -438,6 +444,7 @@
 "1Z2016270312332981": {
 "city": "Fredericksburg",
 "name": "CVS Store # M101",
+"promised": "2026-10-26",
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "22408"
@@ -536,6 +543,7 @@
 "1Z2016270315284108": {
 "city": "Fredericksburg",
 "name": "CVS Store # M101",
+"promised": "2026-10-26",
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "22408"
@@ -564,6 +572,7 @@
 "1Z2016270316500158": {
 "city": "Fredericksburg",
 "name": "CVS Store # M101",
+"promised": "2026-10-26",
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "22408"
@@ -578,6 +587,7 @@
 "1Z2016270316650728": {
 "city": "Fredericksburg",
 "name": "CVS Store # M101",
+"promised": "2026-10-26",
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "22408"
@@ -1915,6 +1925,7 @@
 "1Z201627YW15025952": {
 "city": "HERREID",
 "name": "Corrina Beck",
+"promised": "2026-10-27",
 "state": "SD",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "57632"
@@ -6112,6 +6123,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "45255"
 },
+"1Z29706W0394191588": {
+"city": "WINTHROP",
+"name": "Walgreen's Co. Store #17745 (Winthrop, M",
+"state": "ME",
+"via": "RF-SMART UPS Ground",
+"zip": "04364"
+},
 "1Z29706W0394203663": {
 "city": "RAPID CITY",
 "name": "Walgreen's Co. Store #10656",
@@ -6651,6 +6669,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "93546"
 },
+"1Z29706W0394946192": {
+"city": "WINTHROP",
+"name": "Walgreen's Co. Store #17745 (Winthrop, M",
+"state": "ME",
+"via": "RF-SMART UPS Ground",
+"zip": "04364"
+},
 "1Z29706W0394967866": {
 "city": "APPLE VALLEY",
 "name": "WAL-MART DC 7033A-ASM DIS",
@@ -6727,6 +6752,13 @@
 "state": "TX",
 "via": "RF-SMART UPS Ground",
 "zip": "78741"
+},
+"1Z29706W0395074239": {
+"city": "Glendale",
+"name": "Walgreen's Co. Store #12366",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80246"
 },
 "1Z29706W0395080811": {
 "city": "Perth Amboy",
@@ -7169,6 +7201,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "81212"
 },
+"1Z29706W0395854208": {
+"city": "LIVINGSTON",
+"name": "Walgreen's Co. Store #12016 (Livingston,",
+"state": "TN",
+"via": "RF-SMART UPS Ground",
+"zip": "38570"
+},
 "1Z29706W0395870664": {
 "city": "TULSA",
 "name": "Walgreen's Co. Store #15782 (Tulsa, OK)",
@@ -7196,6 +7235,13 @@
 "state": "AL",
 "via": "RF-SMART UPS Ground",
 "zip": "35043"
+},
+"1Z29706W0395923811": {
+"city": "NAPLES",
+"name": "Walgreen's Co. Store #4524",
+"state": "FL",
+"via": "RF-SMART UPS Ground",
+"zip": "34113"
 },
 "1Z29706W0395938921": {
 "city": "FARMINGTON",
@@ -7420,6 +7466,13 @@
 "state": "CO",
 "via": "RF-SMART UPS Ground",
 "zip": "80751"
+},
+"1Z29706W0396231825": {
+"city": "NAPLES",
+"name": "Walgreen's Co. Store #4524",
+"state": "FL",
+"via": "RF-SMART UPS Ground",
+"zip": "34113"
 },
 "1Z29706W0396247916": {
 "city": "RIO RANCHO",
@@ -8030,6 +8083,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "54868"
 },
+"1Z29706W0396987046": {
+"city": "Glendale",
+"name": "Walgreen's Co. Store #12366",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80246"
+},
 "1Z29706W0396993735": {
 "city": "TUCSON",
 "name": "Walgreen's Co. Store #7232",
@@ -8197,6 +8257,13 @@
 "state": "NM",
 "via": "RF-SMART UPS Ground",
 "zip": "87114"
+},
+"1Z29706W0397366992": {
+"city": "LIVINGSTON",
+"name": "Walgreen's Co. Store #12016 (Livingston,",
+"state": "TN",
+"via": "RF-SMART UPS Ground",
+"zip": "38570"
 },
 "1Z29706W0397372985": {
 "city": "DILLON",
@@ -8897,6 +8964,13 @@
 "state": "TX",
 "via": "RF-SMART UPS Ground",
 "zip": "76180"
+},
+"1Z29706W0398346252": {
+"city": "Glendale",
+"name": "Walgreen's Co. Store #12366",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80246"
 },
 "1Z29706W0398349160": {
 "city": "LAREDO",
@@ -27773,6 +27847,7 @@
 "878766020210": {
 "city": "La Mesa",
 "name": "Christopher Pachall",
+"promised": "2026-10-26",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "91941"
@@ -27780,6 +27855,7 @@
 "878766062857": {
 "city": "INDIANAPOLIS",
 "name": "Dana Dobbins White and Anthony White",
+"promised": "2026-10-22",
 "state": "IN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "46228"
@@ -27787,6 +27863,7 @@
 "878766103427": {
 "city": "PITTSBURGH",
 "name": "Alex Melchert",
+"promised": "2026-10-22",
 "state": "PA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "15224"
@@ -27794,6 +27871,7 @@
 "878766433108": {
 "city": "Chromo",
 "name": "Paul Stackhouse",
+"promised": "2026-10-26",
 "state": "CO",
 "via": "RF-SMART FedEx Ground",
 "zip": "81128"
@@ -27801,6 +27879,7 @@
 "878766489590": {
 "city": "ALVIN",
 "name": "Bustamante",
+"promised": "2026-10-23",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "77511"
@@ -27808,6 +27887,7 @@
 "878766518350": {
 "city": "DENVER",
 "name": "Mike sakamoto",
+"promised": "2026-10-26",
 "state": "CO",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "80205"
@@ -27815,6 +27895,7 @@
 "878766568550": {
 "city": "CASTOR",
 "name": "Randall Dalme",
+"promised": "2026-10-23",
 "state": "LA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "71016"
@@ -27822,6 +27903,7 @@
 "878766594157": {
 "city": "MILLERSVILLE",
 "name": "Thomas Walter",
+"promised": "2026-10-22",
 "state": "MD",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "21108"
@@ -27829,6 +27911,7 @@
 "878766631166": {
 "city": "BOULDER",
 "name": "Hiltons on Canyon",
+"promised": "2026-10-26",
 "state": "CO",
 "via": "RF-SMART FedEx Ground",
 "zip": "80302"
@@ -27878,6 +27961,7 @@
 "878766816735": {
 "city": "DENVER",
 "name": "Matthew Diamond",
+"promised": "2026-10-26",
 "state": "CO",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "80204"
@@ -27885,6 +27969,7 @@
 "878766862425": {
 "city": "Appling",
 "name": "Mary Sample",
+"promised": "2026-10-22",
 "state": "GA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "30802"
@@ -28179,6 +28264,7 @@
 "878767322799": {
 "city": "TOMS RIVER",
 "name": "Loraine Anderson",
+"promised": "2026-10-21",
 "state": "NJ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "08757"
@@ -28319,6 +28405,7 @@
 "878767807748": {
 "city": "SOUTHBRIDGE",
 "name": "Karen Caouette",
+"promised": "2026-10-21",
 "state": "MA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "01550"
@@ -28326,6 +28413,7 @@
 "878767841776": {
 "city": "Hyannis",
 "name": "Ron Ghetti",
+"promised": "2026-10-21",
 "state": "MA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "02601"
@@ -28333,6 +28421,7 @@
 "878767872731": {
 "city": "HATTIESBURG",
 "name": "Delia Delphine Morrison",
+"promised": "2026-10-23",
 "state": "MS",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "39401"
@@ -28340,6 +28429,7 @@
 "878767914135": {
 "city": "HENRICO",
 "name": "Wayne Layton",
+"promised": "2026-10-22",
 "state": "VA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "23228"
@@ -28361,6 +28451,7 @@
 "878767959531": {
 "city": "NOKOMIS",
 "name": "Peter M Jordan",
+"promised": "2026-10-23",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "34275"
@@ -28368,6 +28459,7 @@
 "878767993710": {
 "city": "Barrington",
 "name": "Robert Black",
+"promised": "2026-10-21",
 "state": "RI",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "02806"
@@ -28389,6 +28481,7 @@
 "878768047919": {
 "city": "Springfield",
 "name": "Yellow Hornet Mfg",
+"promised": "2026-10-23",
 "state": "MO",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "65809"
@@ -28396,6 +28489,7 @@
 "878768086228": {
 "city": "HIGHLAND",
 "name": "PWCW",
+"promised": "2026-10-23",
 "state": "IN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "46322"
@@ -28417,6 +28511,7 @@
 "878768128857": {
 "city": "LITTLE ROCK",
 "name": "Roy Holmes",
+"promised": "2026-10-23",
 "state": "AR",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "72204"
@@ -28452,6 +28547,7 @@
 "878768422559": {
 "city": "FRIENDSHIP",
 "name": "IChen Berg",
+"promised": "2026-10-22",
 "state": "NY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "14739"
@@ -28459,6 +28555,7 @@
 "878768482440": {
 "city": "AMARILLO",
 "name": "Ann Morris",
+"promised": "2026-10-23",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "79108"
@@ -28466,6 +28563,7 @@
 "878768515571": {
 "city": "REEDS SPRING",
 "name": "Susan Smith",
+"promised": "2026-10-23",
 "state": "MO",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "65737"
@@ -28473,6 +28571,7 @@
 "878768556251": {
 "city": "MADISON",
 "name": "Timethea Thomas",
+"promised": "2026-10-23",
 "state": "TN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "37115"
@@ -28480,6 +28579,7 @@
 "878768685581": {
 "city": "BAKERSFIELD",
 "name": "Ruth M",
+"promised": "2026-10-27",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "93306"
@@ -28487,6 +28587,7 @@
 "878769084004": {
 "city": "NEWPORT BEACH",
 "name": "Damien Lord",
+"promised": "2026-10-27",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "92660"
@@ -28494,6 +28595,7 @@
 "878769188550": {
 "city": "OLATHE",
 "name": "Nancy Driscoll",
+"promised": "2026-10-23",
 "state": "KS",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "66061"
@@ -28501,6 +28603,7 @@
 "878769233958": {
 "city": "STOCKBRIDGE",
 "name": "GEORGE",
+"promised": "2026-10-23",
 "state": "GA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "30281"
@@ -28508,6 +28611,7 @@
 "878769426469": {
 "city": "Norton",
 "name": "Roberta Smith",
+"promised": "2026-10-22",
 "state": "OH",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "44203"
@@ -28515,6 +28619,7 @@
 "878770764244": {
 "city": "CANOGA PARK",
 "name": "Marianne Briley",
+"promised": "2026-10-27",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "91304"
@@ -28522,6 +28627,7 @@
 "878770819792": {
 "city": "DALLAS",
 "name": "Bryant Kornegay",
+"promised": "2026-10-23",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "75235"
@@ -28529,6 +28635,7 @@
 "878770993706": {
 "city": "EMMITSBURG",
 "name": "Elizabeth Briggs",
+"promised": "2026-10-22",
 "state": "MD",
 "via": "RF-SMART FedEx Ground",
 "zip": "21727"
@@ -28536,6 +28643,7 @@
 "878771076749": {
 "city": "WILBRAHAM",
 "name": "Kathleen M. Moriarty",
+"promised": "2026-10-21",
 "state": "MA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "01095"
@@ -28543,6 +28651,7 @@
 "878771125615": {
 "city": "HUNTINGTON STATION",
 "name": "Theresa a traina",
+"promised": "2026-10-21",
 "state": "NY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "11746"
@@ -28550,6 +28659,7 @@
 "878771171474": {
 "city": "SAN ANTONIO",
 "name": "Joe Brininstool",
+"promised": "2026-10-23",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "78257"
@@ -28900,6 +29010,7 @@
 "878782277760": {
 "city": "MIAMI",
 "name": "FABRICS & WALLS",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Ground",
 "zip": "33155"
@@ -28907,6 +29018,7 @@
 "878782362082": {
 "city": "PASCAGOULA",
 "name": "Michelle L Dixon",
+"promised": "2026-10-26",
 "state": "MS",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "39567"
@@ -28914,6 +29026,7 @@
 "878782427727": {
 "city": "RIDGELAND",
 "name": "Donald E Gabbard",
+"promised": "2026-10-26",
 "state": "SC",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "29936"
@@ -28921,6 +29034,7 @@
 "878782502130": {
 "city": "BLACKSTONE",
 "name": "Marie  Beaudoin",
+"promised": "2026-10-22",
 "state": "MA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "01504"
@@ -28928,6 +29042,7 @@
 "878782552087": {
 "city": "PITTSFIELD",
 "name": "Catherine McHugh",
+"promised": "2026-10-22",
 "state": "MA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "01201"
@@ -28935,6 +29050,7 @@
 "878782637403": {
 "city": "RICHMOND",
 "name": "dana gail dorton",
+"promised": "2026-10-26",
 "state": "MO",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "64085"
@@ -28942,6 +29058,7 @@
 "878782685688": {
 "city": "LOUP CITY",
 "name": "Linda Obermiller",
+"promised": "2026-10-26",
 "state": "NE",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "68853"
@@ -28949,6 +29066,7 @@
 "878782752829": {
 "city": "ROWLETT",
 "name": "Patrick Gilligan",
+"promised": "2026-10-26",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "75089"
@@ -28956,6 +29074,7 @@
 "878782858885": {
 "city": "CHEYENNE",
 "name": "Michael Gallagher",
+"promised": "2026-10-27",
 "state": "WY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "82009"
@@ -28963,6 +29082,7 @@
 "878782927043": {
 "city": "TITUSVILLE",
 "name": "Melissa Cifaldi",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "32796"
@@ -28970,6 +29090,7 @@
 "878782994691": {
 "city": "NITRO",
 "name": "Mary M Blankenship",
+"promised": "2026-10-22",
 "state": "WV",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "25143"
@@ -28977,6 +29098,7 @@
 "878783123329": {
 "city": "PARK CITY",
 "name": "Becky Jeanne Knowles",
+"promised": "2026-10-27",
 "state": "UT",
 "via": "RF-SMART FedEx Ground",
 "zip": "84060"
@@ -28984,6 +29106,7 @@
 "878783123330": {
 "city": "PARK CITY",
 "name": "Becky Jeanne Knowles",
+"promised": "2026-10-27",
 "state": "UT",
 "via": "RF-SMART FedEx Ground",
 "zip": "84060"
@@ -28991,6 +29114,7 @@
 "878783123340": {
 "city": "PARK CITY",
 "name": "Becky Jeanne Knowles",
+"promised": "2026-10-27",
 "state": "UT",
 "via": "RF-SMART FedEx Ground",
 "zip": "84060"
@@ -28998,6 +29122,7 @@
 "878783123351": {
 "city": "PARK CITY",
 "name": "Becky Jeanne Knowles",
+"promised": "2026-10-27",
 "state": "UT",
 "via": "RF-SMART FedEx Ground",
 "zip": "84060"
@@ -29005,6 +29130,7 @@
 "878783123362": {
 "city": "PARK CITY",
 "name": "Becky Jeanne Knowles",
+"promised": "2026-10-27",
 "state": "UT",
 "via": "RF-SMART FedEx Ground",
 "zip": "84060"
@@ -29012,6 +29138,7 @@
 "878783123373": {
 "city": "PARK CITY",
 "name": "Becky Jeanne Knowles",
+"promised": "2026-10-27",
 "state": "UT",
 "via": "RF-SMART FedEx Ground",
 "zip": "84060"
@@ -29019,6 +29146,7 @@
 "878783263965": {
 "city": "NEW YORK",
 "name": "Elise Fischbacher",
+"promised": "2026-10-21",
 "state": "NY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "10021"
@@ -29026,6 +29154,7 @@
 "878783371290": {
 "city": "Austin",
 "name": "Beth Amols",
+"promised": "2026-10-23",
 "state": "TX",
 "via": "RF-SMART FedEx Ground",
 "zip": "78750"
@@ -29033,6 +29162,7 @@
 "878783409481": {
 "city": "ALLIANCE",
 "name": "Mindy Miller",
+"promised": "2026-10-22",
 "state": "OH",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "44601"
@@ -29040,6 +29170,7 @@
 "878783485185": {
 "city": "Big Pine Key",
 "name": "Inez M Trowbridge",
+"promised": "2026-10-23",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "33043"
@@ -29061,6 +29192,7 @@
 "878783576600": {
 "city": "Albuquerque",
 "name": "joshua carter",
+"promised": "2026-10-26",
 "state": "NM",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "87105"
@@ -29068,6 +29200,7 @@
 "878783624682": {
 "city": "WILLIAMSBURG",
 "name": "Deb Shadle",
+"promised": "2026-10-22",
 "state": "IN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "47393"
@@ -29075,6 +29208,7 @@
 "878783734826": {
 "city": "SAN DIEGO",
 "name": "Kim Cooper",
+"promised": "2026-10-27",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "92106"
@@ -29082,6 +29216,7 @@
 "878783830396": {
 "city": "HOUSTON",
 "name": "krikor",
+"promised": "2026-10-23",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "77057"
@@ -29089,6 +29224,7 @@
 "878783895875": {
 "city": "STATEN ISLAND",
 "name": "Helen Benoit",
+"promised": "2026-10-22",
 "state": "NY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "10309"
@@ -29096,6 +29232,7 @@
 "878783953860": {
 "city": "LYMAN",
 "name": "Linda Baumlin",
+"promised": "2026-10-22",
 "state": "SC",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "29365"
@@ -29103,6 +29240,7 @@
 "878784008355": {
 "city": "WILMINGTON",
 "name": "Daniel W Kenney",
+"promised": "2026-10-23",
 "state": "NC",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "28401"
@@ -29110,6 +29248,7 @@
 "878784055420": {
 "city": "HARRISON",
 "name": "Robb Hinton",
+"promised": "2026-10-23",
 "state": "TN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "37341"
@@ -29117,6 +29256,7 @@
 "878784107535": {
 "city": "NEW ALBANY",
 "name": "allen chrisman",
+"promised": "2026-10-22",
 "state": "IN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "47150"
@@ -29124,6 +29264,7 @@
 "878784197577": {
 "city": "PARK RIDGE",
 "name": "Tracey Kapusnik",
+"promised": "2026-10-22",
 "state": "IL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "60068"
@@ -29131,6 +29272,7 @@
 "878784265416": {
 "city": "SAN LUIS OBISPO",
 "name": "Sarah Guy",
+"promised": "2026-10-27",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "93405"
@@ -29138,6 +29280,7 @@
 "878854323868": {
 "city": "LEESBURG",
 "name": "Maria E Rosage",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "34748"
@@ -29145,6 +29288,7 @@
 "878854429766": {
 "city": "FARMINGTON",
 "name": "James Berhow",
+"promised": "2026-10-26",
 "state": "MN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "55024"
@@ -29152,6 +29296,7 @@
 "878854469336": {
 "city": "Tucson",
 "name": "Nancy Sanaghan",
+"promised": "2026-10-27",
 "state": "AZ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "85749"
@@ -29159,6 +29304,7 @@
 "878854506036": {
 "city": "LAS VEGAS",
 "name": "Mark Hill",
+"promised": "2026-10-27",
 "state": "NV",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "89130"
@@ -29166,6 +29312,7 @@
 "878854551690": {
 "city": "NORTH CHESTERFIELD",
 "name": "KELSEY TILTON",
+"promised": "2026-10-23",
 "state": "VA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "23235"
@@ -29173,6 +29320,7 @@
 "878854592554": {
 "city": "DOUGLASVILLE",
 "name": "Cathy Matthews",
+"promised": "2026-10-26",
 "state": "GA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "30135"
@@ -29180,6 +29328,7 @@
 "878854646179": {
 "city": "FAIRFAX",
 "name": "Bob Fischer",
+"promised": "2026-10-23",
 "state": "VA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "22030"
@@ -29187,6 +29336,7 @@
 "878854704679": {
 "city": "HARRISON TOWNSHIP",
 "name": "Tiffany",
+"promised": "2026-10-23",
 "state": "MI",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "48045"
@@ -29194,6 +29344,7 @@
 "878854768864": {
 "city": "JASPER",
 "name": "Edward P White",
+"promised": "2026-10-26",
 "state": "IN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "47546"
@@ -29222,6 +29373,7 @@
 "878854808541": {
 "city": "Mission",
 "name": "Aileene G Neighbors",
+"promised": "2026-10-26",
 "state": "KS",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "66202"
@@ -29229,6 +29381,7 @@
 "878854945733": {
 "city": "FULTON",
 "name": "JAMES THOMAS",
+"promised": "2026-10-26",
 "state": "MO",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "65251"
@@ -29236,6 +29389,7 @@
 "878854998071": {
 "city": "PERRY",
 "name": "Richard William Dyc Sr",
+"promised": "2026-10-23",
 "state": "MI",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "48872"
@@ -29243,6 +29397,7 @@
 "878855039800": {
 "city": "LOUISVILLE",
 "name": "Arthur Aston",
+"promised": "2026-10-23",
 "state": "KY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "40241"
@@ -29250,6 +29405,7 @@
 "878855073573": {
 "city": "FT LAUDERDALE",
 "name": "Charles Hennekens",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "33301"
@@ -29257,6 +29413,7 @@
 "878855109155": {
 "city": "Ashland",
 "name": "Fred P Krasner",
+"promised": "2026-10-29",
 "state": "OR",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "97520"
@@ -29264,6 +29421,7 @@
 "878855146311": {
 "city": "BARRINGTON",
 "name": "Daniel Medeiros",
+"promised": "2026-10-22",
 "state": "RI",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "02806"
@@ -29271,6 +29429,7 @@
 "878855179806": {
 "city": "MIAMI",
 "name": "Guillermo Torres",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "33183"
@@ -29278,6 +29437,7 @@
 "878855230462": {
 "city": "TROY",
 "name": "MARK KENT",
+"promised": "2026-10-23",
 "state": "MI",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "48084"
@@ -29285,6 +29445,7 @@
 "878855331141": {
 "city": "COLLEGE STATION",
 "name": "Sherry Weber",
+"promised": "2026-10-27",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "77845"
@@ -29292,6 +29453,7 @@
 "878855370311": {
 "city": "CASNOVIA",
 "name": "Jason Speet",
+"promised": "2026-10-23",
 "state": "MI",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "49318"
@@ -29299,6 +29461,7 @@
 "878855471711": {
 "city": "Spokane",
 "name": "roby mccoy",
+"promised": "2026-10-29",
 "state": "WA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "99216"
@@ -29306,6 +29469,7 @@
 "878855512060": {
 "city": "VALLEY STREAM",
 "name": "christopher dellaro",
+"promised": "2026-10-22",
 "state": "NY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "11580"
@@ -29313,6 +29477,7 @@
 "878855560794": {
 "city": "vadnais heights",
 "name": "patrick mcgrath",
+"promised": "2026-10-26",
 "state": "MN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "55127"
@@ -29348,6 +29513,7 @@
 "878855602691": {
 "city": "SAINT PETERSBURG",
 "name": "brian hartman",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "33702"
@@ -29355,6 +29521,7 @@
 "878855649601": {
 "city": "MARSHFIELD",
 "name": "Sharon Rockwood",
+"promised": "2026-10-23",
 "state": "MA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "02050"
@@ -29362,6 +29529,7 @@
 "878855710431": {
 "city": "Langhorne",
 "name": "David J Ramella",
+"promised": "2026-10-23",
 "state": "PA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "19047"
@@ -29425,6 +29593,7 @@
 "878855755746": {
 "city": "CARROLLTON",
 "name": "Mark J Nichols",
+"promised": "2026-10-23",
 "state": "OH",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "44615"
@@ -29432,6 +29601,7 @@
 "878855795956": {
 "city": "MANCHESTER",
 "name": "damon brisson",
+"promised": "2026-10-23",
 "state": "MD",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "21102"
@@ -29439,6 +29609,7 @@
 "878855833240": {
 "city": "COLUMBIA CITY",
 "name": "Annie Yagel",
+"promised": "2026-10-23",
 "state": "IN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "46725"
@@ -29446,6 +29617,7 @@
 "878856090285": {
 "city": "BRUSH PRAIRIE",
 "name": "Georgia Richards",
+"promised": "2026-10-29",
 "state": "WA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "98606"
@@ -29453,6 +29625,7 @@
 "878856142893": {
 "city": "WILMINGTON",
 "name": "Christopher Zameska",
+"promised": "2026-10-23",
 "state": "DE",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "19809"
@@ -29460,6 +29633,7 @@
 "878856182739": {
 "city": "MARANA",
 "name": "Heather Baldwin",
+"promised": "2026-10-27",
 "state": "AZ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "85653"
@@ -29474,6 +29648,7 @@
 "878856294286": {
 "city": "FLORISSANT",
 "name": "Judy Grimm",
+"promised": "2026-10-27",
 "state": "CO",
 "via": "RF-SMART FedEx Ground",
 "zip": "80816"
@@ -29488,6 +29663,7 @@
 "878856345876": {
 "city": "BATON ROUGE",
 "name": "CHRISTOPHER M FISHER",
+"promised": "2026-10-26",
 "state": "LA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "70806"
@@ -29495,6 +29671,7 @@
 "878856391382": {
 "city": "KINGSBURG",
 "name": "Timothy james Bybee",
+"promised": "2026-10-28",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "93631"
@@ -29502,6 +29679,7 @@
 "878856427343": {
 "city": "MIDLAND",
 "name": "Gloria Graham/Anita Mooore",
+"promised": "2026-10-26",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "79705"
@@ -29509,6 +29687,7 @@
 "878856469074": {
 "city": "LEWISTOWN",
 "name": "Al Lake",
+"promised": "2026-10-27",
 "state": "MT",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "59457"
@@ -29516,6 +29695,7 @@
 "878856519738": {
 "city": "Astoria",
 "name": "Philip Difranco",
+"promised": "2026-10-22",
 "state": "NY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "11102"
@@ -29523,6 +29703,7 @@
 "878856552830": {
 "city": "FLUSHING",
 "name": "Maman helen",
+"promised": "2026-10-22",
 "state": "NY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "11367"
@@ -29565,6 +29746,7 @@
 "878860905632": {
 "city": "GATESVILLE",
 "name": "Michael Thierer",
+"promised": "2026-10-26",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "76528"
@@ -29572,6 +29754,7 @@
 "878860960728": {
 "city": "SALEM",
 "name": "SGECOM-A-Boxit IncPO2191",
+"promised": "2026-10-22",
 "state": "NH",
 "via": "RF-SMART FedEx Ground",
 "zip": "03079"
@@ -29579,6 +29762,7 @@
 "878861019700": {
 "city": "MISSION HILLS",
 "name": "KAY M PACHECO DEITCH",
+"promised": "2026-10-28",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "91345"
@@ -29586,6 +29770,7 @@
 "878861080055": {
 "city": "DENTON",
 "name": "Jay Stichter",
+"promised": "2026-10-26",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "76207"
@@ -29593,6 +29778,7 @@
 "878861768568": {
 "city": "DALLAS",
 "name": "Fernando Gonzalez",
+"promised": "2026-10-26",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "75234"
@@ -29600,6 +29786,7 @@
 "878862777617": {
 "city": "DANBURY",
 "name": "L. DeMaio",
+"promised": "2026-10-22",
 "state": "CT",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "06811"
@@ -29607,6 +29794,7 @@
 "878862868317": {
 "city": "LAKELAND",
 "name": "Aubrey Steinbronn",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "33813"
@@ -29614,6 +29802,7 @@
 "878862933500": {
 "city": "COLORADO SPRINGS",
 "name": "Tanisha Scottham",
+"promised": "2026-10-27",
 "state": "CO",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "80905"
@@ -29621,6 +29810,7 @@
 "878862988517": {
 "city": "MANTUA",
 "name": "Lewis Hunter",
+"promised": "2026-10-22",
 "state": "NJ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "08051"
@@ -29628,6 +29818,7 @@
 "878863073836": {
 "city": "LEVITTOWN",
 "name": "michael zehender",
+"promised": "2026-10-23",
 "state": "PA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "19057"
@@ -29635,6 +29826,7 @@
 "878863127829": {
 "city": "TROY",
 "name": "Cheryl McCann",
+"promised": "2026-10-22",
 "state": "NY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "12180"
@@ -29642,6 +29834,7 @@
 "878863183141": {
 "city": "TULSA",
 "name": "Tim Isaacson",
+"promised": "2026-10-26",
 "state": "OK",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "74133"
@@ -29649,6 +29842,7 @@
 "878863236160": {
 "city": "Catonsville",
 "name": "Kit Stacey Eremchuk",
+"promised": "2026-10-23",
 "state": "MD",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "21228"
@@ -29656,6 +29850,7 @@
 "878863293660": {
 "city": "GOODYEAR",
 "name": "Andrew Hosman",
+"promised": "2026-10-27",
 "state": "AZ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "85338"
@@ -29663,6 +29858,7 @@
 "878864807866": {
 "city": "WILLIAMSBURG",
 "name": "Bob Daniels",
+"promised": "2026-10-23",
 "state": "VA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "23188"
@@ -29670,6 +29866,7 @@
 "878864865310": {
 "city": "MICHIGAN CITY",
 "name": "Douglas Baker",
+"promised": "2026-10-23",
 "state": "IN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "46360"
@@ -29677,6 +29874,7 @@
 "878864978600": {
 "city": "DEL RIO",
 "name": "victor stewart",
+"promised": "2026-10-26",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "78840"
@@ -29684,6 +29882,7 @@
 "878865053610": {
 "city": "GLASTONBURY",
 "name": "Marc Vojick",
+"promised": "2026-10-23",
 "state": "CT",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "06033"
@@ -29691,6 +29890,7 @@
 "878865334704": {
 "city": "SALEM",
 "name": "Barbara Deardorff",
+"promised": "2026-10-29",
 "state": "OR",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "97305"
@@ -29803,6 +30003,7 @@
 "878870534558": {
 "city": "ST GEORGE",
 "name": "CINDI HUDDLESTON",
+"promised": "2026-10-28",
 "state": "UT",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "84790"
@@ -29810,6 +30011,7 @@
 "878870655364": {
 "city": "ELGIN",
 "name": "David B. Landers",
+"promised": "2026-10-26",
 "state": "OK",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "73538"
@@ -29817,6 +30019,7 @@
 "878870840323": {
 "city": "ATLANTA",
 "name": "Mariah Gillespie",
+"promised": "2026-10-26",
 "state": "GA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "30307"
@@ -29824,6 +30027,7 @@
 "878870941447": {
 "city": "Orange",
 "name": "Terry Caldwell",
+"promised": "2026-10-27",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "92867"
@@ -29831,6 +30035,7 @@
 "878871013780": {
 "city": "CHATHAM",
 "name": "Allison Eckles",
+"promised": "2026-10-22",
 "state": "NJ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "07928"
@@ -29838,6 +30043,7 @@
 "878871094420": {
 "city": "LEES SUMMIT",
 "name": "Jason Neathery",
+"promised": "2026-10-26",
 "state": "MO",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "64063"
@@ -29845,6 +30051,7 @@
 "878871157451": {
 "city": "BEVERLY HILLS",
 "name": "Indiana Retana",
+"promised": "2026-10-28",
 "state": "CA",
 "via": "RF-SMART FedEx Ground",
 "zip": "90212"
@@ -29852,6 +30059,7 @@
 "878871231097": {
 "city": "FERNDALE",
 "name": "Mike Busco",
+"promised": "2026-10-28",
 "state": "WA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "98248"
@@ -29859,6 +30067,7 @@
 "878871313892": {
 "city": "ROCHELLE",
 "name": "Marcella",
+"promised": "2026-10-26",
 "state": "IL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "61068"
@@ -29866,6 +30075,7 @@
 "878871535399": {
 "city": "ROCKFORD",
 "name": "Sonevilay Chanthalangsy",
+"promised": "2026-10-26",
 "state": "IL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "61102"
@@ -29873,6 +30083,7 @@
 "878871622987": {
 "city": "MONTVERDE",
 "name": "Fred Erb",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "34756"
@@ -29880,6 +30091,7 @@
 "878871677619": {
 "city": "NEW HAVEN",
 "name": "Robert selian",
+"promised": "2026-10-22",
 "state": "CT",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "06513"
@@ -29887,6 +30099,7 @@
 "878871785333": {
 "city": "BUTTE",
 "name": "JOHN ROESTI",
+"promised": "2026-10-28",
 "state": "MT",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "59701"
@@ -29894,6 +30107,7 @@
 "878871865687": {
 "city": "LAWTON",
 "name": "Whitney Johnson",
+"promised": "2026-10-26",
 "state": "OK",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "73505"
@@ -29901,6 +30115,7 @@
 "878871928170": {
 "city": "CASPER",
 "name": "kody kizer",
+"promised": "2026-10-28",
 "state": "WY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "82609"
@@ -29908,6 +30123,7 @@
 "878872072411": {
 "city": "WHEELING",
 "name": "Eugene A Hildreth",
+"promised": "2026-10-23",
 "state": "WV",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "26003"
@@ -29915,6 +30131,7 @@
 "878872125327": {
 "city": "SARASOTA",
 "name": "Tom Frascone",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "34234"
@@ -29922,6 +30139,7 @@
 "878872251452": {
 "city": "JACKSONVILLE",
 "name": "Amber Grace",
+"promised": "2026-10-26",
 "state": "AL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "36265"
@@ -29929,6 +30147,7 @@
 "878872315994": {
 "city": "HENDERSON",
 "name": "Skaii",
+"promised": "2026-10-27",
 "state": "NV",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "89012"
@@ -29936,6 +30155,7 @@
 "878872436447": {
 "city": "LONG BEACH",
 "name": "Ronald Ferber",
+"promised": "2026-10-27",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "90803"
@@ -29943,6 +30163,7 @@
 "878872513070": {
 "city": "SPRINGDALE",
 "name": "Leidy Alfaro",
+"promised": "2026-10-26",
 "state": "AR",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "72764"
@@ -29950,6 +30171,7 @@
 "878872575929": {
 "city": "GUERNEVILLE",
 "name": "Jerome Smith",
+"promised": "2026-10-29",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "95446"
@@ -29957,6 +30179,7 @@
 "878872635479": {
 "city": "Tiverton",
 "name": "Ryan Mason Frost",
+"promised": "2026-10-22",
 "state": "RI",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "02878"
@@ -29964,6 +30187,7 @@
 "878872691869": {
 "city": "LINDEN",
 "name": "Sara",
+"promised": "2026-10-26",
 "state": "TN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "37096"
@@ -29971,6 +30195,7 @@
 "878873049887": {
 "city": "NEW EAGLE",
 "name": "William Gibson",
+"promised": "2026-10-23",
 "state": "PA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "15067"
@@ -29978,6 +30203,7 @@
 "878873113970": {
 "city": "SCOTTSDALE",
 "name": "Chris Vassall",
+"promised": "2026-10-27",
 "state": "AZ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "85263"
@@ -29985,6 +30211,7 @@
 "878877297927": {
 "city": "KEARNY",
 "name": "John Fearon",
+"promised": "2026-10-22",
 "state": "NJ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "07032"
@@ -29992,6 +30219,7 @@
 "878877360267": {
 "city": "Minneapolis",
 "name": "Matt Thompson",
+"promised": "2026-10-26",
 "state": "MN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "55408"
@@ -29999,6 +30227,7 @@
 "878877663621": {
 "city": "KEW GARDENS",
 "name": "Elizabeth Ringer",
+"promised": "2026-10-22",
 "state": "NY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "11415"
@@ -30006,6 +30235,7 @@
 "878877739766": {
 "city": "WILMINGTON",
 "name": "M Melicent Jeter",
+"promised": "2026-10-23",
 "state": "NC",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "28411"
@@ -30013,6 +30243,7 @@
 "878877806675": {
 "city": "Palm Desert",
 "name": "maureen schultz",
+"promised": "2026-10-28",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "92211"
@@ -30020,6 +30251,7 @@
 "878877863958": {
 "city": "FAIRLESS HILLS",
 "name": "fred delpizzo",
+"promised": "2026-10-23",
 "state": "PA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "19030"
@@ -30027,6 +30259,7 @@
 "878877920741": {
 "city": "SOUTH BOSTON",
 "name": "Leslie Lakis",
+"promised": "2026-10-22",
 "state": "MA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "02127"
@@ -30034,6 +30267,7 @@
 "878877977810": {
 "city": "Aiken",
 "name": "Cindy Bowers",
+"promised": "2026-10-23",
 "state": "SC",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "29801"
@@ -30041,6 +30275,7 @@
 "878878048150": {
 "city": "ENNIS",
 "name": "N.M. Wagner",
+"promised": "2026-10-26",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "75119"
@@ -30048,6 +30283,7 @@
 "878878098567": {
 "city": "TEMPE",
 "name": "Audrey C Mascali",
+"promised": "2026-10-27",
 "state": "AZ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "85283"
@@ -30055,6 +30291,7 @@
 "878878160420": {
 "city": "Breinigsville",
 "name": "Uva Pevzner",
+"promised": "2026-10-22",
 "state": "PA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "18031"
@@ -30062,6 +30299,7 @@
 "878878221609": {
 "city": "SHERMAN OAKS",
 "name": "gary",
+"promised": "2026-10-27",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "91411"
@@ -30069,6 +30307,7 @@
 "878878281133": {
 "city": "DEWEY",
 "name": "Steven Weishaar",
+"promised": "2026-10-27",
 "state": "AZ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "86327"
@@ -30076,6 +30315,7 @@
 "878880082741": {
 "city": "BEDFORD",
 "name": "Chuck Oh",
+"promised": "2026-10-26",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "76021"
@@ -30083,6 +30323,7 @@
 "878880163201": {
 "city": "MARYSVILLE",
 "name": "Ian Caldwell",
+"promised": "2026-10-29",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "95901"
@@ -30090,6 +30331,7 @@
 "878880208049": {
 "city": "SWEDESBORO",
 "name": "Carol Quinn",
+"promised": "2026-10-22",
 "state": "NJ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "08085"
@@ -30097,6 +30339,7 @@
 "878880249244": {
 "city": "Wheatland",
 "name": "Ronald Allshouse",
+"promised": "2026-10-29",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "95692"
@@ -30104,6 +30347,7 @@
 "878880294887": {
 "city": "SANDIA PARK",
 "name": "Kathleen Bacharka",
+"promised": "2026-10-27",
 "state": "NM",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "87047"
@@ -30111,6 +30355,7 @@
 "878880393780": {
 "city": "Orange Park",
 "name": "Donna K Fortes",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "32065"
@@ -30118,6 +30363,7 @@
 "878880455532": {
 "city": "DOUGLASVILLE",
 "name": "Mary Tipton",
+"promised": "2026-10-26",
 "state": "GA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "30135"
@@ -30125,6 +30371,7 @@
 "878880533666": {
 "city": "RANCHO SANTA MARGARITA",
 "name": "Erica Charlton",
+"promised": "2026-10-28",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "92688"
@@ -30132,6 +30379,7 @@
 "878880600656": {
 "city": "MONMOUTH BEACH",
 "name": "Anthony Cola",
+"promised": "2026-10-22",
 "state": "NJ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "07750"
@@ -30139,6 +30387,7 @@
 "878880671144": {
 "city": "NEW KNOXVILLE",
 "name": "Kathleen A Krites",
+"promised": "2026-10-23",
 "state": "OH",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "45871"
@@ -30146,6 +30395,7 @@
 "878880734223": {
 "city": "NO FT MYERS",
 "name": "Cheryl swift",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "33917"
@@ -30153,6 +30403,7 @@
 "878880799595": {
 "city": "SURFSIDE BEACH",
 "name": "Jennie Sicilia",
+"promised": "2026-10-23",
 "state": "SC",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "29575"
@@ -30160,6 +30411,7 @@
 "878880900702": {
 "city": "Goshen",
 "name": "Bryon Fritz",
+"promised": "2026-10-23",
 "state": "IN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "46528"
@@ -30167,6 +30419,7 @@
 "878880962983": {
 "city": "PETALUMA",
 "name": "Russell Cordes",
+"promised": "2026-10-29",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "94952"
@@ -30174,6 +30427,7 @@
 "878881305336": {
 "city": "BARKHAMSTED",
 "name": "Martin Tinti",
+"promised": "2026-10-22",
 "state": "CT",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "06063"
@@ -30181,6 +30435,7 @@
 "878881373400": {
 "city": "VILLANOVA",
 "name": "robert tabas",
+"promised": "2026-10-23",
 "state": "PA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "19085"
@@ -30188,6 +30443,7 @@
 "878881422206": {
 "city": "TOBYHANNA",
 "name": "George Piller",
+"promised": "2026-10-22",
 "state": "PA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "18466"
@@ -30195,6 +30451,7 @@
 "878881515354": {
 "city": "YORBA LINDA",
 "name": "THERESA YARBROUGH",
+"promised": "2026-10-28",
 "state": "CA",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "92886"
@@ -30202,6 +30459,7 @@
 "878881832701": {
 "city": "MUSKOGEE",
 "name": "Cindy Anderson",
+"promised": "2026-10-26",
 "state": "OK",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "74403"
@@ -30209,6 +30467,7 @@
 "878881889218": {
 "city": "LAKEFIELD",
 "name": "Heidi",
+"promised": "2026-10-26",
 "state": "MN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "56150"
@@ -30216,6 +30475,7 @@
 "878881953194": {
 "city": "SCHENECTADY",
 "name": "Ryan Deyette",
+"promised": "2026-10-22",
 "state": "NY",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "12304"
@@ -30223,6 +30483,7 @@
 "878881999601": {
 "city": "VERO BEACH",
 "name": "Donald and Joanne DeRosa",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "32963"
@@ -30230,6 +30491,7 @@
 "878882046562": {
 "city": "MONTEREY",
 "name": "Charles Pisano",
+"promised": "2026-10-26",
 "state": "TN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "38574"
@@ -30237,6 +30499,7 @@
 "878882136211": {
 "city": "MIMS",
 "name": "Tracy Nash",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "32754"
@@ -30244,6 +30507,7 @@
 "878882189075": {
 "city": "QUEEN ANNE",
 "name": "Thomas Myers",
+"promised": "2026-10-23",
 "state": "MD",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "21657"
@@ -30251,6 +30515,7 @@
 "878882244083": {
 "city": "CHARLOTTE",
 "name": "Gabriella Tebbens",
+"promised": "2026-10-23",
 "state": "NC",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "28215"
@@ -30258,6 +30523,7 @@
 "878882296459": {
 "city": "UNDERWOOD",
 "name": "Jeannie Brandenburg",
+"promised": "2026-10-23",
 "state": "IN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "47177"
@@ -30265,6 +30531,7 @@
 "878882347328": {
 "city": "GRANT",
 "name": "Robert A. Barker",
+"promised": "2026-10-26",
 "state": "AL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "35747"
@@ -30272,6 +30539,7 @@
 "878882397285": {
 "city": "PONTE VEDRA BEACH",
 "name": "QB",
+"promised": "2026-10-26",
 "state": "FL",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "32082"
@@ -30279,6 +30547,7 @@
 "878882451264": {
 "city": "EAST BERNARD",
 "name": "JAMES KAINER",
+"promised": "2026-10-26",
 "state": "TX",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "77435"
@@ -30286,6 +30555,7 @@
 "878884140011": {
 "city": "HIGHLANDS RANCH",
 "name": "Loi Caprara",
+"promised": "2026-10-27",
 "state": "CO",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "80129"
@@ -30293,6 +30563,7 @@
 "878884214278": {
 "city": "RIDGEFIELD PARK",
 "name": "Carlos Delgado",
+"promised": "2026-10-22",
 "state": "NJ",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "07660"
@@ -30300,6 +30571,7 @@
 "878884276677": {
 "city": "AVON",
 "name": "David Collins",
+"promised": "2026-10-23",
 "state": "IN",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "46123"
@@ -30307,9 +30579,194 @@
 "878884340304": {
 "city": "BEREA",
 "name": "Heather Pollack",
+"promised": "2026-10-23",
 "state": "OH",
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "44017"
+},
+"878884397336": {
+"city": "BIXBY",
+"name": "Rachael arenella",
+"promised": "2026-10-26",
+"state": "OK",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "74008"
+},
+"878884448352": {
+"city": "Milford",
+"name": "Diane Costanza",
+"promised": "2026-10-23",
+"state": "MA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "01757"
+},
+"878884505205": {
+"city": "ALBUQUERQUE",
+"name": "bj hanks",
+"promised": "2026-10-27",
+"state": "NM",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "87107"
+},
+"878884554030": {
+"city": "NORTH FORT MYERS",
+"name": "E.Lee Midtgard",
+"promised": "2026-10-26",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "33917"
+},
+"878884599985": {
+"city": "HANOVER",
+"name": "Marlon T. Argimon",
+"promised": "2026-10-23",
+"state": "MD",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "21076"
+},
+"878884659480": {
+"city": "WILMINGTON",
+"name": "richard valeo",
+"promised": "2026-10-23",
+"state": "NC",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "28412"
+},
+"878885657510": {
+"city": "LEVITTOWN",
+"name": "russell comisky",
+"promised": "2026-10-23",
+"state": "PA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "19056"
+},
+"878885707644": {
+"city": "CARSON CITY",
+"name": "Vincent L Euse",
+"promised": "2026-10-28",
+"state": "NV",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "89706"
+},
+"878885767293": {
+"city": "TOBYHANNA",
+"name": "George Piller",
+"promised": "2026-10-22",
+"state": "PA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "18466"
+},
+"878885839127": {
+"city": "KNOXVILLE",
+"name": "Sue Richwagen",
+"promised": "2026-10-23",
+"state": "MD",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "21758"
+},
+"878885905496": {
+"city": "RAMONA",
+"name": "sandy vanburen",
+"promised": "2026-10-28",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "92065"
+},
+"878885996803": {
+"city": "ORAVILLE",
+"name": "David m Presutti",
+"promised": "2026-10-26",
+"state": "IL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "62994"
+},
+"878886060675": {
+"city": "OMAHA",
+"name": "Timothy  Bowen",
+"promised": "2026-10-26",
+"state": "NE",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "68106"
+},
+"878886129189": {
+"city": "PARKVILLE",
+"name": "Matt DeCerbo",
+"promised": "2026-10-23",
+"state": "MD",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "21234"
+},
+"878886231045": {
+"city": "SCHILLER PARK",
+"name": "Tyler von Schwedler",
+"promised": "2026-10-26",
+"state": "IL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "60176"
+},
+"878886283844": {
+"city": "OKLAHOMA CITY",
+"name": "MELODY HARRINGTON",
+"promised": "2026-10-26",
+"state": "OK",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "73106"
+},
+"878886508457": {
+"city": "Evergreen",
+"name": "Ruthe Hannigan",
+"promised": "2026-10-27",
+"state": "CO",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "80439"
+},
+"878886579482": {
+"city": "SAINT PETERSBURG",
+"name": "Fred Swartz",
+"promised": "2026-10-26",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "33709"
+},
+"878886651107": {
+"city": "RUSTON",
+"name": "Shelia Branch",
+"promised": "2026-10-26",
+"state": "LA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "71270"
+},
+"878886706909": {
+"city": "PHILADELPHIA",
+"name": "kyle haines",
+"promised": "2026-10-23",
+"state": "PA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "19127"
+},
+"878886761590": {
+"city": "COLORADO SPRINGS",
+"name": "Christina Bernal",
+"promised": "2026-10-27",
+"state": "CO",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "80951"
+},
+"878886823319": {
+"city": "HUTCHINSON",
+"name": "Don Jolly",
+"promised": "2026-10-26",
+"state": "KS",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "67502"
+},
+"878886913652": {
+"city": "OAKLAND",
+"name": "john buonanno",
+"promised": "2026-10-29",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "94611"
 },
 "9418436208192274458252": {
 "city": "EWA BEACH",
@@ -30643,6 +31100,7 @@
 "9436236208192274655226": {
 "city": "Honokaa",
 "name": "James Dehr",
+"promised": "2026-11-02",
 "state": "HI",
 "via": "RF-SMART USPS Ground Advantage",
 "zip": "96727"
@@ -30650,6 +31108,7 @@
 "9436236208192274655400": {
 "city": "FAIRBANKS",
 "name": "James & Jessie Manning",
+"promised": "2026-10-28",
 "state": "AK",
 "via": "RF-SMART USPS Ground Advantage",
 "zip": "99712"
@@ -30657,6 +31116,7 @@
 "9436236208192274655523": {
 "city": "WASILLA",
 "name": "Dorinda Brezina",
+"promised": "2026-11-02",
 "state": "AK",
 "via": "RF-SMART USPS Ground Advantage",
 "zip": "99654"
@@ -30664,6 +31124,7 @@
 "9436236208192274656995": {
 "city": "KAILUA KONA",
 "name": "Bobbi Teschler",
+"promised": "2026-11-02",
 "state": "HI",
 "via": "RF-SMART USPS Ground Advantage",
 "zip": "96740"
@@ -30671,6 +31132,7 @@
 "9436236208192274657022": {
 "city": "HONOLULU",
 "name": "John  White",
+"promised": "2026-11-02",
 "state": "HI",
 "via": "RF-SMART USPS Ground Advantage",
 "zip": "96817"
@@ -30678,6 +31140,7 @@
 "9436236208192274657091": {
 "city": "HONOLULU",
 "name": "Richard Mukasa",
+"promised": "2026-11-03",
 "state": "HI",
 "via": "RF-SMART USPS Ground Advantage",
 "zip": "96822"
@@ -30706,6 +31169,7 @@
 "9436236208192274663580": {
 "city": "HONOLULU",
 "name": "Takemi Greene",
+"promised": "2026-11-03",
 "state": "HI",
 "via": "RF-SMART USPS Ground Advantage",
 "zip": "96815"
@@ -30746,5 +31210,5 @@
 "zip": "46143"
 }
 },
-"updated": "2026-10-19T14:42:15"
+"updated": "2026-10-19T17:53:39"
 }
