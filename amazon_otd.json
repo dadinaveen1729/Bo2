@@ -1,14 +1,14 @@
 {
-"count": 58,
-"denominatorSource": "our own shipment count (approximate)",
+"count": 76,
+"denominatorSource": "Amazon Seller Central total tracked units",
 "note": "Seller Central exports only units that MISSED the promise. Every unit here is a failure.",
-"onTimePct": 97.1,
+"onTimePct": 96.3,
 "shippedByCarrier": {
-"FedEx": 1447,
-"UPS": 413,
-"USPS": 134
+"FedEx": 1518,
+"UPS": 483,
+"USPS": 191
 },
-"shippedInWindow": 1994,
+"shippedInWindow": 2027,
 "source": "Amazon Seller Central - Unit On-Time Delivery export",
 "targetPct": 90,
 "units": {
@@ -60,6 +60,22 @@
 "shipConfirmed": "2026-09-24",
 "uspsFinalMile": true
 },
+"1Z201627YW24659206": {
+"actualDelivery": "2026-09-26",
+"carrier": "UPS",
+"daysLate": 0.4,
+"hrsFirstScanToDelivery": 209.6,
+"hrsOrderToShip": 31.3,
+"hrsShipToFirstScan": 26.2,
+"hrsShipVsPromisedShip": -33.9,
+"late": true,
+"lateEvenWithExtension": false,
+"method": "RF-SMART UPS Ground Saver",
+"orderId": "112-4164380-9261014",
+"promisedDelivery": "2026-09-26",
+"shipConfirmed": "2026-09-16",
+"uspsFinalMile": true
+},
 "1Z201627YW28078756": {
 "actualDelivery": "2026-10-13",
 "carrier": "UPS",
@@ -76,6 +92,22 @@
 "shipConfirmed": "2026-09-30",
 "uspsFinalMile": true
 },
+"1Z201627YW33677492": {
+"actualDelivery": "2026-09-30",
+"carrier": "UPS",
+"daysLate": 5.4,
+"hrsFirstScanToDelivery": 278.8,
+"hrsOrderToShip": 20.3,
+"hrsShipToFirstScan": 29.4,
+"hrsShipVsPromisedShip": -35.7,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART UPS Ground Saver",
+"orderId": "113-0751543-1122637",
+"promisedDelivery": "2026-09-25",
+"shipConfirmed": "2026-09-17",
+"uspsFinalMile": true
+},
 "1Z201627YW33990474": {
 "actualDelivery": "2026-09-29",
 "carrier": "UPS",
@@ -90,6 +122,22 @@
 "orderId": "112-4158668-9115432",
 "promisedDelivery": "2026-09-29",
 "shipConfirmed": "2026-09-17",
+"uspsFinalMile": true
+},
+"1Z201627YW37213627": {
+"actualDelivery": "2026-09-26",
+"carrier": "UPS",
+"daysLate": 0.7,
+"hrsFirstScanToDelivery": 190.3,
+"hrsOrderToShip": 34.3,
+"hrsShipToFirstScan": 9.7,
+"hrsShipVsPromisedShip": -16.4,
+"late": true,
+"lateEvenWithExtension": false,
+"method": "RF-SMART UPS Ground Saver",
+"orderId": "113-5691876-4153037",
+"promisedDelivery": "2026-09-26",
+"shipConfirmed": "2026-09-18",
 "uspsFinalMile": true
 },
 "1Z29706W0396007550": {
@@ -204,6 +252,22 @@
 "shipConfirmed": "2026-09-21",
 "uspsFinalMile": false
 },
+"877524328108": {
+"actualDelivery": "2026-09-26",
+"carrier": "FedEx",
+"daysLate": 0.4,
+"hrsFirstScanToDelivery": 93.1,
+"hrsOrderToShip": 19.1,
+"hrsShipToFirstScan": 24.4,
+"hrsShipVsPromisedShip": -36.3,
+"late": true,
+"lateEvenWithExtension": false,
+"method": "RF-SMART FedEx Home Delivery",
+"orderId": "113-6931776-1217807",
+"promisedDelivery": "2026-09-26",
+"shipConfirmed": "2026-09-21",
+"uspsFinalMile": false
+},
 "877691994962": {
 "actualDelivery": "2026-10-03",
 "carrier": "FedEx",
@@ -268,6 +332,22 @@
 "shipConfirmed": "2026-09-17",
 "uspsFinalMile": true
 },
+"9418450105496000595076": {
+"actualDelivery": "2026-10-03",
+"carrier": "USPS",
+"daysLate": 6.3,
+"hrsFirstScanToDelivery": 404.1,
+"hrsOrderToShip": 4.0,
+"hrsShipToFirstScan": 0.6,
+"hrsShipVsPromisedShip": -132.6,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "114-2589959-1902635",
+"promisedDelivery": "2026-09-27",
+"shipConfirmed": "2026-09-16",
+"uspsFinalMile": true
+},
 "9418450105496000595298": {
 "actualDelivery": "2026-10-03",
 "carrier": "USPS",
@@ -281,6 +361,22 @@
 "method": "RF-SMART USPS Ground Advantage",
 "orderId": "113-4548600-6639423",
 "promisedDelivery": "2026-09-29",
+"shipConfirmed": "2026-09-16",
+"uspsFinalMile": true
+},
+"9418450105496000595304": {
+"actualDelivery": "2026-10-05",
+"carrier": "USPS",
+"daysLate": 8.4,
+"hrsFirstScanToDelivery": 67.3,
+"hrsOrderToShip": 26.1,
+"hrsShipToFirstScan": 384.9,
+"hrsShipVsPromisedShip": -129.9,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "113-0292083-5573802",
+"promisedDelivery": "2026-09-27",
 "shipConfirmed": "2026-09-16",
 "uspsFinalMile": true
 },
@@ -364,6 +460,38 @@
 "shipConfirmed": "2026-09-18",
 "uspsFinalMile": true
 },
+"9418450105497000646133": {
+"actualDelivery": "2026-10-08",
+"carrier": "USPS",
+"daysLate": 11.5,
+"hrsFirstScanToDelivery": 34.5,
+"hrsOrderToShip": 9.9,
+"hrsShipToFirstScan": 490.9,
+"hrsShipVsPromisedShip": -129.9,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "114-3116272-1293008",
+"promisedDelivery": "2026-09-27",
+"shipConfirmed": "2026-09-16",
+"uspsFinalMile": true
+},
+"9418450105497000646157": {
+"actualDelivery": "2026-09-28",
+"carrier": "USPS",
+"daysLate": 2.3,
+"hrsFirstScanToDelivery": 39.7,
+"hrsOrderToShip": 10.1,
+"hrsShipToFirstScan": 241.2,
+"hrsShipVsPromisedShip": -129.9,
+"late": true,
+"lateEvenWithExtension": false,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "114-0484858-5593068",
+"promisedDelivery": "2026-09-26",
+"shipConfirmed": "2026-09-16",
+"uspsFinalMile": true
+},
 "9418450105497000649202": {
 "actualDelivery": "2026-09-30",
 "carrier": "USPS",
@@ -393,6 +521,22 @@
 "method": "RF-SMART USPS Ground Advantage",
 "orderId": "111-5610062-1489025",
 "promisedDelivery": "2026-09-29",
+"shipConfirmed": "2026-09-17",
+"uspsFinalMile": true
+},
+"9418450105497000650307": {
+"actualDelivery": "2026-10-09",
+"carrier": "USPS",
+"daysLate": 12.5,
+"hrsFirstScanToDelivery": 528.9,
+"hrsOrderToShip": 21.3,
+"hrsShipToFirstScan": 2.5,
+"hrsShipVsPromisedShip": -110.7,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "111-0737477-9344200",
+"promisedDelivery": "2026-09-27",
 "shipConfirmed": "2026-09-17",
 "uspsFinalMile": true
 },
@@ -444,6 +588,54 @@
 "shipConfirmed": "2026-09-17",
 "uspsFinalMile": true
 },
+"9418450105798000595002": {
+"actualDelivery": "2026-09-26",
+"carrier": "USPS",
+"daysLate": 0.5,
+"hrsFirstScanToDelivery": 240.2,
+"hrsOrderToShip": 19.7,
+"hrsShipToFirstScan": 6.0,
+"hrsShipVsPromisedShip": -66.1,
+"late": true,
+"lateEvenWithExtension": false,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "113-3399913-3884206",
+"promisedDelivery": "2026-09-26",
+"shipConfirmed": "2026-09-16",
+"uspsFinalMile": true
+},
+"9418450105798000596344": {
+"actualDelivery": "2026-10-13",
+"carrier": "USPS",
+"daysLate": 17.4,
+"hrsFirstScanToDelivery": 86.8,
+"hrsOrderToShip": 20.4,
+"hrsShipToFirstScan": 557.5,
+"hrsShipVsPromisedShip": -57.9,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "112-9986274-0081836",
+"promisedDelivery": "2026-09-26",
+"shipConfirmed": "2026-09-16",
+"uspsFinalMile": true
+},
+"9418450105798000600430": {
+"actualDelivery": "2026-09-28",
+"carrier": "USPS",
+"daysLate": 2.3,
+"hrsFirstScanToDelivery": 259.5,
+"hrsOrderToShip": 22.1,
+"hrsShipToFirstScan": 2.5,
+"hrsShipVsPromisedShip": -110.7,
+"late": true,
+"lateEvenWithExtension": false,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "113-7835666-9649869",
+"promisedDelivery": "2026-09-26",
+"shipConfirmed": "2026-09-17",
+"uspsFinalMile": true
+},
 "9418450105798000600669": {
 "actualDelivery": "2026-09-29",
 "carrier": "USPS",
@@ -458,6 +650,22 @@
 "orderId": "113-9933521-0846655",
 "promisedDelivery": "2026-09-29",
 "shipConfirmed": "2026-09-17",
+"uspsFinalMile": true
+},
+"9418450105799000602561": {
+"actualDelivery": "2026-09-28",
+"carrier": "USPS",
+"daysLate": 1.5,
+"hrsFirstScanToDelivery": 240.1,
+"hrsOrderToShip": 20.7,
+"hrsShipToFirstScan": 1.4,
+"hrsShipVsPromisedShip": -109.6,
+"late": true,
+"lateEvenWithExtension": false,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "114-5819030-7346618",
+"promisedDelivery": "2026-09-27",
+"shipConfirmed": "2026-09-18",
 "uspsFinalMile": true
 },
 "9418450105799000602653": {
@@ -508,6 +716,54 @@
 "shipConfirmed": "2026-09-16",
 "uspsFinalMile": true
 },
+"9418450105800000594937": {
+"actualDelivery": "2026-10-01",
+"carrier": "USPS",
+"daysLate": 4.2,
+"hrsFirstScanToDelivery": 89.0,
+"hrsOrderToShip": 7.3,
+"hrsShipToFirstScan": 262.5,
+"hrsShipVsPromisedShip": -129.9,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "113-5238120-0863438",
+"promisedDelivery": "2026-09-27",
+"shipConfirmed": "2026-09-16",
+"uspsFinalMile": true
+},
+"9418450105800000594944": {
+"actualDelivery": "2026-09-29",
+"carrier": "USPS",
+"daysLate": 3.6,
+"hrsFirstScanToDelivery": 36.5,
+"hrsOrderToShip": 18.8,
+"hrsShipToFirstScan": 274.8,
+"hrsShipVsPromisedShip": -57.9,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "113-5584731-6742660",
+"promisedDelivery": "2026-09-26",
+"shipConfirmed": "2026-09-16",
+"uspsFinalMile": true
+},
+"9418450105800000598560": {
+"actualDelivery": "2026-10-09",
+"carrier": "USPS",
+"daysLate": 12.3,
+"hrsFirstScanToDelivery": 523.8,
+"hrsOrderToShip": 13.3,
+"hrsShipToFirstScan": 2.5,
+"hrsShipVsPromisedShip": -110.7,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "112-4111529-1485837",
+"promisedDelivery": "2026-09-27",
+"shipConfirmed": "2026-09-17",
+"uspsFinalMile": true
+},
 "9418450105800000598782": {
 "actualDelivery": "2026-10-13",
 "carrier": "USPS",
@@ -538,6 +794,38 @@
 "orderId": "113-2501810-2173825",
 "promisedDelivery": "2026-09-30",
 "shipConfirmed": "2026-09-18",
+"uspsFinalMile": true
+},
+"9436236208192274442048": {
+"actualDelivery": "2026-09-29",
+"carrier": "USPS",
+"daysLate": 3.5,
+"hrsFirstScanToDelivery": 455.2,
+"hrsOrderToShip": 22.9,
+"hrsShipToFirstScan": 2.3,
+"hrsShipVsPromisedShip": -38.2,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "112-3185536-3049015",
+"promisedDelivery": "2026-09-26",
+"shipConfirmed": "2026-09-10",
+"uspsFinalMile": true
+},
+"9436236208192274444349": {
+"actualDelivery": "2026-09-30",
+"carrier": "USPS",
+"daysLate": 4.5,
+"hrsFirstScanToDelivery": 476.6,
+"hrsOrderToShip": 24.5,
+"hrsShipToFirstScan": 3.4,
+"hrsShipVsPromisedShip": -35.6,
+"late": true,
+"lateEvenWithExtension": true,
+"method": "RF-SMART USPS Ground Advantage",
+"orderId": "112-7598521-3021830",
+"promisedDelivery": "2026-09-26",
+"shipConfirmed": "2026-09-10",
 "uspsFinalMile": true
 },
 "9436236208192274446398": {
@@ -941,10 +1229,10 @@
 "uspsFinalMile": true
 }
 },
-"updated": "2026-10-19T18:08:29",
+"updated": "2026-10-20T11:45:24",
 "warnBelowPct": 95,
 "window": {
-"from": "2026-09-29",
+"from": "2026-09-25",
 "to": "2026-10-10"
 }
 }
