@@ -1,5 +1,5 @@
 {
-"count": 4746,
+"count": 4886,
 "destinations": {
 "0888217484": {
 "city": "Sparks",
@@ -1131,6 +1131,13 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "63379"
 },
+"1Z201627YW00758082": {
+"city": "Palo Pinto",
+"name": "robert rogers",
+"state": "TX",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "76484"
+},
 "1Z201627YW00907330": {
 "city": "Henderson",
 "name": "Mark Stevenson",
@@ -1417,6 +1424,13 @@
 "state": "AL",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "35953"
+},
+"1Z201627YW05413033": {
+"city": "Sisseton",
+"name": "James Evenson",
+"state": "SD",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "57262"
 },
 "1Z201627YW05598906": {
 "city": "Central",
@@ -1747,6 +1761,13 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "81401"
 },
+"1Z201627YW10814895": {
+"city": "Dallas",
+"name": "Maggie Wentzel",
+"state": "TX",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "75231"
+},
 "1Z201627YW10890455": {
 "city": "Jackson",
 "name": "Evodio Castillo",
@@ -1817,6 +1838,21 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "34113"
 },
+"1Z201627YW12251874": {
+"city": "Concordia",
+"name": "Christiine Poersch",
+"state": "KS",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "66901"
+},
+"1Z201627YW12627254": {
+"city": "NEWPORT",
+"name": "DALE  KLINGER",
+"promised": "2026-10-27",
+"state": "PA",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "17074"
+},
 "1Z201627YW12770778": {
 "city": "Salem",
 "name": "Lois  Rich",
@@ -1872,6 +1908,13 @@
 "state": "UT",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "84066"
+},
+"1Z201627YW13676842": {
+"city": "Bowling Green",
+"name": "juniorpitoseoro Moreno",
+"state": "OH",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "43402"
 },
 "1Z201627YW13760349": {
 "city": "MONTROSE",
@@ -2105,6 +2148,13 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "59047"
 },
+"1Z201627YW18519824": {
+"city": "Las Vegas",
+"name": "drakevonx Bacon",
+"state": "NV",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "89123"
+},
 "1Z201627YW18537822": {
 "city": "Odessa",
 "name": "Josh Thomas",
@@ -2189,6 +2239,13 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "98003"
 },
+"1Z201627YW20209235": {
+"city": "Fort Payne",
+"name": "Michael Adair",
+"state": "AL",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "35967"
+},
 "1Z201627YW20395641": {
 "city": "Port Charlotte",
 "name": "John robins",
@@ -2209,6 +2266,13 @@
 "state": "CA",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "91906"
+},
+"1Z201627YW21009762": {
+"city": "Taylorsville",
+"name": "Artie Velez Velez",
+"state": "UT",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "84129"
 },
 "1Z201627YW21505529": {
 "city": "west hatfield",
@@ -2251,6 +2315,13 @@
 "state": "AL",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "35542"
+},
+"1Z201627YW22056183": {
+"city": "Goodyear",
+"name": "William Ratchford",
+"state": "AZ",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "85338"
 },
 "1Z201627YW22167303": {
 "city": "New Ipswich",
@@ -2315,6 +2386,13 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "77535"
 },
+"1Z201627YW23401824": {
+"city": "El Segundo",
+"name": "Big 5 Sporting Goods",
+"state": "CA",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "90245"
+},
 "1Z201627YW23471900": {
 "city": "PHILLIPSBURG",
 "name": "Geovanni Eller",
@@ -2349,6 +2427,13 @@
 "state": "CA",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "92220"
+},
+"1Z201627YW23857155": {
+"city": "Kyle",
+"name": "Barbara Rogers",
+"state": "TX",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "78640"
 },
 "1Z201627YW23901794": {
 "city": "Lomita",
@@ -2469,6 +2554,13 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "86305"
 },
+"1Z201627YW25310777": {
+"city": "Cadiz",
+"name": "Gary burks",
+"state": "KY",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "42211"
+},
 "1Z201627YW25450278": {
 "city": "Johnson City",
 "name": "Nick Roark",
@@ -2517,6 +2609,14 @@
 "state": "IA",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "50548"
+},
+"1Z201627YW26781990": {
+"city": "CAMP VERDE",
+"name": "Stacey O'Grady",
+"promised": "2026-10-29",
+"state": "AZ",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "86322"
 },
 "1Z201627YW26975503": {
 "city": "Spirit Lake",
@@ -2714,6 +2814,13 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "36305"
 },
+"1Z201627YW31118812": {
+"city": "MORRISON, IL",
+"name": "Stephen Sanders",
+"state": "IL",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "61270"
+},
 "1Z201627YW31160105": {
 "city": "Glide",
 "name": "Ray Bair",
@@ -2769,6 +2876,13 @@
 "state": "NY",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "10036"
+},
+"1Z201627YW32277041": {
+"city": "Spring Branch",
+"name": "Alayna Gayle",
+"state": "TX",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "78070"
 },
 "1Z201627YW32324856": {
 "city": "Los Fresnos",
@@ -2833,12 +2947,26 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "29102"
 },
+"1Z201627YW33937862": {
+"city": "Cody",
+"name": "Tev Kelley",
+"state": "WY",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "82414"
+},
 "1Z201627YW34033069": {
 "city": "Lowell",
 "name": "Darlene Poleski",
 "state": "IN",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "46356"
+},
+"1Z201627YW34181257": {
+"city": "Vero Beach",
+"name": "Gabby Kirby",
+"state": "FL",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "32962"
 },
 "1Z201627YW34206382": {
 "city": "New Castle",
@@ -6382,6 +6510,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "98204"
 },
+"1Z29706W0394356838": {
+"city": "ARVADA",
+"name": "Natural Grocers # U005-Northwest",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80003"
+},
 "1Z29706W0394358943": {
 "city": "Lafayette",
 "name": "Natural Grocers # U156-Lafayette, LA",
@@ -7103,6 +7238,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "83704"
 },
+"1Z29706W0395268379": {
+"city": "Bend",
+"name": "Sally T",
+"state": "OR",
+"via": "RF-SMART UPS Ground",
+"zip": "97701"
+},
 "1Z29706W0395274380": {
 "city": "RIVERTON",
 "name": "Walgreen's Co. Store #7007",
@@ -7529,6 +7671,13 @@
 "state": "WY",
 "via": "RF-SMART UPS Ground",
 "zip": "82718"
+},
+"1Z29706W0395974703": {
+"city": "Mankato",
+"name": "River Hills Scheels",
+"state": "MN",
+"via": "RF-SMART UPS Ground",
+"zip": "56001"
 },
 "1Z29706W0395979280": {
 "city": "Middletown",
@@ -8181,6 +8330,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "08759"
 },
+"1Z29706W0396742783": {
+"city": "Bend",
+"name": "Sally T",
+"state": "OR",
+"via": "RF-SMART UPS Ground",
+"zip": "97701"
+},
 "1Z29706W0396762494": {
 "city": "DENVER",
 "name": "Walgreen's Co. Store #7253 (Denver, CO)",
@@ -8314,6 +8470,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "89183"
 },
+"1Z29706W0396880268": {
+"city": "Elyria",
+"name": "Jessie Morrison",
+"state": "OH",
+"via": "RF-SMART UPS Ground",
+"zip": "44035"
+},
 "1Z29706W0396901066": {
 "city": "PETAL",
 "name": "Walgreen's Co. Store #10430 (Petal, MS)",
@@ -8398,6 +8561,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "80246"
 },
+"1Z29706W0396987546": {
+"city": "NEW BRAUNFELS",
+"name": "Walgreen's Co. Store #11928 (New Braunfe",
+"state": "TX",
+"via": "RF-SMART UPS Ground",
+"zip": "78132"
+},
 "1Z29706W0396993735": {
 "city": "TUCSON",
 "name": "Walgreen's Co. Store #7232",
@@ -8474,6 +8644,13 @@
 "state": "CO",
 "via": "RF-SMART UPS Ground",
 "zip": "80127"
+},
+"1Z29706W0397192321": {
+"city": "NEW BRAUNFELS",
+"name": "Walgreen's Co. Store #11928 (New Braunfe",
+"state": "TX",
+"via": "RF-SMART UPS Ground",
+"zip": "78132"
 },
 "1Z29706W0397203694": {
 "city": "JANESVILLE",
@@ -9889,6 +10066,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "99205"
 },
+"1Z29706W0399066759": {
+"city": "Pinehurst",
+"name": "George Pickering",
+"state": "TX",
+"via": "RF-SMART UPS Ground",
+"zip": "77362"
+},
 "1Z29706W0399077809": {
 "city": "EL PASO",
 "name": "Walgreen's Co. Store #10582 (El Paso, TX",
@@ -9944,6 +10128,13 @@
 "state": "TX",
 "via": "RF-SMART UPS Ground",
 "zip": "77479"
+},
+"1Z29706W0399154734": {
+"city": "NEW BRAUNFELS",
+"name": "Walgreen's Co. Store #11928 (New Braunfe",
+"state": "TX",
+"via": "RF-SMART UPS Ground",
+"zip": "78132"
 },
 "1Z29706W0399154887": {
 "city": "OSHKOSH",
@@ -10322,6 +10513,13 @@
 "state": "MO",
 "via": "RF-SMART UPS Ground",
 "zip": "63031"
+},
+"1Z29706W0399564318": {
+"city": "Mankato",
+"name": "River Hills Scheels",
+"state": "MN",
+"via": "RF-SMART UPS Ground",
+"zip": "56001"
 },
 "1Z29706W0399566094": {
 "city": "CASTLE ROCK",
@@ -13592,6 +13790,125 @@
 "via": "RF-SMART SmartPost parcel select",
 "zip": "21804"
 },
+"384269433285": {
+"city": "Washington",
+"name": "Paul Ipock",
+"state": "PA",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "15301"
+},
+"384270242347": {
+"city": "Houston",
+"name": "Mary Villarreal",
+"state": "TX",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "77022"
+},
+"384270257887": {
+"city": "Monroe",
+"name": "Patsy Rochowiak",
+"state": "MI",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "48162"
+},
+"384270279642": {
+"city": "Clinton Township",
+"name": "Nancy Biondo",
+"state": "MI",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "48036"
+},
+"384270328037": {
+"city": "Lake Worth Beach",
+"name": "Anthony Shea",
+"state": "FL",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "33460"
+},
+"384270345897": {
+"city": "Oklahoma City",
+"name": "Pyramid Global Hospitality",
+"state": "OK",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "73110"
+},
+"384270363966": {
+"city": "Seattle",
+"name": "Mohneel Parakh",
+"state": "WA",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "98109"
+},
+"384270378693": {
+"city": "Whitman",
+"name": "Christopher White",
+"state": "MA",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "02382"
+},
+"384270406653": {
+"city": "Lake Worth Beach",
+"name": "Anthony Shea",
+"state": "FL",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "33460"
+},
+"384279951705": {
+"city": "SANTEE",
+"name": "RICHARD SULLIVAN",
+"state": "CA",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "92071"
+},
+"384279978208": {
+"city": "Syracuse",
+"name": "Larry  Adams",
+"state": "NY",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "13205"
+},
+"384280472070": {
+"city": "Tampa",
+"name": "Jess Pendergrass",
+"state": "FL",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "33604"
+},
+"384280549833": {
+"city": "Georgetown",
+"name": "Paul Lucas",
+"state": "TX",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "78626"
+},
+"384280631102": {
+"city": "Herriman",
+"name": "Katie Frump",
+"state": "UT",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "84096"
+},
+"384280775722": {
+"city": "Parkville",
+"name": "Megan Tobin",
+"state": "MD",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "21234"
+},
+"384281042420": {
+"city": "Fulton",
+"name": "Kristen Ghaffarian",
+"state": "MD",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "20759"
+},
+"384281382215": {
+"city": "Knoxville",
+"name": "Sarah Stanley",
+"state": "TN",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "37916"
+},
 "5539993406": {
 "city": "Aspen",
 "name": "Carl's Pharmacy",
@@ -13604,6 +13921,13 @@
 "name": "dba Innermountain",
 "state": "CO",
 "via": "RF-SMART USPS Ground Advantage",
+"zip": "81416"
+},
+"59751395423": {
+"city": "Delta",
+"name": "dba Innermountain",
+"state": "CO",
+"via": "Old Dominion Freight",
 "zip": "81416"
 },
 "61299992412022082186": {
@@ -13794,6 +14118,13 @@
 "state": "MS",
 "via": "RF-SMART SmartPost parcel select",
 "zip": "39355"
+},
+"61299992412022086382": {
+"city": "Houston",
+"name": "Mary Villarreal",
+"state": "TX",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "77022"
 },
 "80999419049": {
 "city": "Denver",
@@ -31310,6 +31641,13 @@
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "68136"
 },
+"878890984842": {
+"city": "Breckenridge",
+"name": "Hotel Alpenrock- By Curio/Hilton",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80424"
+},
 "878920934580": {
 "city": "PLATTEVILLE",
 "name": "Sherry Johnston-Slavin",
@@ -33153,6 +33491,669 @@
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "06010"
 },
+"878939935850": {
+"city": "Durham",
+"name": "Richard Sepka",
+"promised": "2026-10-26",
+"state": "NC",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "27707"
+},
+"878939990268": {
+"city": "ALBANY",
+"name": "Jeanette Baker",
+"promised": "2026-10-27",
+"state": "OH",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "45710"
+},
+"878940030879": {
+"city": "Fort Lauderdale",
+"name": "Hampton Inn Ft. Lauderdale Airport North",
+"state": "FL",
+"via": "RF-SMART FedEx Ground",
+"zip": "33315"
+},
+"878940030880": {
+"city": "Fort Lauderdale",
+"name": "Hampton Inn Ft. Lauderdale Airport North",
+"state": "FL",
+"via": "RF-SMART FedEx Ground",
+"zip": "33315"
+},
+"878940030890": {
+"city": "Fort Lauderdale",
+"name": "Hampton Inn Ft. Lauderdale Airport North",
+"state": "FL",
+"via": "RF-SMART FedEx Ground",
+"zip": "33315"
+},
+"878940030905": {
+"city": "Fort Lauderdale",
+"name": "Hampton Inn Ft. Lauderdale Airport North",
+"state": "FL",
+"via": "RF-SMART FedEx Ground",
+"zip": "33315"
+},
+"878940032172": {
+"city": "PITTSBURGH",
+"name": "Charles Raymond Stella",
+"promised": "2026-10-26",
+"state": "PA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "15210"
+},
+"878940075473": {
+"city": "FAYETTEVILLE",
+"name": "Angela Taylor",
+"promised": "2026-10-27",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "78940"
+},
+"878940114670": {
+"city": "BEVERLY HILLS",
+"name": "Lesa NisiewiczPOHCE-5389FMS-55107",
+"promised": "2026-10-27",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "34465"
+},
+"878940174079": {
+"city": "WAXAHACHIE",
+"name": "James G. RedmonPOHealth",
+"promised": "2026-10-24",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "75165"
+},
+"878940208861": {
+"city": "SAN MARCOS",
+"name": "John J Abbene",
+"promised": "2026-10-28",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "92078"
+},
+"878940351680": {
+"city": "BALDWIN",
+"name": "Paul Muldoon",
+"promised": "2026-10-23",
+"state": "NY",
+"via": "RF-SMART FedEx Ground",
+"zip": "11510"
+},
+"878940479859": {
+"city": "NEW YORK CITY",
+"name": "K Orlowski",
+"promised": "2026-10-23",
+"state": "NY",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "10028"
+},
+"878945301324": {
+"city": "Breckenridge",
+"name": "Hotel Alpenrock- By Curio/Hilton",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80424"
+},
+"878945301335": {
+"city": "Breckenridge",
+"name": "Hotel Alpenrock- By Curio/Hilton",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80424"
+},
+"878945301346": {
+"city": "Breckenridge",
+"name": "Hotel Alpenrock- By Curio/Hilton",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80424"
+},
+"878945301357": {
+"city": "Breckenridge",
+"name": "Hotel Alpenrock- By Curio/Hilton",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80424"
+},
+"878945301368": {
+"city": "Breckenridge",
+"name": "Hotel Alpenrock- By Curio/Hilton",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80424"
+},
+"878945301379": {
+"city": "Breckenridge",
+"name": "Hotel Alpenrock- By Curio/Hilton",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80424"
+},
+"878945301380": {
+"city": "Breckenridge",
+"name": "Hotel Alpenrock- By Curio/Hilton",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80424"
+},
+"878945301390": {
+"city": "Breckenridge",
+"name": "Hotel Alpenrock- By Curio/Hilton",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80424"
+},
+"878945301405": {
+"city": "Breckenridge",
+"name": "Hotel Alpenrock- By Curio/Hilton",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80424"
+},
+"878945644770": {
+"city": "Flagstaff",
+"name": "Natural Grocers",
+"state": "AZ",
+"via": "RF-SMART FedEx Ground",
+"zip": "86001"
+},
+"878945644781": {
+"city": "Flagstaff",
+"name": "Natural Grocers",
+"state": "AZ",
+"via": "RF-SMART FedEx Ground",
+"zip": "86001"
+},
+"878945644792": {
+"city": "Flagstaff",
+"name": "Natural Grocers",
+"state": "AZ",
+"via": "RF-SMART FedEx Ground",
+"zip": "86001"
+},
+"878945730527": {
+"city": "Incline Village",
+"name": "Natural Grocers # U171-Incline Village",
+"state": "NV",
+"via": "RF-SMART FedEx Ground",
+"zip": "89451"
+},
+"878945730538": {
+"city": "Incline Village",
+"name": "Natural Grocers # U171-Incline Village",
+"state": "NV",
+"via": "RF-SMART FedEx Ground",
+"zip": "89451"
+},
+"878949993625": {
+"city": "PLATTSMOUTH",
+"name": "75 Mart",
+"promised": "2026-10-28",
+"state": "NE",
+"via": "RF-SMART FedEx Ground",
+"zip": "68048"
+},
+"878950071159": {
+"city": "OCEAN PINES",
+"name": "Colin McDowell",
+"promised": "2026-10-27",
+"state": "MD",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "21811"
+},
+"878950514752": {
+"city": "CONNEAUTVILLE",
+"name": "Pam Duarte",
+"promised": "2026-10-27",
+"state": "PA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "16406"
+},
+"878950579473": {
+"city": "Marquette",
+"name": "sandy bernd",
+"promised": "2026-10-28",
+"state": "MI",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "49855"
+},
+"878950661842": {
+"city": "FAIRFIELD",
+"name": "Daniel S. Rosa",
+"promised": "2026-10-23",
+"state": "CT",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "06825"
+},
+"878950718422": {
+"city": "MARBLEHEAD",
+"name": "Jane Nielsen",
+"promised": "2026-10-27",
+"state": "MA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "01945"
+},
+"878950787890": {
+"city": "GREENWOOD",
+"name": "Timothy Frazier",
+"promised": "2026-10-26",
+"state": "IN",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "46142"
+},
+"878950924434": {
+"city": "melbourne",
+"name": "john day",
+"promised": "2026-10-28",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "32935"
+},
+"878950993055": {
+"city": "CLEVELAND",
+"name": "Alecia Baxley",
+"promised": "2026-10-28",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "77327"
+},
+"878951047746": {
+"city": "MYERSTOWN",
+"name": "Bernard Repa",
+"promised": "2026-10-26",
+"state": "PA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "17067"
+},
+"878951116614": {
+"city": "SAN ANTONIO",
+"name": "Lori Bordisso",
+"promised": "2026-10-28",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "78266"
+},
+"878951258657": {
+"city": "ALBUQUERQUE",
+"name": "Natural Grocers # U019-Albuquerque",
+"state": "NM",
+"via": "RF-SMART FedEx Ground",
+"zip": "87111"
+},
+"878951258668": {
+"city": "ALBUQUERQUE",
+"name": "Natural Grocers # U019-Albuquerque",
+"state": "NM",
+"via": "RF-SMART FedEx Ground",
+"zip": "87111"
+},
+"878951258679": {
+"city": "ALBUQUERQUE",
+"name": "Natural Grocers # U019-Albuquerque",
+"state": "NM",
+"via": "RF-SMART FedEx Ground",
+"zip": "87111"
+},
+"878952287671": {
+"city": "Hoodsport",
+"name": "Craig Rainey 486",
+"state": "WA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "98548"
+},
+"878987850930": {
+"city": "PEORIA",
+"name": "Doug Anstett",
+"state": "AZ",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "85345"
+},
+"878987850940": {
+"city": "PEORIA",
+"name": "Doug Anstett",
+"state": "AZ",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "85345"
+},
+"878987850951": {
+"city": "PEORIA",
+"name": "Doug Anstett",
+"state": "AZ",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "85345"
+},
+"878990013311": {
+"city": "Bronson",
+"name": "Bronson Ace Hardware",
+"state": "FL",
+"via": "RF-SMART FedEx Ground",
+"zip": "32621"
+},
+"878991643409": {
+"city": "Idaho Springs",
+"name": "Indian Hot Springs",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80452"
+},
+"878991643410": {
+"city": "Idaho Springs",
+"name": "Indian Hot Springs",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80452"
+},
+"878991643420": {
+"city": "Idaho Springs",
+"name": "Indian Hot Springs",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80452"
+},
+"878991643431": {
+"city": "Idaho Springs",
+"name": "Indian Hot Springs",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80452"
+},
+"878992291840": {
+"city": "Garden City",
+"name": "Nature's Way Health Food Store",
+"state": "KS",
+"via": "RF-SMART FedEx Ground",
+"zip": "67846"
+},
+"878992514130": {
+"city": "Norman",
+"name": "Natural Grocers # U048-Norman",
+"state": "OK",
+"via": "RF-SMART FedEx Ground",
+"zip": "73069"
+},
+"878992514141": {
+"city": "Norman",
+"name": "Natural Grocers # U048-Norman",
+"state": "OK",
+"via": "RF-SMART FedEx Ground",
+"zip": "73069"
+},
+"878997087421": {
+"city": "BETHESDA",
+"name": "Sarah Mott Freeman",
+"promised": "2026-10-27",
+"state": "MD",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "20814"
+},
+"878997175383": {
+"city": "WICHITA",
+"name": "tim dunmire",
+"promised": "2026-10-28",
+"state": "KS",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "67212"
+},
+"878997276794": {
+"city": "AKRON",
+"name": "Gary Logue",
+"promised": "2026-10-27",
+"state": "OH",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "44305"
+},
+"878997358754": {
+"city": "TRINITY",
+"name": "William Rohrer",
+"promised": "2026-10-26",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "75862"
+},
+"878997503157": {
+"city": "ELGIN",
+"name": "Michael Scholl",
+"promised": "2026-10-28",
+"state": "IL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "60123"
+},
+"878997572124": {
+"city": "ORLANDO",
+"name": "louis hilbert",
+"promised": "2026-10-28",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "32817"
+},
+"878997658535": {
+"city": "COLTON",
+"name": "DONNA GARRETT",
+"promised": "2026-10-30",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "92324"
+},
+"878997765481": {
+"city": "Old forge",
+"name": "stan mazaleski",
+"promised": "2026-10-26",
+"state": "PA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "18518"
+},
+"878997917810": {
+"city": "BURTON",
+"name": "Jack leach jr",
+"promised": "2026-10-27",
+"state": "MI",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "48509"
+},
+"878998009802": {
+"city": "JUPITER",
+"name": "Sherron Burleson",
+"promised": "2026-10-28",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "33458"
+},
+"878998085300": {
+"city": "AMITE",
+"name": "JOHN K Himes",
+"promised": "2026-10-28",
+"state": "LA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "70422"
+},
+"878998138250": {
+"city": "HUNTSVILLE",
+"name": "Anita Phillips",
+"promised": "2026-10-28",
+"state": "AL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "35806"
+},
+"878998206420": {
+"city": "Plainfield",
+"name": "John Jarabek",
+"promised": "2026-10-27",
+"state": "IN",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "46168"
+},
+"878998264180": {
+"city": "CHICAGO",
+"name": "Dr.M.Pakrooh",
+"promised": "2026-10-28",
+"state": "IL",
+"via": "RF-SMART FedEx Ground",
+"zip": "60657"
+},
+"878998326365": {
+"city": "NEW YORK",
+"name": "Natalie saada",
+"promised": "2026-10-26",
+"state": "NY",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "10026"
+},
+"878998395630": {
+"city": "BROKEN ARROW",
+"name": "jackie hultz",
+"promised": "2026-10-28",
+"state": "OK",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "74012"
+},
+"878998449483": {
+"city": "HOUSTON",
+"name": "Wenjing Wu",
+"promised": "2026-10-25",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "77005"
+},
+"878998503793": {
+"city": "OMAHA",
+"name": "Christopher James Duncan",
+"promised": "2026-10-28",
+"state": "NE",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "68164"
+},
+"878998557635": {
+"city": "BELTON",
+"name": "Dan and Cindy Nagy",
+"promised": "2026-10-27",
+"state": "SC",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "29627"
+},
+"878998862404": {
+"city": "LAKESIDE",
+"name": "Ted Cebula",
+"promised": "2026-10-30",
+"state": "AZ",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "85929"
+},
+"878998936627": {
+"city": "WEST MONROE",
+"name": "Jason Leon Hendon",
+"promised": "2026-10-29",
+"state": "LA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "71291"
+},
+"878999003719": {
+"city": "MADISON",
+"name": "Twig Perkins",
+"promised": "2026-10-27",
+"state": "NH",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "03849"
+},
+"878999070462": {
+"city": "FORT COLLINS",
+"name": "Nathan Willmore",
+"promised": "2026-10-29",
+"state": "CO",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "80524"
+},
+"878999160615": {
+"city": "FORT WAYNE",
+"name": "David  Kistner",
+"promised": "2026-10-27",
+"state": "IN",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "46816"
+},
+"878999334896": {
+"city": "FAIR OAKS RANCH",
+"name": "Paul & Nalga Mebane",
+"promised": "2026-10-28",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "78015"
+},
+"878999383997": {
+"city": "SAN DIEGO",
+"name": "New Era CPAs, LLP",
+"promised": "2026-10-28",
+"state": "CA",
+"via": "RF-SMART FedEx Ground",
+"zip": "92106"
+},
+"878999459620": {
+"city": "LEANDER",
+"name": "ROBERT GAMBELL",
+"promised": "2026-10-29",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "78641"
+},
+"878999530819": {
+"city": "NAPLES",
+"name": "Sebastian acosta",
+"promised": "2026-10-28",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "34119"
+},
+"878999613911": {
+"city": "HOLLYWOOD",
+"name": "Rodolfo Aranes",
+"promised": "2026-10-28",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "33019"
+},
+"878999671579": {
+"city": "littleton",
+"name": "stephen kimball",
+"promised": "2026-10-27",
+"state": "NH",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "03561"
+},
+"878999725230": {
+"city": "BEAVERTON",
+"name": "David Allen",
+"promised": "2026-10-30",
+"state": "OR",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "97008"
+},
+"878999789194": {
+"city": "ALTAMONT",
+"name": "Thomas F Campbell",
+"promised": "2026-10-28",
+"state": "IL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "62411"
+},
+"878999842225": {
+"city": "LOVELAND",
+"name": "Russell Reedy",
+"promised": "2026-10-30",
+"state": "CO",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "80538"
+},
+"878999905922": {
+"city": "LOS ANGELES",
+"name": "Megan Firestone",
+"promised": "2026-10-28",
+"state": "CA",
+"via": "RF-SMART FedEx Ground",
+"zip": "90034"
+},
 "9418436208192274458252": {
 "city": "EWA BEACH",
 "name": "Lyann Hamada",
@@ -33591,6 +34592,38 @@
 "via": "RF-SMART USPS Ground Advantage",
 "zip": "00926"
 },
+"9436236208192274670519": {
+"city": "LAUPAHOEHOE",
+"name": "Thomas A Walker",
+"promised": "2026-10-29",
+"state": "HI",
+"via": "RF-SMART USPS Ground Advantage",
+"zip": "96764"
+},
+"9436236208192274670557": {
+"city": "TOA ALTA",
+"name": "Mildred Torres",
+"promised": "2026-11-03",
+"state": "PR",
+"via": "RF-SMART USPS Ground Advantage",
+"zip": "00953"
+},
+"9436236208192274675194": {
+"city": "Laie",
+"name": "Gaylene Nikora Lolofie",
+"promised": "2026-10-30",
+"state": "HI",
+"via": "RF-SMART USPS Ground Advantage",
+"zip": "96762"
+},
+"9436236208192274675347": {
+"city": "ANCHORAGE",
+"name": "LONA L YOUNG",
+"promised": "2026-10-30",
+"state": "AK",
+"via": "RF-SMART USPS Ground Advantage",
+"zip": "99515"
+},
 "Load#570928148": {
 "city": "Indianapolis",
 "name": "CVS Store # 1101",
@@ -33612,6 +34645,14 @@
 "via": "* Customer Pick-Up",
 "zip": "64153"
 },
+"Load#572462178": {
+"city": "Waverly",
+"name": "CVS Store # Y101",
+"promised": "2026-11-02",
+"state": "NY",
+"via": "* Customer Pick-Up",
+"zip": "14892"
+},
 "LoadID#46514845": {
 "city": "LEBANON",
 "name": "WAL-MART DC 7377",
@@ -33627,5 +34668,5 @@
 "zip": "46143"
 }
 },
-"updated": "2026-10-20T11:45:12"
+"updated": "2026-10-21T11:45:13"
 }
