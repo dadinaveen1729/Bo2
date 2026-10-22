@@ -1,5 +1,5 @@
 {
-"count": 6089,
+"count": 6101,
 "orders": {
 "SO780298": {
 "amount": "47.91",
@@ -30445,8 +30445,68 @@
 "amount": "29.91",
 "customer": "Jones, James",
 "order_date": "10/21/2026"
+},
+"SO794697": {
+"amount": "31.94",
+"customer": "Wil, C",
+"order_date": "10/22/2026"
+},
+"SO794698": {
+"amount": "29.91",
+"customer": "mccormick, lyle",
+"order_date": "10/22/2026"
+},
+"SO794699": {
+"amount": "29.91",
+"customer": "Greenlaw, Brenda D",
+"order_date": "10/22/2026"
+},
+"SO794711": {
+"amount": "34.99",
+"customer": "Chuck, Chuck",
+"order_date": "10/22/2026"
+},
+"SO794713": {
+"amount": "31.94",
+"customer": "Briggs, Donna",
+"order_date": "10/22/2026"
+},
+"SO794714": {
+"amount": "79.76",
+"customer": "Alvarado, Reynaldo",
+"order_date": "10/22/2026"
+},
+"SO794715": {
+"amount": "95.82",
+"customer": "Rodolfo, Rodolfo",
+"order_date": "10/22/2026"
+},
+"SO794716": {
+"amount": "50.20",
+"customer": "Poor, Michelle",
+"order_date": "10/22/2026"
+},
+"SO794717": {
+"amount": "61.85",
+"customer": "Burlingame, Teddy",
+"order_date": "10/22/2026"
+},
+"SO794719": {
+"amount": "31.94",
+"customer": "Novacek, Teri",
+"order_date": "10/22/2026"
+},
+"SO794721": {
+"amount": "38.24",
+"customer": "amazon, David a",
+"order_date": "10/22/2026"
+},
+"SO794722": {
+"amount": "47.91",
+"customer": "Jr., Kenneth C",
+"order_date": "10/22/2026"
 }
 },
 "source": "NetSuite: Amazon Orders Pending Fulfillment",
-"updated": "2026-10-21T11:45:09"
+"updated": "2026-10-22T11:22:19"
 }
