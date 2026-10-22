@@ -1,5 +1,5 @@
 {
-"count": 5090,
+"count": 5091,
 "destinations": {
 "0888217484": {
 "city": "Sparks",
@@ -36183,6 +36183,13 @@
 "via": "RF-SMART USPS Ground Advantage",
 "zip": "00778"
 },
+"Load#46717065": {
+"city": "LEBANON",
+"name": "WAL-MART DC 7377",
+"state": "PA",
+"via": "* Customer Pick-Up",
+"zip": "17046"
+},
 "Load#570928148": {
 "city": "Indianapolis",
 "name": "CVS Store # 1101",
@@ -36227,5 +36234,5 @@
 "zip": "46143"
 }
 },
-"updated": "2026-10-22T11:22:24"
+"updated": "2026-10-22T11:45:25"
 }
