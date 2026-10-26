@@ -1,27 +1,76 @@
 {
+ "byMethod": {
+  "RF-SMART FedEx Ground": 6,
+  "RF-SMART FedEx Home Delivery": 7.0,
+  "RF-SMART SmartPost parcel select": 7.5,
+  "RF-SMART UPS Ground": 7,
+  "RF-SMART UPS Ground Saver": 8.7,
+  "RF-SMART USPS Ground Advantage": 15
+ },
  "byCarrier": {
-  "FedEx": 7.5,
-  "UPS": 8.7,
-  "USPS": 9.7,
+  "FedEx": 7.0,
+  "UPS": 7,
+  "USPS": 15,
   "Unknown": 8.7
  },
- "byMethod": {
-  "RF-SMART FedEx Home Delivery": 5.5,
-  "RF-SMART SmartPost parcel select": 7.5,
-  "RF-SMART UPS Ground": 8.7,
-  "RF-SMART UPS Ground Saver": 8.7,
-  "RF-SMART USPS Ground Advantage": 9.7
+ "defaultDays": 7.0,
+ "sampleSizes": {
+  "byMethod": {
+   "* Customer Pick-Up": 1,
+   "FedEx Home Delivery\u00ae": 1,
+   "RF-SMART FedEx Ground": 87,
+   "RF-SMART FedEx Home Delivery": 664,
+   "RF-SMART SmartPost parcel select": 2,
+   "RF-SMART UPS Ground": 27,
+   "RF-SMART UPS Ground Saver": 8,
+   "RF-SMART USPS Ground Advantage": 29
+  },
+  "byCarrier": {
+   "FedEx": 752,
+   "UPS": 35,
+   "USPS": 29,
+   "Unknown": 3
+  }
  },
- "calibratedAgainst": {
-  "amazonReportedPct": 81.2,
-  "ourComputedPct": 82.2,
-  "window": "2026-09-16 to 2026-09-30"
+ "minSampleForMethod": 10,
+ "learnedFrom": 819,
+ "learnedOn": "2026-10-26",
+ "supersedes": {
+  "byMethod": {
+   "RF-SMART FedEx Home Delivery": 5.5,
+   "RF-SMART SmartPost parcel select": 7.5,
+   "RF-SMART UPS Ground": 8.7,
+   "RF-SMART UPS Ground Saver": 8.7,
+   "RF-SMART USPS Ground Advantage": 9.7
+  },
+  "byCarrier": {
+   "FedEx": 7.5,
+   "UPS": 8.7,
+   "USPS": 9.7,
+   "Unknown": 8.7
+  },
+  "learnedFrom": 814,
+  "calibratedAgainst": {
+   "amazonReportedPct": 81.2,
+   "ourComputedPct": 82.2,
+   "window": "2026-09-16 to 2026-09-30"
+  }
  },
- "caveat": "Amazon only exports units that MISSED, so the rule is learned from failures. It reproduces Amazon's published rate closely but is an approximation of a promise only Amazon sets. Re-calibrate whenever a fresh export and a fresh Seller Central percentage are to hand.",
- "defaultDays": 8.7,
- "learnedFrom": 814,
- "note": "Days from OUR ship confirmation to Amazon's promised delivery date. Learned from Amazon's own Unit On-Time Delivery export, then calibrated against the rate Seller Central actually published for the same window: these values reproduce 82.2% where Amazon reported 81.2%.",
  "targetPct": 90,
  "warnBelowPct": 95,
- "warnDaysEarly": 2
+ "warnDaysEarly": 2,
+ "note": "Days from OUR ship confirmation to Amazon's promised delivery date, learned from Amazon's REAL promised dates as they arrive in the NetSuite report - not from the failures-only export the previous rule used.",
+ "whyReplaced": "The old rule was learned from Amazon's Unit On-Time Delivery export, which contains ONLY units that missed. Learning a promise from a sample of broken promises bakes in the lanes that fail. Measured against the real dates now on hand, it ran a median 1.5 days TIGHTER than Amazon's actual promise and was within half a day only 20% of the time - so it judged parcels late that Amazon never counted late. Worst two: FedEx Home Delivery at 5.5 days where Amazon allows 7, and USPS Ground Advantage at 9.7 where Amazon allows 15.",
+ "caveat": "Still an approximation of a date only Amazon sets: Amazon's real promises run from 2 to 23 days on the same lane, so no single number per method can reproduce them. Use it to triage what to chase, never as the published rate. Any shipment with a real promised date must be scored on that date instead, and the rate that leaves this building should be built from those alone.",
+ "keptFromOldRule": {
+  "RF-SMART SmartPost parcel select": {
+   "days": 7.5,
+   "n": 2
+  },
+  "RF-SMART UPS Ground Saver": {
+   "days": 8.7,
+   "n": 8
+  }
+ },
+ "whyKept": "These lanes have fewer than minSampleForMethod real promises, so their median would be noise - but both hand the last mile to USPS, and dropping them to the FedEx/UPS carrier default would judge them TIGHTER than the old rule did. Holding the previous value is the one option that cannot make them worse. Re-learn once n reaches the floor."
 }
