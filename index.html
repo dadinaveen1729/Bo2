@@ -2507,6 +2507,13 @@ function renderAmazon(){
     +'<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">'
     +'<span style="font-size:13px;font-weight:800;letter-spacing:.3px">LIVE, FROM OUR OWN TRACKING &mdash; '+rangeLabel(amzRange)+'</span>'
     +'<span style="font-size:11px;opacity:.75">updated by the daily carrier run, not by an Amazon download</span></div>'
+    // THE WINDOW BASIS HAS TO BE ON THE PANEL
+    // This range is ship dates. Amazon's is promised delivery dates, and its
+    // window has already closed. Two percentages sitting on one tab with no
+    // basis stated invite the reader to subtract them, and the difference is
+    // mostly the window, not performance.
+    +'<div style="font-size:10.5px;opacity:.7;margin-top:3px">by <b>ship date</b> &mdash; parcels we have sent, including those still moving. '
+    +'Amazon scores by promised delivery date over a window that has already closed, so this runs ahead of their figure by design.</div>'
     +'<div style="font-size:11px;opacity:.8;margin-top:5px">'
     +(usedReal
        ? '<b>'+usedReal.toLocaleString()+'</b> scored against Amazon’s own promised date'
@@ -2617,15 +2624,39 @@ function renderAmazon(){
       +'<div><span style="font-size:28px;font-weight:800;color:'+ncol+'">'+amazonNow.otdr_pct+'%</span>'
       +'<span style="font-size:11px;color:#6B7280;margin-left:7px">on-time delivery</span></div>'
       +(amazonNow.total_units?'<div style="font-size:12px;color:#4B5563">'+Number(amazonNow.total_units).toLocaleString()+' tracked units</div>':'')
-      +(amazonNow.window_from?'<div style="font-size:12px;color:#4B5563">'+amazonNow.window_from+' to '+(amazonNow.window_to||"")+'</div>':'')
+      +(amazonNow.window_from?'<div style="font-size:12px;color:#4B5563">'+amazonNow.window_from+' to '+(amazonNow.window_to||"")
+        +(amazonNow.windowBasis?' <span style="color:#9CA3AF">promised delivery date</span>':'')+'</div>':'')
       +'</div>'
-      +'<div style="font-size:11px;color:#6B7280;margin-top:6px">Amazon publishes no feed for this, so it is read from Shipping Performance and typed into <b>amazon_current.txt</b>. The live panel above comes from our own tracking and updates on its own every morning.</div>'
+      +'<div style="font-size:11px;color:#6B7280;margin-top:6px">Amazon publishes no feed for this, so it is read from Shipping Performance and typed into <b>amazon_current.txt</b>.</div>'
+      // WHY THE TWO PANELS DISAGREE, SAID PLAINLY
+      // Amazon bounds this window by promised delivery date and only publishes it
+      // once it has closed, so every parcel in it is already judged and the figure
+      // cannot move. Our live panel is deliberately a later, still-open window.
+      // Without this sentence the two sit next to each other looking like the same
+      // measurement taken twice, and the difference reads as an error in ours.
+      +(amazonNow.windowSettled?'<div style="font-size:11px;color:#1E3A5F;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;padding:7px 9px;margin-top:7px;line-height:1.5">'
+        +'<b>This window is closed.</b> Amazon scores by promised delivery date, so every parcel here was due on or before '+(amazonNow.window_to||"")
+        +' and this number is final &mdash; nothing we do now changes it. The live panel above covers parcels promised <b>after</b> that date, which Amazon has not scored yet. '
+        +'That is the only window where switching a carrier still changes the outcome, so the two figures are not meant to match.</div>':'')
       +'</div>';
   }else{
     html+='<div style="font-size:11.5px;color:#92400E;background:#FFFBEB;border:1px solid #FDE68A;border-radius:7px;padding:9px 11px;margin:16px 0 12px">'
       +'Seller Central’s own figure is not recorded. Put it in <b>amazon_current.txt</b> and run <b>amazon_current_publish.py</b> to show it here beside ours.</div>';
   }
 
+  // A RATE IS ONLY A RATE IF BOTH HALVES COME FROM THE SAME WINDOW
+  // The export carries the failures; the denominator was typed off Seller
+  // Central for Amazon's window. When those spans differ the quotient belongs to
+  // no period at all, so it is labelled a reconstruction and Amazon's own
+  // published figure above is pointed to as the one to quote.
+  var denomMismatch=(amazonOtdMeta&&amazonOtdMeta.windowsAligned===false);
+  if(denomMismatch){
+    html+='<div style="font-size:11.5px;color:#92400E;background:#FFFBEB;border:1px solid #FDE68A;border-radius:7px;padding:9px 11px;margin:16px 0 0;line-height:1.5">'
+      +'<b>The rate below is a reconstruction, not Amazon’s.</b> Its '+totalLate+' failures cover '+windowTxt
+      +', but the '+windowShipped.toLocaleString()+'-unit denominator was read off Seller Central for '
+      +String(amazonOtdMeta.denominatorWindow||"").replace(":"," to ")+'. Different windows, so the percentage describes no actual period. '
+      +'The failure breakdown underneath is Amazon’s own data and stands; for the rate itself, quote the Seller Central figure above.</div>';
+  }
   html+='<div style="font-size:12px;font-weight:800;color:#374151;margin:16px 0 7px">From the last Amazon export'
     +((amazonOtdMeta&&amazonOtdMeta.updated)?' <span style="font-weight:400;color:#9CA3AF">— imported '+String(amazonOtdMeta.updated).slice(0,10)+', covers '+windowTxt+'. Does not move until the next export.</span>':' <span style="font-weight:400;color:#9CA3AF">— a point-in-time snapshot, not today’s number.</span>')
     +'</div>';
@@ -2640,17 +2671,30 @@ function renderAmazon(){
     +tile("USPS last mile",(totalLate?Math.round(stat.uspsLast/totalLate*100):0)+"%","#DC2626",stat.uspsLast+" of "+totalLate+" failures")
     +'</div>';
 
-  if(otdr!==null&&otdr<AMZ_TARGET_PCT){
+  // THE DEACTIVATION WARNING FIRES ON AMAZON'S NUMBER, NOT OURS
+  // Amazon deactivates on the figure Amazon publishes. Where we hold that
+  // figure it is the only correct trigger; the export reconstruction is a
+  // fallback, and when its windows do not line up it must not raise or silence
+  // an alarm about losing the seller-fulfilled offer.
+  var riskPct=(amazonNow&&amazonNow.otdr_pct)?amazonNow.otdr_pct:(denomMismatch?null:otdr);
+  var riskBase=(amazonNow&&amazonNow.otdr_pct&&amazonNow.total_units)
+    ?Number(amazonNow.total_units):windowShipped;
+  var riskLate=(amazonNow&&amazonNow.otdr_pct&&amazonNow.total_units&&amazonNow.on_time_units)
+    ?Number(amazonNow.total_units)-Number(amazonNow.on_time_units):totalLate;
+  var riskSrc=(amazonNow&&amazonNow.otdr_pct)
+    ?"Seller Central, "+(amazonNow.window_from||"")+" to "+(amazonNow.window_to||"")
+    :"reconstructed from the export";
+  if(riskPct!==null&&riskPct<AMZ_TARGET_PCT){
     html+='<div style="background:#7F1D1D;color:#fff;border-radius:8px;padding:13px 15px;margin-bottom:14px">'
       +'<div style="font-weight:800;font-size:15px;margin-bottom:4px">Seller-fulfilled offers are at risk of deactivation</div>'
-      +'<div style="font-size:12.5px;line-height:1.5;opacity:.95">On-time delivery is <b>'+otdr+'%</b> against Amazon\u2019s floor of '
-      +AMZ_TARGET_PCT+'%. Recovering '+Math.ceil((AMZ_TARGET_PCT-otdr)/100*windowShipped)
-      +' of the '+totalLate+' late units in this window clears the floor; '
-      +Math.ceil((AMZ_WARN_PCT-otdr)/100*windowShipped)+' clears the '+AMZ_WARN_PCT+'% working target.</div></div>';
-  }else if(otdr!==null&&otdr<AMZ_WARN_PCT){
+      +'<div style="font-size:12.5px;line-height:1.5;opacity:.95">On-time delivery is <b>'+riskPct+'%</b> <span style="opacity:.8">('+riskSrc+')</span> against Amazon\u2019s floor of '
+      +AMZ_TARGET_PCT+'%. Recovering '+Math.ceil((AMZ_TARGET_PCT-riskPct)/100*riskBase)
+      +' of the '+riskLate.toLocaleString()+' late units in this window clears the floor; '
+      +Math.ceil((AMZ_WARN_PCT-riskPct)/100*riskBase)+' clears the '+AMZ_WARN_PCT+'% working target.</div></div>';
+  }else if(riskPct!==null&&riskPct<AMZ_WARN_PCT){
     html+='<div style="background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #D97706;border-radius:8px;padding:11px 13px;margin-bottom:14px;font-size:12.5px;color:#92400E">'
       +'<b>Above Amazon\u2019s floor but below the '+AMZ_WARN_PCT+'% working target.</b> '
-      +Math.ceil((AMZ_WARN_PCT-otdr)/100*windowShipped)+' fewer late units would clear it.</div>';
+      +Math.ceil((AMZ_WARN_PCT-riskPct)/100*riskBase)+' fewer late units would clear it.</div>';
   }
 
   // ---- the one finding that matters ------------------------------------
