@@ -1,12 +1,12 @@
 {
- "ageDays": 1,
- "checked_on": "2026-10-26",
- "on_time_units": 1592,
- "otdr_pct": 97.43,
- "publishedAt": "2026-10-27T11:45:16",
- "total_units": 1634,
+ "ageDays": 0,
+ "checked_on": "2026-10-27",
+ "on_time_units": 1556,
+ "otdr_pct": 97.55,
+ "publishedAt": "2026-10-27T13:34:47",
+ "total_units": 1595,
  "windowBasis": "promised delivery date",
  "windowSettled": true,
- "window_from": "2026-10-06",
- "window_to": "2026-10-19"
+ "window_from": "2026-10-07",
+ "window_to": "2026-10-20"
 }
