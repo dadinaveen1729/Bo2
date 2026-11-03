@@ -1,5 +1,5 @@
 {
-"count": 6798,
+"count": 6823,
 "orders": {
 "SO780298": {
 "amount": "47.91",
@@ -33990,8 +33990,133 @@
 "amount": "37.94",
 "customer": "Clark, Joann",
 "order_date": "11/2/2026"
+},
+"SO796824": {
+"amount": "37.94",
+"customer": "Fuller, Lon",
+"order_date": "11/2/2026"
+},
+"SO796857": {
+"amount": "31.94",
+"customer": "Churchill, Liz",
+"order_date": "11/2/2026"
+},
+"SO796873": {
+"amount": "29.91",
+"customer": "FUNSINN, ROBERT W",
+"order_date": "11/2/2026"
+},
+"SO796879": {
+"amount": "39.88",
+"customer": "Beshaw, Nicholas",
+"order_date": "11/2/2026"
+},
+"SO796886": {
+"amount": "47.91",
+"customer": "Lindsey, Mary J",
+"order_date": "11/2/2026"
+},
+"SO796888": {
+"amount": "31.94",
+"customer": "busche, Victoria",
+"order_date": "11/2/2026"
+},
+"SO796893": {
+"amount": "31.94",
+"customer": "Farber, Brenda",
+"order_date": "11/2/2026"
+},
+"SO796934": {
+"amount": "29.91",
+"customer": "Dimon, Mark",
+"order_date": "11/2/2026"
+},
+"SO796939": {
+"amount": "31.94",
+"customer": "GONZALEZ, JOSE",
+"order_date": "11/2/2026"
+},
+"SO796961": {
+"amount": "31.94",
+"customer": "kang, Jung",
+"order_date": "11/2/2026"
+},
+"SO796965": {
+"amount": "56.94",
+"customer": "baugh, scott g",
+"order_date": "11/3/2026"
+},
+"SO796967": {
+"amount": "29.91",
+"customer": "jr, robert d",
+"order_date": "11/3/2026"
+},
+"SO796968": {
+"amount": "31.88",
+"customer": "J.H., J.H.",
+"order_date": "11/3/2026"
+},
+"SO796970": {
+"amount": "113.82",
+"customer": "Kenney, Daniel W",
+"order_date": "11/3/2026"
+},
+"SO796979": {
+"amount": "44.99",
+"customer": "ELCI, LAURIANN",
+"order_date": "11/3/2026"
+},
+"SO796980": {
+"amount": "31.94",
+"customer": "WRIGHT, RICKY D",
+"order_date": "11/3/2026"
+},
+"SO796981": {
+"amount": "44.99",
+"customer": "Trueman, Holly",
+"order_date": "11/3/2026"
+},
+"SO796996": {
+"amount": "47.96",
+"customer": "Kenaa Inc - Exborders FZEPOV-M-270926",
+"order_date": "11/3/2026"
+},
+"SO796997": {
+"amount": "31.94",
+"customer": "KO, KO",
+"order_date": "11/3/2026"
+},
+"SO796998": {
+"amount": "31.94",
+"customer": "Hii_D, Hii_D",
+"order_date": "11/3/2026"
+},
+"SO797002": {
+"amount": "113.82",
+"customer": "Martens, Paul",
+"order_date": "11/3/2026"
+},
+"SO797003": {
+"amount": "227.64",
+"customer": "Benedum, Rae",
+"order_date": "11/3/2026"
+},
+"SO797004": {
+"amount": "69.88",
+"customer": "fischbacher, dr e",
+"order_date": "11/3/2026"
+},
+"SO797005": {
+"amount": "31.94",
+"customer": "Evans, Shelia",
+"order_date": "11/3/2026"
+},
+"SO797007": {
+"amount": "31.94",
+"customer": "Santos, Aparecida",
+"order_date": "11/3/2026"
 }
 },
 "source": "NetSuite: Amazon Orders Pending Fulfillment",
-"updated": "2026-11-02T11:45:11"
+"updated": "2026-11-03T11:45:08"
 }
