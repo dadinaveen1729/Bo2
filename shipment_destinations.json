@@ -1,5 +1,5 @@
 {
-"count": 8442,
+"count": 8563,
 "destinations": {
 "0888217484": {
 "city": "Sparks",
@@ -1480,6 +1480,20 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "15690"
 },
+"1Z201627YW00391147": {
+"city": "Madison",
+"name": "Kelly Knight",
+"state": "IN",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "47250"
+},
+"1Z201627YW00441511": {
+"city": "Juneau",
+"name": "Julie Schall",
+"state": "WI",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "53039"
+},
 "1Z201627YW00530040": {
 "city": "Ruidoso",
 "name": "RD U178 - Natural Grocers",
@@ -1717,6 +1731,13 @@
 "state": "CA",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "96114"
+},
+"1Z201627YW03009331": {
+"city": "Garden Valley",
+"name": "Zeth Kinnett",
+"state": "CA",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "95633"
 },
 "1Z201627YW03026401": {
 "city": "Eugene",
@@ -2272,6 +2293,13 @@
 "state": "ID",
 "via": "RF-SMART UPS Ground Saver",
 "zip": "83401"
+},
+"1Z201627YW07939552": {
+"city": "Bozeman",
+"name": "Gordon Dellwo",
+"state": "MT",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "59718"
 },
 "1Z201627YW08020756": {
 "city": "Beatty",
@@ -4434,6 +4462,13 @@
 "via": "RF-SMART UPS Ground Saver",
 "zip": "60913"
 },
+"1Z201627YW32611223": {
+"city": "Mystic",
+"name": "Eva Hildebrand",
+"state": "CT",
+"via": "RF-SMART UPS Ground Saver",
+"zip": "06355"
+},
 "1Z201627YW32719082": {
 "city": "Murphy",
 "name": "DAVE THOMPSON",
@@ -5129,6 +5164,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "54301"
 },
+"1Z29706W0390036431": {
+"city": "LOS RANCHOS",
+"name": "11176 Walgreen's Co. Store # 7735",
+"state": "NM",
+"via": "RF-SMART UPS Ground",
+"zip": "87107"
+},
 "1Z29706W0390038046": {
 "city": "SAN ANTONIO",
 "name": "Walgreen's Co. Store #11520 (San Antonio",
@@ -5318,6 +5360,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "80537"
 },
+"1Z29706W0390126049": {
+"city": "LOS RANCHOS",
+"name": "11176 Walgreen's Co. Store # 7735",
+"state": "NM",
+"via": "RF-SMART UPS Ground",
+"zip": "87107"
+},
 "1Z29706W0390127208": {
 "city": "DANVILLE",
 "name": "Walgreen's Co. Store #15291 (Danville, V",
@@ -5388,12 +5437,26 @@
 "via": "RF-SMART UPS Ground",
 "zip": "19701"
 },
+"1Z29706W0390193600": {
+"city": "NEW YORK",
+"name": "Walgreen's Co. Store #14126 (New York, N",
+"state": "NY",
+"via": "RF-SMART UPS Ground",
+"zip": "10005"
+},
 "1Z29706W0390210966": {
 "city": "CONROE",
 "name": "Walgreen's Co. Store #7632 (Conroe, TX)",
 "state": "TX",
 "via": "RF-SMART UPS Ground",
 "zip": "77384"
+},
+"1Z29706W0390215809": {
+"city": "BRICK",
+"name": "Walgreen's Co. Store #7921 (Brick, NJ)",
+"state": "NJ",
+"via": "RF-SMART UPS Ground",
+"zip": "08723"
 },
 "1Z29706W0390216808": {
 "city": "WESLEY CHAPEL",
@@ -5674,6 +5737,13 @@
 "state": "CO",
 "via": "RF-SMART UPS Ground",
 "zip": "80435"
+},
+"1Z29706W0390417823": {
+"city": "Payson",
+"name": "Walgreen's Co. Store #6533",
+"state": "AZ",
+"via": "RF-SMART UPS Ground",
+"zip": "85541"
 },
 "1Z29706W0390430264": {
 "city": "SAVANNAH",
@@ -6137,12 +6207,26 @@
 "via": "RF-SMART UPS Ground",
 "zip": "12010"
 },
+"1Z29706W0390875552": {
+"city": "DENVER",
+"name": "11008 Walgreen's Co. Store # 356",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80202"
+},
 "1Z29706W0390888502": {
 "city": "PARK CITY",
 "name": "Walgreen's Co. Store # 19168",
 "state": "UT",
 "via": "RF-SMART UPS Ground",
 "zip": "84060"
+},
+"1Z29706W0390889770": {
+"city": "DENVER",
+"name": "11008 Walgreen's Co. Store # 356",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80202"
 },
 "1Z29706W0390901335": {
 "city": "CHESTERTON",
@@ -6291,6 +6375,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "37076"
 },
+"1Z29706W0390990196": {
+"city": "GLENDALE",
+"name": "Walgreen's Co. Store #5266",
+"state": "AZ",
+"via": "RF-SMART UPS Ground",
+"zip": "85308"
+},
 "1Z29706W0390999928": {
 "city": "KNOXVILLE",
 "name": "Bentley MarlowPO170KM",
@@ -6431,6 +6522,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "14304"
 },
+"1Z29706W0391139097": {
+"city": "MUSCLE SHOALS",
+"name": "Walgreen's Co. Store #2557 (Muscle Shoal",
+"state": "AL",
+"via": "RF-SMART UPS Ground",
+"zip": "35661"
+},
 "1Z29706W0391139515": {
 "city": "PORTLAND",
 "name": "Walgreen's Co. Store #19821 (Portland, M",
@@ -6551,6 +6649,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "80915"
 },
+"1Z29706W0391280022": {
+"city": "Apache Junction",
+"name": "Walgreen's Co. Store #4188 (Apache Junct",
+"state": "AZ",
+"via": "RF-SMART UPS Ground",
+"zip": "85120"
+},
 "1Z29706W0391283485": {
 "city": "LAS CRUCES",
 "name": "Walgreen's Co. Store #13927",
@@ -6634,6 +6739,13 @@
 "state": "FL",
 "via": "RF-SMART UPS Ground",
 "zip": "34997"
+},
+"1Z29706W0391339362": {
+"city": "BILLINGS",
+"name": "Walgreen's Co. Store #12155 (Billings, M",
+"state": "MT",
+"via": "RF-SMART UPS Ground",
+"zip": "59102"
 },
 "1Z29706W0391339595": {
 "city": "Las Vegas",
@@ -7118,6 +7230,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "88345"
 },
+"1Z29706W0391835585": {
+"city": "GLENDALE",
+"name": "Walgreen's Co. Store #5266",
+"state": "AZ",
+"via": "RF-SMART UPS Ground",
+"zip": "85308"
+},
 "1Z29706W0391842951": {
 "city": "HIGHLANDS RANCH",
 "name": "Walgreen's Co. Store #2641",
@@ -7558,6 +7677,13 @@
 "state": "CO",
 "via": "RF-SMART UPS Ground",
 "zip": "80033"
+},
+"1Z29706W0392194481": {
+"city": "MUSCLE SHOALS",
+"name": "Walgreen's Co. Store #2557 (Muscle Shoal",
+"state": "AL",
+"via": "RF-SMART UPS Ground",
+"zip": "35661"
 },
 "1Z29706W0392216537": {
 "city": "WINTER PARK",
@@ -8126,6 +8252,13 @@
 "state": "VA",
 "via": "RF-SMART UPS Ground",
 "zip": "23901"
+},
+"1Z29706W0392612411": {
+"city": "BRICK",
+"name": "Walgreen's Co. Store #7921 (Brick, NJ)",
+"state": "NJ",
+"via": "RF-SMART UPS Ground",
+"zip": "08723"
 },
 "1Z29706W0392615043": {
 "city": "Glenwood Springs",
@@ -8772,6 +8905,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "85254"
 },
+"1Z29706W0393136729": {
+"city": "LAS CRUCES",
+"name": "Walgreen's Co. Store #11458",
+"state": "NM",
+"via": "RF-SMART UPS Ground",
+"zip": "88011"
+},
 "1Z29706W0393155708": {
 "city": "CLINTON",
 "name": "Patrick O. Shaffer",
@@ -8792,6 +8932,13 @@
 "state": "GA",
 "via": "UPS\u00ae Ground",
 "zip": "30248"
+},
+"1Z29706W0393170218": {
+"city": "Payson",
+"name": "Walgreen's Co. Store #6533",
+"state": "AZ",
+"via": "RF-SMART UPS Ground",
+"zip": "85541"
 },
 "1Z29706W0393178836": {
 "city": "COMMERCE CITY",
@@ -9017,6 +9164,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "80303"
 },
+"1Z29706W0393332507": {
+"city": "ATMORE",
+"name": "Walgreen's Co. Store #10761 (Atmore, AL)",
+"state": "AL",
+"via": "RF-SMART UPS Ground",
+"zip": "36502"
+},
 "1Z29706W0393332990": {
 "city": "Colorado Springs",
 "name": "Scheels Colorado Springs",
@@ -9073,6 +9227,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "32955"
 },
+"1Z29706W0393387995": {
+"city": "NEW YORK",
+"name": "Walgreen's Co. Store #14126 (New York, N",
+"state": "NY",
+"via": "RF-SMART UPS Ground",
+"zip": "10005"
+},
 "1Z29706W0393390329": {
 "city": "SAINT MARYS",
 "name": "Walgreen's Co. Store #17935 (Saint Marys",
@@ -9121,6 +9282,13 @@
 "state": "CA",
 "via": "RF-SMART UPS Ground",
 "zip": "92307"
+},
+"1Z29706W0393424944": {
+"city": "DENVER",
+"name": "11008 Walgreen's Co. Store # 356",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80202"
 },
 "1Z29706W0393430811": {
 "city": "LEE",
@@ -9277,6 +9445,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "60056"
 },
+"1Z29706W0393545331": {
+"city": "DENVER",
+"name": "11008 Walgreen's Co. Store # 356",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80202"
+},
 "1Z29706W0393549800": {
 "city": "CORINTH",
 "name": "Walgreen's Co. Store #19911 (Corinth, NY",
@@ -9360,6 +9535,13 @@
 "state": "OH",
 "via": "RF-SMART UPS Ground",
 "zip": "44053"
+},
+"1Z29706W0393627538": {
+"city": "PARK CITY",
+"name": "Walgreen's Co. Store # 19168",
+"state": "UT",
+"via": "RF-SMART UPS Ground",
+"zip": "84060"
 },
 "1Z29706W0393628368": {
 "city": "DILLON",
@@ -9564,6 +9746,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "80528"
 },
+"1Z29706W0393786652": {
+"city": "ARLINGTON",
+"name": "Walgreen's Co. Store #4099 (Arlington, T",
+"state": "TX",
+"via": "RF-SMART UPS Ground",
+"zip": "76017"
+},
 "1Z29706W0393792029": {
 "city": "Avon",
 "name": "Westin Riverfront Resort",
@@ -9591,6 +9780,13 @@
 "state": "CO",
 "via": "RF-SMART UPS Ground",
 "zip": "80534"
+},
+"1Z29706W0393797757": {
+"city": "DRAPER",
+"name": "Walgreen's Co. Store #6281",
+"state": "UT",
+"via": "RF-SMART UPS Ground",
+"zip": "84020"
 },
 "1Z29706W0393803436": {
 "city": "TAMPA",
@@ -9781,6 +9977,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "28713"
 },
+"1Z29706W0393927142": {
+"city": "DRAPER",
+"name": "Walgreen's Co. Store #6281",
+"state": "UT",
+"via": "RF-SMART UPS Ground",
+"zip": "84020"
+},
 "1Z29706W0393929828": {
 "city": "ABILENE",
 "name": "Walgreen's Co. Store #7937 (Abilene, TX)",
@@ -9892,6 +10095,13 @@
 "state": "OR",
 "via": "RF-SMART UPS Ground",
 "zip": "97338"
+},
+"1Z29706W0393997166": {
+"city": "DENVER",
+"name": "11008 Walgreen's Co. Store # 356",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80202"
 },
 "1Z29706W0393999502": {
 "city": "PHOENIX",
@@ -10005,6 +10215,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "55374"
 },
+"1Z29706W0394099116": {
+"city": "LAS CRUCES",
+"name": "Walgreen's Co. Store #11458",
+"state": "NM",
+"via": "RF-SMART UPS Ground",
+"zip": "88011"
+},
 "1Z29706W0394103020": {
 "city": "RUTLAND",
 "name": "Walgreen's Co. Store #1756 (Rutland, VT)",
@@ -10039,6 +10256,13 @@
 "state": "UT",
 "via": "RF-SMART UPS Ground",
 "zip": "84770"
+},
+"1Z29706W0394118265": {
+"city": "ARLINGTON",
+"name": "Walgreen's Co. Store #4099 (Arlington, T",
+"state": "TX",
+"via": "RF-SMART UPS Ground",
+"zip": "76017"
 },
 "1Z29706W0394119791": {
 "city": "APPLE VALLEY",
@@ -10102,6 +10326,13 @@
 "state": "CO",
 "via": "RF-SMART UPS Ground",
 "zip": "81620"
+},
+"1Z29706W0394154707": {
+"city": "PARK CITY",
+"name": "Walgreen's Co. Store # 19168",
+"state": "UT",
+"via": "RF-SMART UPS Ground",
+"zip": "84060"
 },
 "1Z29706W0394154903": {
 "city": "ROCKFORD",
@@ -10312,6 +10543,20 @@
 "state": "CO",
 "via": "RF-SMART UPS Ground",
 "zip": "80504"
+},
+"1Z29706W0394318638": {
+"city": "Apache Junction",
+"name": "Walgreen's Co. Store #4188 (Apache Junct",
+"state": "AZ",
+"via": "RF-SMART UPS Ground",
+"zip": "85120"
+},
+"1Z29706W0394341317": {
+"city": "PARK CITY",
+"name": "Walgreen's Co. Store # 19168",
+"state": "UT",
+"via": "RF-SMART UPS Ground",
+"zip": "84060"
 },
 "1Z29706W0394342085": {
 "city": "FAIRHOPE",
@@ -10712,6 +10957,20 @@
 "via": "RF-SMART UPS Ground",
 "zip": "78640"
 },
+"1Z29706W0394651974": {
+"city": "BILLINGS",
+"name": "Walgreen's Co. Store #12155 (Billings, M",
+"state": "MT",
+"via": "RF-SMART UPS Ground",
+"zip": "59102"
+},
+"1Z29706W0394653383": {
+"city": "DENVER",
+"name": "11008 Walgreen's Co. Store # 356",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80202"
+},
 "1Z29706W0394657281": {
 "city": "CENTENNIAL",
 "name": "Walgreen's Co. Store #3091",
@@ -10908,6 +11167,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "80303"
 },
+"1Z29706W0394798923": {
+"city": "PARK CITY",
+"name": "Walgreen's Co. Store # 19168",
+"state": "UT",
+"via": "RF-SMART UPS Ground",
+"zip": "84060"
+},
 "1Z29706W0394799306": {
 "city": "HURRICANE",
 "name": "Walgreen's Co. Store #17409 (Hurricane, ",
@@ -10949,6 +11215,13 @@
 "state": "CA",
 "via": "RF-SMART UPS Ground",
 "zip": "92307"
+},
+"1Z29706W0394828248": {
+"city": "COLORADO SPRINGS",
+"name": "11010 Walgreen's Co. Store # 3586",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80917"
 },
 "1Z29706W0394831387": {
 "city": "WINTER GARDEN",
@@ -11447,6 +11720,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "83704"
 },
+"1Z29706W0395191871": {
+"city": "PRESQUE ISLE",
+"name": "Walgreen's Co. Store #17152 (Presque Isl",
+"state": "ME",
+"via": "RF-SMART UPS Ground",
+"zip": "04769"
+},
 "1Z29706W0395208693": {
 "city": "Locust Grove",
 "name": "Home Depot 6777",
@@ -11853,6 +12133,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "97303"
 },
+"1Z29706W0395571095": {
+"city": "WINTER GARDEN",
+"name": "Walgreen's Co. Store #7385 (Winter Garde",
+"state": "FL",
+"via": "RF-SMART UPS Ground",
+"zip": "34787"
+},
 "1Z29706W0395573137": {
 "city": "GREENSBURG",
 "name": "Linda Greene",
@@ -12000,6 +12287,13 @@
 "state": "UT",
 "via": "RF-SMART UPS Ground",
 "zip": "84097"
+},
+"1Z29706W0395718230": {
+"city": "COLORADO SPRINGS",
+"name": "Walgreen's Co. Store #5794",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80910"
 },
 "1Z29706W0395718801": {
 "city": "Harmony",
@@ -12161,6 +12455,13 @@
 "state": "CO",
 "via": "RF-SMART UPS Ground",
 "zip": "80424"
+},
+"1Z29706W0395891865": {
+"city": "PRESQUE ISLE",
+"name": "Walgreen's Co. Store #17152 (Presque Isl",
+"state": "ME",
+"via": "RF-SMART UPS Ground",
+"zip": "04769"
 },
 "1Z29706W0395900130": {
 "city": "CULLMAN",
@@ -12701,6 +13002,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "02882"
 },
+"1Z29706W0396310945": {
+"city": "WETUMPKA",
+"name": "Walgreen's Co. Store #10664 (Wetumpka, A",
+"state": "AL",
+"via": "RF-SMART UPS Ground",
+"zip": "36092"
+},
 "1Z29706W0396317724": {
 "city": "Pittsfield",
 "name": "Walgreen's Co. Store #17637 (Pittsfield,",
@@ -12931,6 +13239,13 @@
 "state": "IL",
 "via": "RF-SMART UPS Ground",
 "zip": "61820"
+},
+"1Z29706W0396506289": {
+"city": "WINTER GARDEN",
+"name": "Walgreen's Co. Store #7385 (Winter Garde",
+"state": "FL",
+"via": "RF-SMART UPS Ground",
+"zip": "34787"
 },
 "1Z29706W0396506921": {
 "city": "CRYSTAL LAKE",
@@ -13436,6 +13751,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "30501"
 },
+"1Z29706W0396915828": {
+"city": "COLORADO SPRINGS",
+"name": "Walgreen's Co. Store #5794",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80910"
+},
 "1Z29706W0396920769": {
 "city": "NORTH HAVEN",
 "name": "Walgreen's Co. Store #9071 (North Haven,",
@@ -13736,6 +14058,13 @@
 "state": "AL",
 "via": "RF-SMART UPS Ground",
 "zip": "35055"
+},
+"1Z29706W0397110258": {
+"city": "Mankato",
+"name": "River Hills Scheels",
+"state": "MN",
+"via": "RF-SMART UPS Ground",
+"zip": "56001"
 },
 "1Z29706W0397113326": {
 "city": "Prescott Valley",
@@ -14339,6 +14668,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "36606"
 },
+"1Z29706W0397570994": {
+"city": "RUIDOSO",
+"name": "Walgreen's Co. Store #4650",
+"state": "NM",
+"via": "RF-SMART UPS Ground",
+"zip": "88345"
+},
 "1Z29706W0397579904": {
 "city": "Glendale",
 "name": "Walgreen's Co. Store #12366",
@@ -14850,6 +15186,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "80501"
 },
+"1Z29706W0397962301": {
+"city": "PALM DESERT",
+"name": "Walgreen's Co. Store #4756",
+"state": "CA",
+"via": "RF-SMART UPS Ground",
+"zip": "92260"
+},
 "1Z29706W0397963097": {
 "city": "WOODLAND PARK",
 "name": "11212 Walgreen's Co. Store # 9561",
@@ -15004,6 +15347,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "83402"
 },
+"1Z29706W0398047816": {
+"city": "GALVESTON",
+"name": "Walgreen's Co. Store #9062 (Galveston, T",
+"state": "TX",
+"via": "RF-SMART UPS Ground",
+"zip": "77551"
+},
 "1Z29706W0398051525": {
 "city": "ELIZABETHTOWN",
 "name": "Walgreen's Co. Store #12775 (Elizabethto",
@@ -15136,6 +15486,13 @@
 "state": "CO",
 "via": "RF-SMART UPS Ground",
 "zip": "80249"
+},
+"1Z29706W0398163762": {
+"city": "TULSA",
+"name": "Walgreen's Co. Store #15777 (Tulsa, OK)",
+"state": "OK",
+"via": "RF-SMART UPS Ground",
+"zip": "74135"
 },
 "1Z29706W0398165493": {
 "city": "ROSWELL",
@@ -15431,6 +15788,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "81401"
 },
+"1Z29706W0398422133": {
+"city": "WETUMPKA",
+"name": "Walgreen's Co. Store #10664 (Wetumpka, A",
+"state": "AL",
+"via": "RF-SMART UPS Ground",
+"zip": "36092"
+},
 "1Z29706W0398430231": {
 "city": "Breckenridge",
 "name": "Lodge at Breckenridge",
@@ -15689,6 +16053,20 @@
 "state": "NY",
 "via": "RF-SMART UPS Ground",
 "zip": "10019"
+},
+"1Z29706W0398690184": {
+"city": "RUIDOSO",
+"name": "Walgreen's Co. Store #4650",
+"state": "NM",
+"via": "RF-SMART UPS Ground",
+"zip": "88345"
+},
+"1Z29706W0398695910": {
+"city": "PALM DESERT",
+"name": "Walgreen's Co. Store #4756",
+"state": "CA",
+"via": "RF-SMART UPS Ground",
+"zip": "92260"
 },
 "1Z29706W0398706587": {
 "city": "COLORADO SPRINGS",
@@ -16005,6 +16383,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "36542"
 },
+"1Z29706W0398999771": {
+"city": "RUIDOSO",
+"name": "Walgreen's Co. Store #4650",
+"state": "NM",
+"via": "RF-SMART UPS Ground",
+"zip": "88345"
+},
 "1Z29706W0399002899": {
 "city": "PALOS HEIGHTS",
 "name": "Walgreen's Co. Store # 9347 (Palos, IL)",
@@ -16158,6 +16543,13 @@
 "state": "GA",
 "via": "RF-SMART UPS Ground",
 "zip": "30080"
+},
+"1Z29706W0399086157": {
+"city": "TULSA",
+"name": "Walgreen's Co. Store #15777 (Tulsa, OK)",
+"state": "OK",
+"via": "RF-SMART UPS Ground",
+"zip": "74135"
 },
 "1Z29706W0399099429": {
 "city": "Pagosa Springs",
@@ -17132,6 +17524,13 @@
 "via": "RF-SMART UPS Ground",
 "zip": "89109"
 },
+"1Z29706W0399818204": {
+"city": "GALVESTON",
+"name": "Walgreen's Co. Store #9062 (Galveston, T",
+"state": "TX",
+"via": "RF-SMART UPS Ground",
+"zip": "77551"
+},
 "1Z29706W0399819525": {
 "city": "THE VILLAGES",
 "name": "Walgreen's Co. Store #16466",
@@ -17348,6 +17747,13 @@
 "state": "TX",
 "via": "RF-SMART UPS Ground",
 "zip": "77474"
+},
+"1Z29706W0399991044": {
+"city": "COLORADO SPRINGS",
+"name": "Walgreen's Co. Store #5794",
+"state": "CO",
+"via": "RF-SMART UPS Ground",
+"zip": "80910"
 },
 "1Z2GV0380301185475": {
 "city": "Frisco",
@@ -22727,6 +23133,48 @@
 "state": "OH",
 "via": "RF-SMART SmartPost parcel select",
 "zip": "44641"
+},
+"384458554343": {
+"city": "Houston",
+"name": "Lauren Elderton",
+"state": "TX",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "77068"
+},
+"384458621491": {
+"city": "McAllen",
+"name": "Javier Ayala",
+"state": "TX",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "78501"
+},
+"384458726989": {
+"city": "murray",
+"name": "Jace Gatzemeier",
+"state": "UT",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "84107"
+},
+"384458795978": {
+"city": "Buford",
+"name": "Robert Searles",
+"state": "GA",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "30519"
+},
+"384458966819": {
+"city": "Syracuse",
+"name": "Todd Bailey",
+"state": "NY",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "13206"
+},
+"384459166353": {
+"city": "Manistee",
+"name": "Rudy Linke",
+"state": "MI",
+"via": "RF-SMART SmartPost parcel select",
+"zip": "49660"
 },
 "5539993406": {
 "city": "Aspen",
@@ -60151,6 +60599,445 @@
 "via": "RF-SMART FedEx Home Delivery",
 "zip": "06084"
 },
+"879720314273": {
+"city": "LONG BEACH",
+"name": "Teresa Jones",
+"promised": "2026-11-13",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "90813"
+},
+"879720375941": {
+"city": "LOUP CITY",
+"name": "Linda Obermiller",
+"promised": "2026-11-12",
+"state": "NE",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "68853"
+},
+"879720428581": {
+"city": "MIAMI",
+"name": "Juliett Fantony",
+"promised": "2026-11-12",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "33144"
+},
+"879720487710": {
+"city": "WASHOE VALLEY",
+"name": "David D. Moore",
+"promised": "2026-11-16",
+"state": "NV",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "89704"
+},
+"879720537821": {
+"city": "LOUISVILLE",
+"name": "jennifer s gower",
+"promised": "2026-11-10",
+"state": "KY",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "40242"
+},
+"879720601043": {
+"city": "SMITHVILLE",
+"name": "Jeff Blackton",
+"promised": "2026-11-12",
+"state": "MO",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "64089"
+},
+"879720668499": {
+"city": "HOUSTON",
+"name": "David Sharp",
+"promised": "2026-11-12",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "77042"
+},
+"879720747633": {
+"city": "BATTLE CREEK",
+"name": "Barry A Gooch",
+"promised": "2026-11-10",
+"state": "MI",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "49017"
+},
+"879720804390": {
+"city": "LEONARD",
+"name": "Caroline kraning",
+"promised": "2026-11-13",
+"state": "ND",
+"via": "RF-SMART FedEx Ground",
+"zip": "58052"
+},
+"879720853653": {
+"city": "HICKSVILLE",
+"name": "Fabiana aimar",
+"promised": "2026-11-09",
+"state": "NY",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "11801"
+},
+"879720950598": {
+"city": "HEATHSVILLE",
+"name": "Kirk Olverson",
+"promised": "2026-11-10",
+"state": "VA",
+"via": "RF-SMART FedEx Ground",
+"zip": "22473"
+},
+"879721012496": {
+"city": "HAMILTON",
+"name": "Kenaa Inc - Exborders FZEPOV-J-031126",
+"promised": "2026-11-09",
+"state": "NJ",
+"via": "RF-SMART FedEx Ground",
+"zip": "08609"
+},
+"879721058877": {
+"city": "CALEDONIA",
+"name": "David Bradybaugh",
+"promised": "2026-11-10",
+"state": "NY",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "14423"
+},
+"879721116461": {
+"city": "DEERFIELD BEACH",
+"name": "Mary L Goeden",
+"promised": "2026-11-12",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "33441"
+},
+"879721167430": {
+"city": "RIO GRANDE",
+"name": "Voss Striluk",
+"promised": "2026-11-09",
+"state": "NJ",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "08242"
+},
+"879721225653": {
+"city": "SAINT PAULS",
+"name": "Robert Shepherd",
+"promised": "2026-11-10",
+"state": "NC",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "28384"
+},
+"879721281930": {
+"city": "MILLBROOK",
+"name": "Joanna J Jordan",
+"promised": "2026-11-09",
+"state": "NY",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "12545"
+},
+"879721332614": {
+"city": "NOWATA",
+"name": "Daniel Grubbs",
+"promised": "2026-11-12",
+"state": "OK",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "74048"
+},
+"879721369520": {
+"city": "Atascadero",
+"name": "John Wall",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "93422"
+},
+"879721405587": {
+"city": "EL CAMPO",
+"name": "Kim Strarup",
+"promised": "2026-11-12",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "77437"
+},
+"879721609430": {
+"city": "ELY",
+"name": "Venessa Nystrom",
+"promised": "2026-11-16",
+"state": "NV",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "89301"
+},
+"879721670750": {
+"city": "Pompano Beach",
+"name": "SAV-A-LOT NUTRITION CENTERS",
+"state": "FL",
+"via": "RF-SMART FedEx Ground",
+"zip": "33063"
+},
+"879721677022": {
+"city": "CORDOVA",
+"name": "Anita Page",
+"promised": "2026-11-12",
+"state": "TN",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "38016"
+},
+"879721764426": {
+"city": "SALISBURY",
+"name": "Catherine Nock",
+"promised": "2026-11-10",
+"state": "MD",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "21801"
+},
+"879721866395": {
+"city": "CHULA VISTA",
+"name": "James P. Hudson",
+"promised": "2026-11-13",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "91910"
+},
+"879721925825": {
+"city": "Hawthorne",
+"name": "Robert J. Antonaccio",
+"promised": "2026-11-09",
+"state": "NY",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "10532"
+},
+"879721989024": {
+"city": "La Canada",
+"name": "R Jesmok",
+"promised": "2026-11-13",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "91011"
+},
+"879722047225": {
+"city": "MANHASSET",
+"name": "Maciej Jaworski",
+"promised": "2026-11-09",
+"state": "NY",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "11030"
+},
+"879722099862": {
+"city": "CAMDEN",
+"name": "Kathy L Walker",
+"promised": "2026-11-12",
+"state": "TN",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "38320"
+},
+"879722161703": {
+"city": "SAINT CLAIR",
+"name": "Jerome Riesenbeck",
+"promised": "2026-11-12",
+"state": "MO",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "63077"
+},
+"879722267049": {
+"city": "SAN DIEGO",
+"name": "Mike Tamburri",
+"promised": "2026-11-13",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "92128"
+},
+"879722342140": {
+"city": "PETERSBURG",
+"name": "Leon Crawford",
+"promised": "2026-11-10",
+"state": "VA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "23805"
+},
+"879722384754": {
+"city": "Denver",
+"name": "Denver Beverage",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722384765": {
+"city": "Denver",
+"name": "Denver Beverage",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722384776": {
+"city": "Denver",
+"name": "Denver Beverage",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722384787": {
+"city": "Denver",
+"name": "Denver Beverage",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722384798": {
+"city": "Denver",
+"name": "Denver Beverage",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722384802": {
+"city": "Denver",
+"name": "Denver Beverage",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722384813": {
+"city": "Denver",
+"name": "Denver Beverage",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722384824": {
+"city": "Denver",
+"name": "Denver Beverage",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722500507": {
+"city": "DENVER",
+"name": "Natural Grocers # U025",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722500518": {
+"city": "DENVER",
+"name": "Natural Grocers # U025",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722500529": {
+"city": "DENVER",
+"name": "Natural Grocers # U025",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722500530": {
+"city": "DENVER",
+"name": "Natural Grocers # U025",
+"state": "CO",
+"via": "RF-SMART FedEx Ground",
+"zip": "80216"
+},
+"879722677875": {
+"city": "ANN ARBOR",
+"name": "R. K.",
+"promised": "2026-11-10",
+"state": "MI",
+"via": "RF-SMART FedEx Ground",
+"zip": "48105"
+},
+"879722734886": {
+"city": "Romeo",
+"name": "Melody Hawley",
+"promised": "2026-11-10",
+"state": "MI",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "48065"
+},
+"879722790393": {
+"city": "HILLSBORO",
+"name": "Howard J. Tarnowski",
+"promised": "2026-11-13",
+"state": "WI",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "54634"
+},
+"879722870144": {
+"city": "MIDWEST CITY",
+"name": "Darron White",
+"promised": "2026-11-12",
+"state": "OK",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "73110"
+},
+"879722926092": {
+"city": "FAIRBURN",
+"name": "Anitra Bobbitt",
+"promised": "2026-11-10",
+"state": "GA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "30213"
+},
+"879722979887": {
+"city": "PFLUGERVILLE",
+"name": "RUBY C MARLEY",
+"promised": "2026-11-12",
+"state": "TX",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "78660"
+},
+"879722991649": {
+"city": "Richardson",
+"name": "Natural Grocers # U028-Richardson",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75080"
+},
+"879722991650": {
+"city": "Richardson",
+"name": "Natural Grocers # U028-Richardson",
+"state": "TX",
+"via": "RF-SMART FedEx Ground",
+"zip": "75080"
+},
+"879723029222": {
+"city": "LOS ANGELES",
+"name": "Chris Hawkins/code 1289 both doors",
+"promised": "2026-11-13",
+"state": "CA",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "90005"
+},
+"879723086582": {
+"city": "ELK GROVE VILLAGE",
+"name": "Steve",
+"promised": "2026-11-10",
+"state": "IL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "60007"
+},
+"879723100785": {
+"city": "Hialeah",
+"name": "Hale's Health Foods",
+"state": "FL",
+"via": "RF-SMART FedEx Ground",
+"zip": "33014"
+},
+"879723200321": {
+"city": "LAKE MARY",
+"name": "Frank Ferrantello",
+"promised": "2026-11-12",
+"state": "FL",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "32746"
+},
+"879723263635": {
+"city": "SWARTZ CREEK",
+"name": "MARTHA A SPENCER",
+"promised": "2026-11-10",
+"state": "MI",
+"via": "RF-SMART FedEx Home Delivery",
+"zip": "48473"
+},
 "9418436208192274458252": {
 "city": "EWA BEACH",
 "name": "Lyann Hamada",
@@ -61192,5 +62079,5 @@
 "zip": "46143"
 }
 },
-"updated": "2026-11-04T09:24:08"
+"updated": "2026-11-04T11:45:13"
 }
