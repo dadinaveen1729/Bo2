@@ -1,5 +1,5 @@
 {
-"count": 6823,
+"count": 6863,
 "orders": {
 "SO780298": {
 "amount": "47.91",
@@ -34115,8 +34115,208 @@
 "amount": "31.94",
 "customer": "Santos, Aparecida",
 "order_date": "11/3/2026"
+},
+"SO797065": {
+"amount": "31.94",
+"customer": "Antonaccio, Robert",
+"order_date": "11/3/2026"
+},
+"SO797067": {
+"amount": "37.94",
+"customer": "Baldwin, Leonard",
+"order_date": "11/3/2026"
+},
+"SO797069": {
+"amount": "31.94",
+"customer": "Jesmok, R",
+"order_date": "11/3/2026"
+},
+"SO797070": {
+"amount": "34.99",
+"customer": "catherine, catherine",
+"order_date": "11/3/2026"
+},
+"SO797078": {
+"amount": "44.99",
+"customer": "Hudson, James",
+"order_date": "11/3/2026"
+},
+"SO797081": {
+"amount": "31.94",
+"customer": "hawkins, chris",
+"order_date": "11/3/2026"
+},
+"SO797092": {
+"amount": "31.94",
+"customer": "leonardo, leonardo",
+"order_date": "11/3/2026"
+},
+"SO797096": {
+"amount": "113.82",
+"customer": "Jaworski, Maciej",
+"order_date": "11/3/2026"
+},
+"SO797098": {
+"amount": "44.99",
+"customer": "Watson, Debbie",
+"order_date": "11/3/2026"
+},
+"SO797100": {
+"amount": "56.94",
+"customer": "soderbery, jean",
+"order_date": "11/3/2026"
+},
+"SO797104": {
+"amount": "227.64",
+"customer": "Steve, Steve",
+"order_date": "11/3/2026"
+},
+"SO797106": {
+"amount": "31.94",
+"customer": "Walker, Kathy L",
+"order_date": "11/3/2026"
+},
+"SO797118": {
+"amount": "47.96",
+"customer": "FERRANTELLO, FRANK S",
+"order_date": "11/3/2026"
+},
+"SO797122": {
+"amount": "31.94",
+"customer": "spencer, marcus",
+"order_date": "11/3/2026"
+},
+"SO797123": {
+"amount": "31.94",
+"customer": "Quinlan, John-Curtiss",
+"order_date": "11/3/2026"
+},
+"SO797125": {
+"amount": "37.94",
+"customer": "Riesenbeck, Jerome",
+"order_date": "11/3/2026"
+},
+"SO797127": {
+"amount": "31.94",
+"customer": "Mike, Mike",
+"order_date": "11/3/2026"
+},
+"SO797130": {
+"amount": "31.94",
+"customer": "Page, Anita",
+"order_date": "11/3/2026"
+},
+"SO797131": {
+"amount": "31.94",
+"customer": "john, john",
+"order_date": "11/3/2026"
+},
+"SO797133": {
+"amount": "31.94",
+"customer": "Nystrom, Venessa",
+"order_date": "11/3/2026"
+},
+"SO797135": {
+"amount": "34.99",
+"customer": "Leon, Leon",
+"order_date": "11/3/2026"
+},
+"SO797137": {
+"amount": "56.94",
+"customer": "Marley, Ruby",
+"order_date": "11/3/2026"
+},
+"SO797140": {
+"amount": "31.94",
+"customer": "Fennebresque, Deborah J",
+"order_date": "11/3/2026"
+},
+"SO797141": {
+"amount": "37.94",
+"customer": "Chen, Rain",
+"order_date": "11/3/2026"
+},
+"SO797142": {
+"amount": "87.00",
+"customer": "Bobbitt, Anitra",
+"order_date": "11/4/2026"
+},
+"SO797143": {
+"amount": "37.94",
+"customer": "White, Darron",
+"order_date": "11/4/2026"
+},
+"SO797144": {
+"amount": "37.94",
+"customer": "Hawley, Diane M",
+"order_date": "11/4/2026"
+},
+"SO797145": {
+"amount": "56.94",
+"customer": "ken, ken",
+"order_date": "11/4/2026"
+},
+"SO797146": {
+"amount": "31.94",
+"customer": "R. K.",
+"order_date": "11/4/2026"
+},
+"SO797147": {
+"amount": "31.94",
+"customer": "Tarnowski, Howard J",
+"order_date": "11/4/2026"
+},
+"SO797149": {
+"amount": "31.94",
+"customer": "Matthew, Matthew",
+"order_date": "11/4/2026"
+},
+"SO797150": {
+"amount": "31.94",
+"customer": "Grant, David",
+"order_date": "11/4/2026"
+},
+"SO797151": {
+"amount": "29.91",
+"customer": "Bryant, Louise",
+"order_date": "11/4/2026"
+},
+"SO797152": {
+"amount": "37.94",
+"customer": "McKinney, April",
+"order_date": "11/4/2026"
+},
+"SO797153": {
+"amount": "37.94",
+"customer": "Montanari, Christina",
+"order_date": "11/4/2026"
+},
+"SO797159": {
+"amount": "44.99",
+"customer": "Russell, E. P",
+"order_date": "11/4/2026"
+},
+"SO797176": {
+"amount": "31.94",
+"customer": "Harlich, Rachel E",
+"order_date": "11/4/2026"
+},
+"SO797183": {
+"amount": "113.82",
+"customer": "Howe, Malonie",
+"order_date": "11/4/2026"
+},
+"SO797185": {
+"amount": "56.94",
+"customer": "Nishioku, Gary Y",
+"order_date": "11/4/2026"
+},
+"SO797187": {
+"amount": "31.94",
+"customer": "Nauman, Daryl",
+"order_date": "11/4/2026"
 }
 },
 "source": "NetSuite: Amazon Orders Pending Fulfillment",
-"updated": "2026-11-04T09:24:00"
+"updated": "2026-11-04T11:45:09"
 }
