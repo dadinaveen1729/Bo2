@@ -1,9 +1,9 @@
 {
- "ageDays": 21,
+ "ageDays": 22,
  "checked_on": "2026-10-27",
  "on_time_units": 1556,
  "otdr_pct": 97.55,
- "publishedAt": "2026-11-17T11:45:25",
+ "publishedAt": "2026-11-18T11:45:19",
  "total_units": 1595,
  "windowBasis": "promised delivery date",
  "windowSettled": true,
