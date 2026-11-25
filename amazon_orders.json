@@ -1,5 +1,5 @@
 {
-"count": 8594,
+"count": 8595,
 "orders": {
 "SO780298": {
 "amount": "47.91",
@@ -42970,8 +42970,13 @@
 "amount": "46.69",
 "customer": "Hayko, Loretta",
 "order_date": "11/24/2026"
+},
+"SO801790": {
+"amount": "46.69",
+"customer": "gruschus, harrison j",
+"order_date": "11/25/2026"
 }
 },
 "source": "NetSuite: Amazon Orders Pending Fulfillment",
-"updated": "2026-11-24T11:45:07"
+"updated": "2026-11-25T11:45:09"
 }
