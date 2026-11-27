@@ -1,5 +1,5 @@
 {
-"count": 8687,
+"count": 8831,
 "orders": {
 "SO780298": {
 "amount": "47.91",
@@ -43435,8 +43435,728 @@
 "amount": "32.25",
 "customer": "Turner, dennis R",
 "order_date": "11/26/2026"
+},
+"SO801950": {
+"amount": "32.25",
+"customer": "Steinhart, Justin",
+"order_date": "11/26/2026"
+},
+"SO801951": {
+"amount": "46.69",
+"customer": "Petersen, Chris",
+"order_date": "11/26/2026"
+},
+"SO801952": {
+"amount": "46.69",
+"customer": "dennis, anne",
+"order_date": "11/26/2026"
+},
+"SO801953": {
+"amount": "46.69",
+"customer": "Pacheco, Weston",
+"order_date": "11/26/2026"
+},
+"SO801954": {
+"amount": "29.91",
+"customer": "Taylor, Janine",
+"order_date": "11/26/2026"
+},
+"SO801955": {
+"amount": "32.25",
+"customer": "SACATROPEZ, JENNIFER",
+"order_date": "11/26/2026"
+},
+"SO801956": {
+"amount": "46.69",
+"customer": "Moglovkin, Colleen",
+"order_date": "11/26/2026"
+},
+"SO801957": {
+"amount": "32.25",
+"customer": "Lahue, Ed",
+"order_date": "11/26/2026"
+},
+"SO801958": {
+"amount": "91.06",
+"customer": "Toth, Joseph",
+"order_date": "11/26/2026"
+},
+"SO801959": {
+"amount": "46.69",
+"customer": "Kim, David",
+"order_date": "11/26/2026"
+},
+"SO801960": {
+"amount": "32.25",
+"customer": "Ketcham, James",
+"order_date": "11/26/2026"
+},
+"SO801961": {
+"amount": "32.25",
+"customer": "Dinielli, Jayson T",
+"order_date": "11/26/2026"
+},
+"SO801962": {
+"amount": "32.25",
+"customer": "Daniel, Daniel",
+"order_date": "11/26/2026"
+},
+"SO801963": {
+"amount": "32.25",
+"customer": "Kristi, Kristi",
+"order_date": "11/26/2026"
+},
+"SO801964": {
+"amount": "34.99",
+"customer": "harley, april",
+"order_date": "11/26/2026"
+},
+"SO801965": {
+"amount": "32.25",
+"customer": "Lapierre, Gail",
+"order_date": "11/26/2026"
+},
+"SO801966": {
+"amount": "32.25",
+"customer": "mallari, nisza",
+"order_date": "11/26/2026"
+},
+"SO801967": {
+"amount": "31.94",
+"customer": "burlison, rodney",
+"order_date": "11/26/2026"
+},
+"SO801968": {
+"amount": "31.94",
+"customer": "Frieson, Renetha",
+"order_date": "11/26/2026"
+},
+"SO801969": {
+"amount": "39.88",
+"customer": "Lozano, Jose L",
+"order_date": "11/26/2026"
+},
+"SO801970": {
+"amount": "32.25",
+"customer": "Hovatter, Ryan",
+"order_date": "11/26/2026"
+},
+"SO801971": {
+"amount": "89.98",
+"customer": "bowes, thomas d",
+"order_date": "11/26/2026"
+},
+"SO801972": {
+"amount": "32.25",
+"customer": "Clark, Robert D",
+"order_date": "11/26/2026"
+},
+"SO801973": {
+"amount": "29.91",
+"customer": "Jacoby, Leslie",
+"order_date": "11/26/2026"
+},
+"SO801974": {
+"amount": "31.94",
+"customer": "Stover, Candice",
+"order_date": "11/26/2026"
+},
+"SO801975": {
+"amount": "46.69",
+"customer": "Tom, Tom",
+"order_date": "11/26/2026"
+},
+"SO801976": {
+"amount": "32.25",
+"customer": "savage, samantha",
+"order_date": "11/26/2026"
+},
+"SO801977": {
+"amount": "32.25",
+"customer": "stephen, linda k",
+"order_date": "11/26/2026"
+},
+"SO801978": {
+"amount": "31.94",
+"customer": "Becky, Becky",
+"order_date": "11/26/2026"
+},
+"SO801979": {
+"amount": "32.25",
+"customer": "Phillips, James K",
+"order_date": "11/26/2026"
+},
+"SO801980": {
+"amount": "31.94",
+"customer": "Chilcutt, vicki",
+"order_date": "11/26/2026"
+},
+"SO801981": {
+"amount": "29.91",
+"customer": "Wnuk, Stanislaw F",
+"order_date": "11/26/2026"
+},
+"SO801982": {
+"amount": "46.69",
+"customer": "Tollefson, Nat",
+"order_date": "11/26/2026"
+},
+"SO801983": {
+"amount": "32.25",
+"customer": "Oswald, Joseph",
+"order_date": "11/26/2026"
+},
+"SO801984": {
+"amount": "29.99",
+"customer": "fahmy, Jan",
+"order_date": "11/26/2026"
+},
+"SO801985": {
+"amount": "32.25",
+"customer": "Blackford, William C",
+"order_date": "11/26/2026"
+},
+"SO801986": {
+"amount": "32.25",
+"customer": "Wiltshire, Dot",
+"order_date": "11/26/2026"
+},
+"SO801987": {
+"amount": "32.25",
+"customer": "Santos, Jose",
+"order_date": "11/26/2026"
+},
+"SO801988": {
+"amount": "31.94",
+"customer": "metzler, marni",
+"order_date": "11/26/2026"
+},
+"SO801989": {
+"amount": "32.25",
+"customer": "Toman, Brandi",
+"order_date": "11/26/2026"
+},
+"SO801990": {
+"amount": "46.69",
+"customer": "Nelson, Carl",
+"order_date": "11/26/2026"
+},
+"SO801991": {
+"amount": "32.25",
+"customer": "Fels, William J",
+"order_date": "11/26/2026"
+},
+"SO801992": {
+"amount": "46.69",
+"customer": "Willis, Kittina",
+"order_date": "11/26/2026"
+},
+"SO801993": {
+"amount": "64.50",
+"customer": "strayer, adam w",
+"order_date": "11/26/2026"
+},
+"SO801994": {
+"amount": "134.97",
+"customer": "Larry Hausman",
+"order_date": "11/26/2026"
+},
+"SO801995": {
+"amount": "32.25",
+"customer": "bradley, cheryl",
+"order_date": "11/26/2026"
+},
+"SO801996": {
+"amount": "32.25",
+"customer": "McGinnis, Patrick",
+"order_date": "11/26/2026"
+},
+"SO801997": {
+"amount": "32.25",
+"customer": "Rambaran, Ramdat",
+"order_date": "11/26/2026"
+},
+"SO801998": {
+"amount": "29.91",
+"customer": "Owen, Owen",
+"order_date": "11/26/2026"
+},
+"SO801999": {
+"amount": "32.25",
+"customer": "Gilbert, Paul",
+"order_date": "11/26/2026"
+},
+"SO802000": {
+"amount": "32.25",
+"customer": "Girouard, Dorothy",
+"order_date": "11/26/2026"
+},
+"SO802001": {
+"amount": "46.69",
+"customer": "Estabrook, Heather",
+"order_date": "11/26/2026"
+},
+"SO802002": {
+"amount": "46.69",
+"customer": "Hingorany, David A",
+"order_date": "11/26/2026"
+},
+"SO802003": {
+"amount": "46.69",
+"customer": "Nelson, Lee",
+"order_date": "11/26/2026"
+},
+"SO802004": {
+"amount": "46.69",
+"customer": "Harmon, Mr.",
+"order_date": "11/26/2026"
+},
+"SO802005": {
+"amount": "46.69",
+"customer": "Harmon, Mr.",
+"order_date": "11/26/2026"
+},
+"SO802006": {
+"amount": "32.25",
+"customer": "Szybowski, Merry D",
+"order_date": "11/26/2026"
+},
+"SO802007": {
+"amount": "32.25",
+"customer": "Schnelly, Andrew J",
+"order_date": "11/26/2026"
+},
+"SO802008": {
+"amount": "46.69",
+"customer": "Kopit, Anna",
+"order_date": "11/26/2026"
+},
+"SO802009": {
+"amount": "46.69",
+"customer": "bassford, christiane s",
+"order_date": "11/26/2026"
+},
+"SO802010": {
+"amount": "31.94",
+"customer": "rollyson, james",
+"order_date": "11/26/2026"
+},
+"SO802011": {
+"amount": "32.25",
+"customer": "O'Neall, Kevin",
+"order_date": "11/26/2026"
+},
+"SO802012": {
+"amount": "32.25",
+"customer": "tatum, Nancy",
+"order_date": "11/26/2026"
+},
+"SO802013": {
+"amount": "31.94",
+"customer": "Howell, Charles",
+"order_date": "11/26/2026"
+},
+"SO802014": {
+"amount": "31.94",
+"customer": "Lindsay, Lindsay",
+"order_date": "11/26/2026"
+},
+"SO802015": {
+"amount": "31.94",
+"customer": "Morales, Manny",
+"order_date": "11/26/2026"
+},
+"SO802016": {
+"amount": "32.25",
+"customer": "mehta, ahan",
+"order_date": "11/26/2026"
+},
+"SO802017": {
+"amount": "32.25",
+"customer": "Helm, John",
+"order_date": "11/26/2026"
+},
+"SO802018": {
+"amount": "46.69",
+"customer": "Logan, Frances",
+"order_date": "11/26/2026"
+},
+"SO802019": {
+"amount": "31.94",
+"customer": "Huntzinger, Sueann",
+"order_date": "11/26/2026"
+},
+"SO802020": {
+"amount": "31.94",
+"customer": "Paullus, David",
+"order_date": "11/26/2026"
+},
+"SO802021": {
+"amount": "32.25",
+"customer": "Swain, Richard W",
+"order_date": "11/26/2026"
+},
+"SO802022": {
+"amount": "46.69",
+"customer": "Brown, Donald",
+"order_date": "11/26/2026"
+},
+"SO802023": {
+"amount": "32.25",
+"customer": "Martinez, Felipe",
+"order_date": "11/26/2026"
+},
+"SO802024": {
+"amount": "29.91",
+"customer": "Dominguez, leydi",
+"order_date": "11/26/2026"
+},
+"SO802025": {
+"amount": "31.94",
+"customer": "Eckels, Larry",
+"order_date": "11/26/2026"
+},
+"SO802026": {
+"amount": "32.25",
+"customer": "Burkhart, Brenda",
+"order_date": "11/26/2026"
+},
+"SO802027": {
+"amount": "46.69",
+"customer": "Thornton, Peter R",
+"order_date": "11/26/2026"
+},
+"SO802028": {
+"amount": "32.25",
+"customer": "Belara, John",
+"order_date": "11/26/2026"
+},
+"SO802029": {
+"amount": "32.25",
+"customer": "Rodriguez, Jesus",
+"order_date": "11/26/2026"
+},
+"SO802030": {
+"amount": "31.94",
+"customer": "Rachael, Rachael",
+"order_date": "11/26/2026"
+},
+"SO802031": {
+"amount": "31.94",
+"customer": "DeMaio, L.",
+"order_date": "11/26/2026"
+},
+"SO802032": {
+"amount": "32.25",
+"customer": "Brito, Amanda R",
+"order_date": "11/26/2026"
+},
+"SO802033": {
+"amount": "91.06",
+"customer": "collinsworth, bc",
+"order_date": "11/26/2026"
+},
+"SO802034": {
+"amount": "46.69",
+"customer": "SHOCK, DAVID",
+"order_date": "11/26/2026"
+},
+"SO802035": {
+"amount": "32.25",
+"customer": "Guo, Bing",
+"order_date": "11/26/2026"
+},
+"SO802036": {
+"amount": "32.25",
+"customer": "Rohman, Irene",
+"order_date": "11/26/2026"
+},
+"SO802037": {
+"amount": "31.94",
+"customer": "Martinez, Esmeralda",
+"order_date": "11/26/2026"
+},
+"SO802038": {
+"amount": "32.25",
+"customer": "Blackhawk, Bethamy",
+"order_date": "11/26/2026"
+},
+"SO802039": {
+"amount": "64.50",
+"customer": "Hampson, yvonne",
+"order_date": "11/26/2026"
+},
+"SO802040": {
+"amount": "46.69",
+"customer": "Fechter-kitts, Karin A",
+"order_date": "11/26/2026"
+},
+"SO802041": {
+"amount": "32.25",
+"customer": "Masters, Randy",
+"order_date": "11/26/2026"
+},
+"SO802042": {
+"amount": "95.64",
+"customer": "Beaton, Douglas",
+"order_date": "11/26/2026"
+},
+"SO802043": {
+"amount": "32.25",
+"customer": "Ridgway, Jane",
+"order_date": "11/26/2026"
+},
+"SO802044": {
+"amount": "32.25",
+"customer": "Foster, Chris",
+"order_date": "11/26/2026"
+},
+"SO802045": {
+"amount": "46.69",
+"customer": "Liu, Kevin",
+"order_date": "11/26/2026"
+},
+"SO802046": {
+"amount": "32.25",
+"customer": "Raymond, Janet",
+"order_date": "11/26/2026"
+},
+"SO802047": {
+"amount": "44.99",
+"customer": "Brookhouser, Pam",
+"order_date": "11/27/2026"
+},
+"SO802048": {
+"amount": "32.25",
+"customer": "brown, valecia",
+"order_date": "11/27/2026"
+},
+"SO802049": {
+"amount": "182.12",
+"customer": "zehender, michael",
+"order_date": "11/27/2026"
+},
+"SO802050": {
+"amount": "32.25",
+"customer": "komal, komal",
+"order_date": "11/27/2026"
+},
+"SO802051": {
+"amount": "32.25",
+"customer": "Gaston, Julie",
+"order_date": "11/27/2026"
+},
+"SO802052": {
+"amount": "32.25",
+"customer": "herberg, scott",
+"order_date": "11/27/2026"
+},
+"SO802053": {
+"amount": "31.94",
+"customer": "AVelez, AVelez",
+"order_date": "11/27/2026"
+},
+"SO802054": {
+"amount": "32.25",
+"customer": "Baxter, Ken",
+"order_date": "11/27/2026"
+},
+"SO802055": {
+"amount": "31.94",
+"customer": "Wilson, Bryce",
+"order_date": "11/27/2026"
+},
+"SO802056": {
+"amount": "32.25",
+"customer": "moore, jason",
+"order_date": "11/27/2026"
+},
+"SO802057": {
+"amount": "44.99",
+"customer": "Morris, David B",
+"order_date": "11/27/2026"
+},
+"SO802058": {
+"amount": "31.94",
+"customer": "Lloyd, Gwendolyn",
+"order_date": "11/27/2026"
+},
+"SO802059": {
+"amount": "46.69",
+"customer": "BROYLES, RHONDA L",
+"order_date": "11/27/2026"
+},
+"SO802060": {
+"amount": "31.94",
+"customer": "Hernandez, Rebecca V",
+"order_date": "11/27/2026"
+},
+"SO802061": {
+"amount": "32.25",
+"customer": "Murphy, Kevin",
+"order_date": "11/27/2026"
+},
+"SO802062": {
+"amount": "32.25",
+"customer": "BROOKS, JAMES",
+"order_date": "11/27/2026"
+},
+"SO802063": {
+"amount": "31.88",
+"customer": "Gras, Deanna",
+"order_date": "11/27/2026"
+},
+"SO802064": {
+"amount": "46.69",
+"customer": "Karul, Virginia",
+"order_date": "11/27/2026"
+},
+"SO802065": {
+"amount": "31.94",
+"customer": "Masuda, Naoki",
+"order_date": "11/27/2026"
+},
+"SO802066": {
+"amount": "32.25",
+"customer": "Johnson, Alton L",
+"order_date": "11/27/2026"
+},
+"SO802067": {
+"amount": "91.06",
+"customer": "DeVane, Jim",
+"order_date": "11/27/2026"
+},
+"SO802068": {
+"amount": "46.69",
+"customer": "jandres, Juan",
+"order_date": "11/27/2026"
+},
+"SO802069": {
+"amount": "46.69",
+"customer": "Mengelkoch, Samuel O",
+"order_date": "11/27/2026"
+},
+"SO802070": {
+"amount": "31.94",
+"customer": "Hauck, Michael",
+"order_date": "11/27/2026"
+},
+"SO802071": {
+"amount": "32.25",
+"customer": "Horn, Dennis V",
+"order_date": "11/27/2026"
+},
+"SO802072": {
+"amount": "32.25",
+"customer": "sherman, susan",
+"order_date": "11/27/2026"
+},
+"SO802073": {
+"amount": "47.91",
+"customer": "6665, 954 4",
+"order_date": "11/27/2026"
+},
+"SO802074": {
+"amount": "32.25",
+"customer": "Robinson, Erica",
+"order_date": "11/27/2026"
+},
+"SO802075": {
+"amount": "32.25",
+"customer": "Blair, John",
+"order_date": "11/27/2026"
+},
+"SO802076": {
+"amount": "32.25",
+"customer": "DiPietro, Darilyn C",
+"order_date": "11/27/2026"
+},
+"SO802077": {
+"amount": "32.25",
+"customer": "Schoepfer, Guy",
+"order_date": "11/27/2026"
+},
+"SO802078": {
+"amount": "29.99",
+"customer": "Blechinger, Joel",
+"order_date": "11/27/2026"
+},
+"SO802079": {
+"amount": "32.25",
+"customer": "Carraher, Dee",
+"order_date": "11/27/2026"
+},
+"SO802080": {
+"amount": "91.06",
+"customer": "Grube, Robert",
+"order_date": "11/27/2026"
+},
+"SO802081": {
+"amount": "32.25",
+"customer": "leach, Robert",
+"order_date": "11/27/2026"
+},
+"SO802082": {
+"amount": "46.69",
+"customer": "Thacker, Peggy L",
+"order_date": "11/27/2026"
+},
+"SO802083": {
+"amount": "44.99",
+"customer": "Veatch, Peaches",
+"order_date": "11/27/2026"
+},
+"SO802084": {
+"amount": "32.25",
+"customer": "Viapiano, Stephanie",
+"order_date": "11/27/2026"
+},
+"SO802085": {
+"amount": "31.94",
+"customer": "Parker, Sandra C",
+"order_date": "11/27/2026"
+},
+"SO802086": {
+"amount": "32.25",
+"customer": "Key, Frank",
+"order_date": "11/27/2026"
+},
+"SO802087": {
+"amount": "64.50",
+"customer": "wenqinchen, wenqinchen",
+"order_date": "11/27/2026"
+},
+"SO802088": {
+"amount": "32.25",
+"customer": "hoffman, james",
+"order_date": "11/27/2026"
+},
+"SO802089": {
+"amount": "46.69",
+"customer": "Sharum, David",
+"order_date": "11/27/2026"
+},
+"SO802090": {
+"amount": "32.25",
+"customer": "PEEBLES, MICHAEL S",
+"order_date": "11/27/2026"
+},
+"SO802091": {
+"amount": "32.25",
+"customer": "Duck, Dawn",
+"order_date": "11/27/2026"
+},
+"SO802092": {
+"amount": "46.69",
+"customer": "belding, ned",
+"order_date": "11/27/2026"
+},
+"SO802093": {
+"amount": "94.51",
+"customer": "Brewer, Lance C",
+"order_date": "11/27/2026"
 }
 },
 "source": "NetSuite: Amazon Orders Pending Fulfillment",
-"updated": "2026-11-26T11:45:07"
+"updated": "2026-11-27T11:45:06"
 }
